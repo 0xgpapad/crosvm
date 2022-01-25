@@ -253,6 +253,9 @@
 <span id="253">253</span>
 <span id="254">254</span>
 <span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -335,7 +338,10 @@
                     <span class="ident">entry</span>.<span class="ident">edx</span> <span class="op">|</span><span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">EDX_HTT_SHIFT</span>;
                 }
             }
-            <span class="number">2</span> <span class="op">|</span> <span class="number">0x80000005</span> <span class="op">|</span> <span class="number">0x80000006</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">unsafe</span> {
+            <span class="number">2</span> <span class="op">|</span> <span class="comment">// Cache and TLB Descriptor information</span>
+            <span class="number">0x80000002</span> <span class="op">|</span> <span class="number">0x80000003</span> <span class="op">|</span> <span class="number">0x80000004</span> <span class="op">|</span> <span class="comment">// Processor Brand String</span>
+            <span class="number">0x80000005</span> <span class="op">|</span> <span class="number">0x80000006</span> <span class="comment">// L1 and L2 cache information</span>
+              <span class="op">=</span><span class="op">&gt;</span> <span class="kw">unsafe</span> {
                 <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">__cpuid</span>(<span class="ident">entry</span>.<span class="ident">function</span>);
                 <span class="ident">entry</span>.<span class="ident">eax</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">eax</span>;
                 <span class="ident">entry</span>.<span class="ident">ebx</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">ebx</span>;
