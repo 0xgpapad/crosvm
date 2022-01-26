@@ -3967,6 +3967,130 @@
 <span id="3967">3967</span>
 <span id="3968">3968</span>
 <span id="3969">3969</span>
+<span id="3970">3970</span>
+<span id="3971">3971</span>
+<span id="3972">3972</span>
+<span id="3973">3973</span>
+<span id="3974">3974</span>
+<span id="3975">3975</span>
+<span id="3976">3976</span>
+<span id="3977">3977</span>
+<span id="3978">3978</span>
+<span id="3979">3979</span>
+<span id="3980">3980</span>
+<span id="3981">3981</span>
+<span id="3982">3982</span>
+<span id="3983">3983</span>
+<span id="3984">3984</span>
+<span id="3985">3985</span>
+<span id="3986">3986</span>
+<span id="3987">3987</span>
+<span id="3988">3988</span>
+<span id="3989">3989</span>
+<span id="3990">3990</span>
+<span id="3991">3991</span>
+<span id="3992">3992</span>
+<span id="3993">3993</span>
+<span id="3994">3994</span>
+<span id="3995">3995</span>
+<span id="3996">3996</span>
+<span id="3997">3997</span>
+<span id="3998">3998</span>
+<span id="3999">3999</span>
+<span id="4000">4000</span>
+<span id="4001">4001</span>
+<span id="4002">4002</span>
+<span id="4003">4003</span>
+<span id="4004">4004</span>
+<span id="4005">4005</span>
+<span id="4006">4006</span>
+<span id="4007">4007</span>
+<span id="4008">4008</span>
+<span id="4009">4009</span>
+<span id="4010">4010</span>
+<span id="4011">4011</span>
+<span id="4012">4012</span>
+<span id="4013">4013</span>
+<span id="4014">4014</span>
+<span id="4015">4015</span>
+<span id="4016">4016</span>
+<span id="4017">4017</span>
+<span id="4018">4018</span>
+<span id="4019">4019</span>
+<span id="4020">4020</span>
+<span id="4021">4021</span>
+<span id="4022">4022</span>
+<span id="4023">4023</span>
+<span id="4024">4024</span>
+<span id="4025">4025</span>
+<span id="4026">4026</span>
+<span id="4027">4027</span>
+<span id="4028">4028</span>
+<span id="4029">4029</span>
+<span id="4030">4030</span>
+<span id="4031">4031</span>
+<span id="4032">4032</span>
+<span id="4033">4033</span>
+<span id="4034">4034</span>
+<span id="4035">4035</span>
+<span id="4036">4036</span>
+<span id="4037">4037</span>
+<span id="4038">4038</span>
+<span id="4039">4039</span>
+<span id="4040">4040</span>
+<span id="4041">4041</span>
+<span id="4042">4042</span>
+<span id="4043">4043</span>
+<span id="4044">4044</span>
+<span id="4045">4045</span>
+<span id="4046">4046</span>
+<span id="4047">4047</span>
+<span id="4048">4048</span>
+<span id="4049">4049</span>
+<span id="4050">4050</span>
+<span id="4051">4051</span>
+<span id="4052">4052</span>
+<span id="4053">4053</span>
+<span id="4054">4054</span>
+<span id="4055">4055</span>
+<span id="4056">4056</span>
+<span id="4057">4057</span>
+<span id="4058">4058</span>
+<span id="4059">4059</span>
+<span id="4060">4060</span>
+<span id="4061">4061</span>
+<span id="4062">4062</span>
+<span id="4063">4063</span>
+<span id="4064">4064</span>
+<span id="4065">4065</span>
+<span id="4066">4066</span>
+<span id="4067">4067</span>
+<span id="4068">4068</span>
+<span id="4069">4069</span>
+<span id="4070">4070</span>
+<span id="4071">4071</span>
+<span id="4072">4072</span>
+<span id="4073">4073</span>
+<span id="4074">4074</span>
+<span id="4075">4075</span>
+<span id="4076">4076</span>
+<span id="4077">4077</span>
+<span id="4078">4078</span>
+<span id="4079">4079</span>
+<span id="4080">4080</span>
+<span id="4081">4081</span>
+<span id="4082">4082</span>
+<span id="4083">4083</span>
+<span id="4084">4084</span>
+<span id="4085">4085</span>
+<span id="4086">4086</span>
+<span id="4087">4087</span>
+<span id="4088">4088</span>
+<span id="4089">4089</span>
+<span id="4090">4090</span>
+<span id="4091">4091</span>
+<span id="4092">4092</span>
+<span id="4093">4093</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3988,14 +4112,14 @@
 <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
 <span class="kw">use</span> <span class="ident">arch</span>::{<span class="ident">set_default_serial_parameters</span>, <span class="ident">Pstore</span>, <span class="ident">VcpuAffinity</span>};
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">debug</span>, <span class="ident">error</span>, <span class="ident">getpid</span>, <span class="ident">info</span>, <span class="ident">kill_process_group</span>, <span class="ident">reap_child</span>, <span class="ident">syslog</span>, <span class="ident">warn</span>};
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">debug</span>, <span class="ident">error</span>, <span class="ident">getpid</span>, <span class="ident">info</span>, <span class="ident">kill_process_group</span>, <span class="ident">pagesize</span>, <span class="ident">reap_child</span>, <span class="ident">syslog</span>, <span class="ident">warn</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">crosvm::DirectIoOption</span>;
 <span class="kw">use</span> <span class="ident">crosvm</span>::{
     <span class="ident">argument</span>::{<span class="self">self</span>, <span class="ident">print_help</span>, <span class="ident">set_arguments</span>, <span class="ident">Argument</span>},
-    <span class="ident">platform</span>, <span class="ident">BindMount</span>, <span class="ident">Config</span>, <span class="ident">DiskOption</span>, <span class="ident">Executable</span>, <span class="ident">GidMap</span>, <span class="ident">SharedDir</span>, <span class="ident">TouchDeviceOption</span>,
-    <span class="ident">VfioCommand</span>, <span class="ident">VhostUserFsOption</span>, <span class="ident">VhostUserOption</span>, <span class="ident">VhostUserWlOption</span>, <span class="ident">VhostVsockDeviceParameter</span>,
-    <span class="ident">DISK_ID_LEN</span>,
+    <span class="ident">platform</span>, <span class="ident">BindMount</span>, <span class="ident">Config</span>, <span class="ident">DiskOption</span>, <span class="ident">Executable</span>, <span class="ident">FileBackedMappingParameters</span>, <span class="ident">GidMap</span>,
+    <span class="ident">SharedDir</span>, <span class="ident">TouchDeviceOption</span>, <span class="ident">VfioCommand</span>, <span class="ident">VhostUserFsOption</span>, <span class="ident">VhostUserOption</span>,
+    <span class="ident">VhostUserWlOption</span>, <span class="ident">VhostVsockDeviceParameter</span>, <span class="ident">DISK_ID_LEN</span>,
 };
 <span class="kw">use</span> <span class="ident">devices::serial_device</span>::{<span class="ident">SerialHardware</span>, <span class="ident">SerialParameters</span>, <span class="ident">SerialType</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;virgl_renderer_next&quot;</span>))]</span>
@@ -4989,6 +5113,62 @@
     }
 
     <span class="prelude-val">Ok</span>(<span class="ident">params</span>)
+}
+
+<span class="kw">fn</span> <span class="ident">parse_file_backed_mapping</span>(<span class="ident">s</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">argument::Result</span><span class="op">&lt;</span><span class="ident">FileBackedMappingParameters</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">ok_or</span>(<span class="ident">argument::Error::ExpectedValue</span>(<span class="ident">String::from</span>(
+        <span class="string">&quot;file-backed-mapping: memory mapping option value required&quot;</span>,
+    )))<span class="question-mark">?</span>;
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">address</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">size</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">path</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writable</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sync</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">align</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    <span class="kw">for</span> <span class="ident">opt</span> <span class="kw">in</span> <span class="ident">argument::parse_key_value_options</span>(<span class="string">&quot;file-backed-mapping&quot;</span>, <span class="ident">s</span>, <span class="string">&#39;,&#39;</span>) {
+        <span class="kw">match</span> <span class="ident">opt</span>.<span class="ident">key</span>() {
+            <span class="string">&quot;addr&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">address</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">opt</span>.<span class="ident">parse_numeric</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>()<span class="question-mark">?</span>),
+            <span class="string">&quot;size&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">size</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">opt</span>.<span class="ident">parse_numeric</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>()<span class="question-mark">?</span>),
+            <span class="string">&quot;path&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">path</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">PathBuf::from</span>(<span class="ident">opt</span>.<span class="ident">value</span>()<span class="question-mark">?</span>)),
+            <span class="string">&quot;offset&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">offset</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">opt</span>.<span class="ident">parse_numeric</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>()<span class="question-mark">?</span>),
+            <span class="string">&quot;ro&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">writable</span> <span class="op">=</span> <span class="op">!</span><span class="ident">opt</span>.<span class="ident">parse_or</span>::<span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>(<span class="bool-val">true</span>)<span class="question-mark">?</span>,
+            <span class="string">&quot;rw&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">writable</span> <span class="op">=</span> <span class="ident">opt</span>.<span class="ident">parse_or</span>::<span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>(<span class="bool-val">true</span>)<span class="question-mark">?</span>,
+            <span class="string">&quot;sync&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">sync</span> <span class="op">=</span> <span class="ident">opt</span>.<span class="ident">parse_or</span>::<span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>(<span class="bool-val">true</span>)<span class="question-mark">?</span>,
+            <span class="string">&quot;align&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">align</span> <span class="op">=</span> <span class="ident">opt</span>.<span class="ident">parse_or</span>::<span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>(<span class="bool-val">true</span>)<span class="question-mark">?</span>,
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">opt</span>.<span class="ident">invalid_key_err</span>()),
+        }
+    }
+
+    <span class="kw">let</span> (<span class="ident">address</span>, <span class="ident">path</span>, <span class="ident">size</span>) <span class="op">=</span> <span class="kw">match</span> (<span class="ident">address</span>, <span class="ident">path</span>, <span class="ident">size</span>) {
+        (<span class="prelude-val">Some</span>(<span class="ident">a</span>), <span class="prelude-val">Some</span>(<span class="ident">p</span>), <span class="prelude-val">Some</span>(<span class="ident">s</span>)) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">a</span>, <span class="ident">p</span>, <span class="ident">s</span>),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::ExpectedValue</span>(<span class="ident">String::from</span>(
+                <span class="string">&quot;file-backed-mapping: address, size, and path parameters are required&quot;</span>,
+            )))
+        }
+    };
+
+    <span class="kw">let</span> <span class="ident">pagesize_mask</span> <span class="op">=</span> <span class="ident">pagesize</span>() <span class="kw">as</span> <span class="ident">u64</span> <span class="op">-</span> <span class="number">1</span>;
+    <span class="kw">let</span> <span class="ident">aligned_address</span> <span class="op">=</span> <span class="ident">address</span> <span class="op">&amp;</span> <span class="op">!</span><span class="ident">pagesize_mask</span>;
+    <span class="kw">let</span> <span class="ident">aligned_size</span> <span class="op">=</span> ((<span class="ident">address</span> <span class="op">+</span> <span class="ident">size</span> <span class="op">+</span> <span class="ident">pagesize_mask</span>) <span class="op">&amp;</span> <span class="op">!</span><span class="ident">pagesize_mask</span>) <span class="op">-</span> <span class="ident">aligned_address</span>;
+
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">align</span> <span class="op">&amp;&amp;</span> (<span class="ident">aligned_address</span> <span class="op">!</span><span class="op">=</span> <span class="ident">address</span> <span class="op">|</span><span class="op">|</span> <span class="ident">aligned_size</span> <span class="op">!</span><span class="op">=</span> <span class="ident">size</span>) {
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
+            <span class="ident">value</span>: <span class="ident">s</span>.<span class="ident">to_owned</span>(),
+            <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;addr and size parameters must be page size aligned&quot;</span>),
+        });
+    }
+
+    <span class="prelude-val">Ok</span>(<span class="ident">FileBackedMappingParameters</span> {
+        <span class="ident">address</span>: <span class="ident">aligned_address</span>,
+        <span class="ident">size</span>: <span class="ident">aligned_size</span>,
+        <span class="ident">path</span>,
+        <span class="ident">offset</span>: <span class="ident">offset</span>.<span class="ident">unwrap_or</span>(<span class="number">0</span>),
+        <span class="ident">writable</span>,
+        <span class="ident">sync</span>,
+    })
 }
 
 <span class="kw">fn</span> <span class="ident">set_argument</span>(<span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Config</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">value</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">argument::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
@@ -6195,6 +6375,10 @@
             }
             <span class="ident">cfg</span>.<span class="ident">coiommu_param</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">params</span>);
         }
+        <span class="string">&quot;file-backed-mapping&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">cfg</span>.<span class="ident">file_backed_mappings</span>
+                .<span class="ident">push</span>(<span class="ident">parse_file_backed_mapping</span>(<span class="ident">value</span>)<span class="question-mark">?</span>);
+        }
         <span class="string">&quot;help&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::PrintHelp</span>),
         <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
     }
@@ -6326,7 +6510,7 @@
           <span class="ident">Argument::flag</span>(<span class="string">&quot;per-vm-core-scheduling&quot;</span>, <span class="string">&quot;Enable per-VM core scheduling intead of the default one (per-vCPU core scheduing) by
               making all vCPU threads share same cookie for core scheduling.
               This option is no-op on devices that have neither MDS nor L1TF vulnerability.&quot;</span>),
-          <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio_cras&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio_cras&quot;</span>)]</span>
           <span class="ident">Argument::value</span>(<span class="string">&quot;cras-snd&quot;</span>,
           <span class="string">&quot;[capture=true,client=crosvm,socket=unified,num_output_streams=1,num_input_streams=1]&quot;</span>,
           <span class="string">&quot;Comma separated key=value pairs for setting up cras snd devices.
@@ -6522,13 +6706,13 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
           <span class="ident">Argument::value</span>(<span class="string">&quot;direct-pmio&quot;</span>, <span class="string">&quot;PATH@RANGE[,RANGE[,...]]&quot;</span>, <span class="string">&quot;Path and ranges for direct port mapped I/O access. RANGE may be decimal or hex (starting with 0x).&quot;</span>),
           <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
           <span class="ident">Argument::value</span>(<span class="string">&quot;direct-mmio&quot;</span>, <span class="string">&quot;PATH@RANGE[,RANGE[,...]]&quot;</span>, <span class="string">&quot;Path and ranges for direct memory mapped I/O access. RANGE may be decimal or hex (starting with 0x).&quot;</span>),
-          <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
           <span class="ident">Argument::value</span>(<span class="string">&quot;direct-level-irq&quot;</span>, <span class="string">&quot;irq&quot;</span>, <span class="string">&quot;Enable interrupt passthrough&quot;</span>),
-          <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
           <span class="ident">Argument::value</span>(<span class="string">&quot;direct-edge-irq&quot;</span>, <span class="string">&quot;irq&quot;</span>, <span class="string">&quot;Enable interrupt passthrough&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;dmi&quot;</span>, <span class="string">&quot;DIR&quot;</span>, <span class="string">&quot;Directory with smbios_entry_point/DMI files&quot;</span>),
           <span class="ident">Argument::flag</span>(<span class="string">&quot;no-legacy&quot;</span>, <span class="string">&quot;Don&#39;t use legacy KBD/RTC devices emulation&quot;</span>),
-          <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
           <span class="ident">Argument::flag</span>(<span class="string">&quot;host-cpu-topology&quot;</span>, <span class="string">&quot;Use mirror cpu topology of Host for Guest VM&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;stub-pci-device&quot;</span>, <span class="string">&quot;DOMAIN:BUS:DEVICE.FUNCTION[,vendor=NUM][,device=NUM][,class=NUM][,subsystem_vendor=NUM][,subsystem_device=NUM][,revision=NUM]&quot;</span>, <span class="string">&quot;Comma-separated key=value pairs for setting up a stub PCI device that just enumerates. The first option in the list must specify a PCI address to claim.
                               Optional further parameters
@@ -6546,6 +6730,16 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
                               unpin_interval=NUM - Unpin interval time in seconds.
                               unpin_limit=NUM - Unpin limit for each unpin cycle, in unit of page count. 0 is invalid.
                               unpin_gen_threshold=NUM -  Number of unpin intervals a pinned page must be busy for to be aged into the older which is less frequently checked generation.&quot;</span>),
+          <span class="ident">Argument::value</span>(<span class="string">&quot;file-backed-mapping&quot;</span>, <span class="string">&quot;addr=NUM,size=SIZE,path=PATH[,offset=NUM][,ro][,rw][,sync]&quot;</span>, <span class="string">&quot;Map the given file into guest memory at the specified address.
+                              Parameters (addr, size, path are required):
+                              addr=NUM - guest physical address to map at
+                              size=NUM - amount of memory to map
+                              path=PATH - path to backing file/device to map
+                              offset=NUM - offset in backing file (default 0)
+                              ro - make the mapping readonly (default)
+                              rw - make the mapping writable
+                              sync - open backing file with O_SYNC
+                              align - whether to adjust addr and size to page boundaries implicitly&quot;</span>),
           <span class="ident">Argument::short_flag</span>(<span class="string">&#39;h&#39;</span>, <span class="string">&quot;help&quot;</span>, <span class="string">&quot;Print help message.&quot;</span>)];
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cfg</span> <span class="op">=</span> <span class="ident">Config::default</span>();
@@ -7934,6 +8128,60 @@ with a &#39;--backing_file&#39;.&quot;</span>
             .<span class="ident">unwrap_err</span>()
             .<span class="ident">to_string</span>()
             .<span class="ident">contains</span>(<span class="string">&quot;invalid base range value&quot;</span>));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">parse_file_backed_mapping_valid</span>() {
+        <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">parse_file_backed_mapping</span>(<span class="prelude-val">Some</span>(
+            <span class="string">&quot;addr=0x1000,size=0x2000,path=/dev/mem,offset=0x3000,ro,rw,sync&quot;</span>,
+        ))
+        .<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">params</span>.<span class="ident">address</span>, <span class="number">0x1000</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">params</span>.<span class="ident">size</span>, <span class="number">0x2000</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">params</span>.<span class="ident">path</span>, <span class="ident">PathBuf::from</span>(<span class="string">&quot;/dev/mem&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="ident">params</span>.<span class="ident">offset</span>, <span class="number">0x3000</span>);
+        <span class="macro">assert!</span>(<span class="ident">params</span>.<span class="ident">writable</span>);
+        <span class="macro">assert!</span>(<span class="ident">params</span>.<span class="ident">sync</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">parse_file_backed_mapping_incomplete</span>() {
+        <span class="macro">assert!</span>(<span class="ident">parse_file_backed_mapping</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;addr=0x1000,size=0x2000&quot;</span>))
+            .<span class="ident">unwrap_err</span>()
+            .<span class="ident">to_string</span>()
+            .<span class="ident">contains</span>(<span class="string">&quot;required&quot;</span>));
+        <span class="macro">assert!</span>(<span class="ident">parse_file_backed_mapping</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;size=0x2000,path=/dev/mem&quot;</span>))
+            .<span class="ident">unwrap_err</span>()
+            .<span class="ident">to_string</span>()
+            .<span class="ident">contains</span>(<span class="string">&quot;required&quot;</span>));
+        <span class="macro">assert!</span>(<span class="ident">parse_file_backed_mapping</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;addr=0x1000,path=/dev/mem&quot;</span>))
+            .<span class="ident">unwrap_err</span>()
+            .<span class="ident">to_string</span>()
+            .<span class="ident">contains</span>(<span class="string">&quot;required&quot;</span>));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">parse_file_backed_mapping_unaligned</span>() {
+        <span class="macro">assert!</span>(
+            <span class="ident">parse_file_backed_mapping</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;addr=0x1001,size=0x2000,path=/dev/mem&quot;</span>))
+                .<span class="ident">unwrap_err</span>()
+                .<span class="ident">to_string</span>()
+                .<span class="ident">contains</span>(<span class="string">&quot;aligned&quot;</span>)
+        );
+        <span class="macro">assert!</span>(
+            <span class="ident">parse_file_backed_mapping</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;addr=0x1000,size=0x2001,path=/dev/mem&quot;</span>))
+                .<span class="ident">unwrap_err</span>()
+                .<span class="ident">to_string</span>()
+                .<span class="ident">contains</span>(<span class="string">&quot;aligned&quot;</span>)
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">parse_file_backed_mapping_align</span>() {
+        <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span>
+            <span class="ident">parse_file_backed_mapping</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;addr=0x3042,size=0xff0,path=/dev/mem,align&quot;</span>)).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">params</span>.<span class="ident">address</span>, <span class="number">0x3000</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">params</span>.<span class="ident">size</span>, <span class="number">0x2000</span>);
     }
 }
 </code></pre></div>
