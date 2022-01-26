@@ -3744,6 +3744,10 @@
 <span id="3744">3744</span>
 <span id="3745">3745</span>
 <span id="3746">3746</span>
+<span id="3747">3747</span>
+<span id="3748">3748</span>
+<span id="3749">3749</span>
+<span id="3750">3750</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3768,7 +3772,7 @@
 <span class="kw">use</span> <span class="ident">std::thread</span>;
 <span class="kw">use</span> <span class="ident">std::thread::JoinHandle</span>;
 
-<span class="kw">use</span> <span class="ident">libc</span>::{<span class="self">self</span>, <span class="ident">c_int</span>, <span class="ident">gid_t</span>, <span class="ident">uid_t</span>};
+<span class="kw">use</span> <span class="ident">libc</span>::{<span class="self">self</span>, <span class="ident">c_int</span>, <span class="ident">c_ulong</span>, <span class="ident">gid_t</span>, <span class="ident">uid_t</span>};
 
 <span class="kw">use</span> <span class="ident">acpi_tables::sdt::SDT</span>;
 
@@ -3868,6 +3872,7 @@
     <span class="ident">seccomp_policy</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Path</span>,
     <span class="ident">uid_map</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span>,
     <span class="ident">gid_map</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span>,
+    <span class="ident">remount_mode</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">c_ulong</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">fn</span> <span class="ident">create_base_minijail</span>(
@@ -3927,6 +3932,10 @@
         <span class="ident">j</span>.<span class="ident">use_seccomp_filter</span>();
         <span class="comment">// Don&#39;t do init setup.</span>
         <span class="ident">j</span>.<span class="ident">run_as_init</span>();
+        <span class="comment">// Set up requested remount mode instead of default MS_PRIVATE.</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">mode</span>) <span class="op">=</span> <span class="ident">config</span>.<span class="ident">remount_mode</span> {
+            <span class="ident">j</span>.<span class="ident">set_remount_mode</span>(<span class="ident">mode</span>);
+        }
     }
 
     <span class="comment">// Only pivot_root if we are not re-using the current root directory.</span>
@@ -3960,6 +3969,7 @@
             <span class="ident">seccomp_policy</span>: <span class="kw-2">&amp;</span><span class="ident">policy_path</span>,
             <span class="ident">uid_map</span>: <span class="prelude-val">None</span>,
             <span class="ident">gid_map</span>: <span class="prelude-val">None</span>,
+            <span class="ident">remount_mode</span>: <span class="prelude-val">None</span>,
         };
         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">create_base_minijail</span>(<span class="ident">root_path</span>, <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">config</span>))<span class="question-mark">?</span>))
     } <span class="kw">else</span> {
@@ -4993,13 +5003,11 @@
             <span class="ident">gid_map</span>: <span class="prelude-val">Some</span>(<span class="ident">gid_map</span>),
             <span class="ident">log_failures</span>: <span class="ident">cfg</span>.<span class="ident">seccomp_log_failures</span>,
             <span class="ident">seccomp_policy</span>: <span class="kw-2">&amp;</span><span class="ident">seccomp_policy</span>,
+            <span class="comment">// We want bind mounts from the parent namespaces to propagate into the fs device&#39;s</span>
+            <span class="comment">// namespace.</span>
+            <span class="ident">remount_mode</span>: <span class="prelude-val">Some</span>(<span class="ident">libc::MS_SLAVE</span>),
         };
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">jail</span> <span class="op">=</span> <span class="ident">create_base_minijail</span>(<span class="ident">src</span>, <span class="prelude-val">Some</span>(<span class="ident">max_open_files</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">config</span>))<span class="question-mark">?</span>;
-        <span class="comment">// We want bind mounts from the parent namespaces to propagate into the fs device&#39;s</span>
-        <span class="comment">// namespace.</span>
-        <span class="ident">jail</span>.<span class="ident">set_remount_mode</span>(<span class="ident">libc::MS_SLAVE</span>);
-
-        <span class="ident">jail</span>
+        <span class="ident">create_base_minijail</span>(<span class="ident">src</span>, <span class="prelude-val">Some</span>(<span class="ident">max_open_files</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">config</span>))<span class="question-mark">?</span>
     } <span class="kw">else</span> {
         <span class="ident">create_base_minijail</span>(<span class="ident">src</span>, <span class="prelude-val">Some</span>(<span class="ident">max_open_files</span>), <span class="prelude-val">None</span>)<span class="question-mark">?</span>
     };
@@ -5034,12 +5042,12 @@
             <span class="ident">gid_map</span>: <span class="prelude-val">Some</span>(<span class="ident">gid_map</span>),
             <span class="ident">log_failures</span>: <span class="ident">cfg</span>.<span class="ident">seccomp_log_failures</span>,
             <span class="ident">seccomp_policy</span>: <span class="kw-2">&amp;</span><span class="ident">seccomp_policy</span>,
+            <span class="comment">// We want bind mounts from the parent namespaces to propagate into the 9p server&#39;s</span>
+            <span class="comment">// namespace.</span>
+            <span class="ident">remount_mode</span>: <span class="prelude-val">Some</span>(<span class="ident">libc::MS_SLAVE</span>),
         };
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">jail</span> <span class="op">=</span> <span class="ident">create_base_minijail</span>(<span class="ident">src</span>, <span class="prelude-val">Some</span>(<span class="ident">max_open_files</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">config</span>))<span class="question-mark">?</span>;
-        <span class="comment">// We want bind mounts from the parent namespaces to propagate into the 9p server&#39;s</span>
-        <span class="comment">// namespace.</span>
-        <span class="ident">jail</span>.<span class="ident">set_remount_mode</span>(<span class="ident">libc::MS_SLAVE</span>);
+        <span class="kw">let</span> <span class="ident">jail</span> <span class="op">=</span> <span class="ident">create_base_minijail</span>(<span class="ident">src</span>, <span class="prelude-val">Some</span>(<span class="ident">max_open_files</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">config</span>))<span class="question-mark">?</span>;
 
         <span class="comment">//  The shared directory becomes the root of the device&#39;s file system.</span>
         <span class="kw">let</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="string">&quot;/&quot;</span>);
