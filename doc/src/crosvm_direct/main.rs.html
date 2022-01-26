@@ -6563,7 +6563,7 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
                     <span class="prelude-val">Ok</span>(<span class="ident">CommandStatus::VmStop</span>)
                 }
                 <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="macro">error!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">e</span>);
+                    <span class="macro">error!</span>(<span class="string">&quot;{:#}&quot;</span>, <span class="ident">e</span>);
                     <span class="prelude-val">Err</span>(())
                 }
             }
