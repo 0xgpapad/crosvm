@@ -764,12 +764,6 @@
 <span id="764">764</span>
 <span id="765">765</span>
 <span id="766">766</span>
-<span id="767">767</span>
-<span id="768">768</span>
-<span id="769">769</span>
-<span id="770">770</span>
-<span id="771">771</span>
-<span id="772">772</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -927,15 +921,9 @@
         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">cpu_count</span> {
             <span class="ident">vcpu_pipes</span>.<span class="ident">push</span>(<span class="ident">new_pipe_pair</span>().<span class="ident">context</span>(<span class="string">&quot;error creating vcpu request socket&quot;</span>)<span class="question-mark">?</span>);
         }
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">per_vcpu_states</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">PerVcpuState</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span>
-            <span class="ident">Vec::with_capacity</span>(<span class="ident">cpu_count</span> <span class="kw">as</span> <span class="ident">usize</span>);
-        <span class="comment">// TODO(zachr): replace with `resize_default` when that stabilizes. Using a plain `resize`</span>
-        <span class="comment">// is incorrect because each element in the `Vec` will contain a shared reference to the</span>
-        <span class="comment">// same `PerVcpuState` instance. This happens because `resize` fills new slots using clones</span>
-        <span class="comment">// of the instance given to `resize`.</span>
-        <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">cpu_count</span> {
-            <span class="ident">per_vcpu_states</span>.<span class="ident">push</span>(<span class="ident">Default::default</span>());
-        }
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">per_vcpu_states</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">PerVcpuState</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="ident">per_vcpu_states</span>.<span class="ident">resize_with</span>(<span class="ident">cpu_count</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">Default::default</span>);
 
         <span class="kw">let</span> <span class="ident">plugin_pid</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">jail</span> {
             <span class="prelude-val">Some</span>(<span class="ident">jail</span>) <span class="op">=</span><span class="op">&gt;</span> {
