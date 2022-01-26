@@ -951,10 +951,17 @@ reviewing. All crosvm CLs are listed at the <a href="https://chromium-review.goo
 <blockquote>
 <p>Note: We don't accept any pull requests on the <a href="https://github.com/google/crosvm">GitHub mirror</a>.</p>
 </blockquote>
-<h4 id="for-chromium-os-developers"><a class="header" href="#for-chromium-os-developers">For Chromium OS Developers</a></h4>
+<h4 id="for-chromium-os-developers-chromiumos-cl"><a class="header" href="#for-chromium-os-developers-chromiumos-cl">For Chromium OS Developers {#chromiumos-cl}</a></h4>
 <p>If you have already set up the <code>chromiumos</code> repository and the <code>repo</code> command,
-you can simply create and upload your CL in the same way as other Chromium OS
-projects.</p>
+you can simply create and upload your CL in a similar manner as other Chromium
+OS projects.</p>
+<p><code>repo start</code> will create a branch tracking <code>cros/chromeos</code> so you can develop
+with the latest, CQ-tested code as a foundation.</p>
+<p>However, changes are not acceped to the <code>cros/chromeos</code> branch, and should be
+submitted to <code>cros/main</code> instead.</p>
+<p>Use <code>repo upload -D main</code> to upload changes to the main branch, which works fine
+in most cases where gerrit can rebase the commit cleanly. If not, please rebase
+to <code>cros/main</code> manually.</p>
 <h4 id="for-non-chromium-os-developers"><a class="header" href="#for-non-chromium-os-developers">For non-Chromium OS Developers</a></h4>
 <p>If you are not interested in other Chromium OS components, you can simply clone
 and contribute crosvm only. Before you make a commit locally, please set up
@@ -968,7 +975,7 @@ $ git push origin HEAD:refs/for/main
 </code></pre>
 <h3 id="code-review"><a class="header" href="#code-review">Code review</a></h3>
 <p>Your change must be reviewed and approved by one of <a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/HEAD/OWNERS">crosvm owners</a>.</p>
-<h3 id="presubmit-checking"><a class="header" href="#presubmit-checking">Presubmit checking</a></h3>
+<h3 id="presubmit-checking-presubmit"><a class="header" href="#presubmit-checking-presubmit">Presubmit checking {#presubmit}</a></h3>
 <p>Once your change is reviewed, it will need to go through two layers of presubmit
 checks.</p>
 <p>The review will trigger Kokoro to run crosvm specific tests. If you want to
@@ -984,6 +991,20 @@ by setting CQ+2.</p>
 <p>Note: This is different from other ChromeOS repositories, where Verified +1 bit
 is set by the developers to indicate that they successfully tested a change. The
 Verified bit can only be set by Kokoro in the crosvm repository.</p>
+<h3 id="postsubmit-merging-to-chrome-os-chromiumos-postsubmit"><a class="header" href="#postsubmit-merging-to-chrome-os-chromiumos-postsubmit">Postsubmit merging to Chrome OS {#chromiumos-postsubmit}</a></h3>
+<p>Crosvm has a unique setup to integrate with ChromeOS infrastructure.</p>
+<p>The chromeos checkout tracks the
+<a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/refs/heads/chromeos">cros/chromeos</a>
+branch of crosvm, not the
+<a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/refs/heads/main">cros/main</a>
+branch.</p>
+<p>While upstream development is happening on the <code>main</code> branch, changes submitted
+to that branch are only tested by the crosvm kokoro CI system, not by the
+ChromeOS CQ.</p>
+<p>There is a
+<a href="https://chromium-review.googlesource.com/q/project:chromiumos%252Fplatform%252Fcrosvm+branch:chromeos">daily process</a>
+that creates a commit to merge changes from <code>main</code> into the <code>chromeos</code> branch,
+which is then tested through the CQ and watched by the crosvm-uprev rotation.</p>
 <h2 id="contributing-to-the-documentation"><a class="header" href="#contributing-to-the-documentation">Contributing to the documentation</a></h2>
 <p><a href="https://google.github.io/crosvm/">The book of crosvm</a> is build with <a href="https://rust-lang.github.io/mdBook/">mdBook</a>. Each markdown files must follow
 <a href="https://github.com/google/styleguide/blob/gh-pages/docguide/style.md">Google Markdown style guide</a>.</p>
