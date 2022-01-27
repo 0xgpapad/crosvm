@@ -1429,6 +1429,7 @@
 <span id="1429">1429</span>
 <span id="1430">1430</span>
 <span id="1431">1431</span>
+<span id="1432">1432</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1621,9 +1622,12 @@
     <span class="ident">Reserved</span> <span class="op">=</span> <span class="number">0x2</span>,
 }
 
+<span class="kw">const</span> <span class="ident">MB</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>;
+<span class="kw">const</span> <span class="ident">GB</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">30</span>;
+
 <span class="kw">const</span> <span class="ident">BOOT_STACK_POINTER</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0x8000</span>;
 <span class="comment">// Make sure it align to 256MB for MTRR convenient</span>
-<span class="kw">const</span> <span class="ident">MEM_32BIT_GAP_SIZE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">768</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>;
+<span class="kw">const</span> <span class="ident">MEM_32BIT_GAP_SIZE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">768</span> <span class="op">*</span> <span class="ident">MB</span>;
 <span class="kw">const</span> <span class="ident">FIRST_ADDR_PAST_32BITS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>;
 <span class="comment">// Reserved memory for nand_bios/LAPIC/IOAPIC/HPET/.....</span>
 <span class="kw">const</span> <span class="ident">RESERVED_MEM_SIZE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0x800_0000</span>;
@@ -2534,8 +2538,6 @@
     <span class="doccomment">/// * mem: The memory to be used by the guest</span>
     <span class="kw">fn</span> <span class="ident">get_high_mmio_base</span>(<span class="ident">mem</span>: <span class="kw-2">&amp;</span><span class="ident">GuestMemory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="comment">// Put device memory at a 2MB boundary after physical memory or 4gb, whichever is greater.</span>
-        <span class="kw">const</span> <span class="ident">MB</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>;
-        <span class="kw">const</span> <span class="ident">GB</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">30</span>;
         <span class="kw">let</span> <span class="ident">ram_end_round_2mb</span> <span class="op">=</span> (<span class="ident">mem</span>.<span class="ident">end_addr</span>().<span class="ident">offset</span>() <span class="op">+</span> <span class="number">2</span> <span class="op">*</span> <span class="ident">MB</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">/</span> (<span class="number">2</span> <span class="op">*</span> <span class="ident">MB</span>) <span class="op">*</span> (<span class="number">2</span> <span class="op">*</span> <span class="ident">MB</span>);
         <span class="ident">std::cmp::max</span>(<span class="ident">ram_end_round_2mb</span>, <span class="number">4</span> <span class="op">*</span> <span class="ident">GB</span>)
     }
@@ -2810,7 +2812,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">regions_lt_4gb_bios</span>() {
-        <span class="kw">let</span> <span class="ident">bios_len</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>;
+        <span class="kw">let</span> <span class="ident">bios_len</span> <span class="op">=</span> <span class="number">1</span> <span class="op">*</span> <span class="ident">MB</span>;
         <span class="kw">let</span> <span class="ident">regions</span> <span class="op">=</span> <span class="ident">arch_memory_regions</span>(<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">29</span>, <span class="prelude-val">Some</span>(<span class="ident">bios_len</span>));
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, <span class="ident">regions</span>.<span class="ident">len</span>());
         <span class="macro">assert_eq!</span>(<span class="ident">GuestAddress</span>(<span class="number">0</span>), <span class="ident">regions</span>[<span class="number">0</span>].<span class="number">0</span>);
@@ -2824,7 +2826,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">regions_gt_4gb_bios</span>() {
-        <span class="kw">let</span> <span class="ident">bios_len</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>;
+        <span class="kw">let</span> <span class="ident">bios_len</span> <span class="op">=</span> <span class="number">1</span> <span class="op">*</span> <span class="ident">MB</span>;
         <span class="kw">let</span> <span class="ident">regions</span> <span class="op">=</span> <span class="ident">arch_memory_regions</span>((<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>) <span class="op">+</span> <span class="number">0x8000</span>, <span class="prelude-val">Some</span>(<span class="ident">bios_len</span>));
         <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">regions</span>.<span class="ident">len</span>());
         <span class="macro">assert_eq!</span>(<span class="ident">GuestAddress</span>(<span class="number">0</span>), <span class="ident">regions</span>[<span class="number">0</span>].<span class="number">0</span>);
@@ -2838,21 +2840,21 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">regions_eq_4gb_nobios</span>() {
-        <span class="comment">// Test with size = 3328, which is exactly 4 GiB minus the size of the gap (768 MiB).</span>
-        <span class="kw">let</span> <span class="ident">regions</span> <span class="op">=</span> <span class="ident">arch_memory_regions</span>(<span class="number">3328</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>, <span class="comment">/* bios_size */</span> <span class="prelude-val">None</span>);
+        <span class="comment">// Test with size = 3328, which is exactly 4 GiB minus the size of the gap (768 MB).</span>
+        <span class="kw">let</span> <span class="ident">regions</span> <span class="op">=</span> <span class="ident">arch_memory_regions</span>(<span class="number">3328</span> <span class="op">*</span> <span class="ident">MB</span>, <span class="comment">/* bios_size */</span> <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">regions</span>.<span class="ident">len</span>());
         <span class="macro">assert_eq!</span>(<span class="ident">GuestAddress</span>(<span class="number">0</span>), <span class="ident">regions</span>[<span class="number">0</span>].<span class="number">0</span>);
-        <span class="macro">assert_eq!</span>(<span class="number">3328</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>, <span class="ident">regions</span>[<span class="number">0</span>].<span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">3328</span> <span class="op">*</span> <span class="ident">MB</span>, <span class="ident">regions</span>[<span class="number">0</span>].<span class="number">1</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">regions_eq_4gb_bios</span>() {
-        <span class="comment">// Test with size = 3328, which is exactly 4 GiB minus the size of the gap (768 MiB).</span>
-        <span class="kw">let</span> <span class="ident">bios_len</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>;
-        <span class="kw">let</span> <span class="ident">regions</span> <span class="op">=</span> <span class="ident">arch_memory_regions</span>(<span class="number">3328</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>, <span class="prelude-val">Some</span>(<span class="ident">bios_len</span>));
+        <span class="comment">// Test with size = 3328, which is exactly 4 GiB minus the size of the gap (768 MB).</span>
+        <span class="kw">let</span> <span class="ident">bios_len</span> <span class="op">=</span> <span class="number">1</span> <span class="op">*</span> <span class="ident">MB</span>;
+        <span class="kw">let</span> <span class="ident">regions</span> <span class="op">=</span> <span class="ident">arch_memory_regions</span>(<span class="number">3328</span> <span class="op">*</span> <span class="ident">MB</span>, <span class="prelude-val">Some</span>(<span class="ident">bios_len</span>));
         <span class="macro">assert_eq!</span>(<span class="number">2</span>, <span class="ident">regions</span>.<span class="ident">len</span>());
         <span class="macro">assert_eq!</span>(<span class="ident">GuestAddress</span>(<span class="number">0</span>), <span class="ident">regions</span>[<span class="number">0</span>].<span class="number">0</span>);
-        <span class="macro">assert_eq!</span>(<span class="number">3328</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">20</span>, <span class="ident">regions</span>[<span class="number">0</span>].<span class="number">1</span>);
+        <span class="macro">assert_eq!</span>(<span class="number">3328</span> <span class="op">*</span> <span class="ident">MB</span>, <span class="ident">regions</span>[<span class="number">0</span>].<span class="number">1</span>);
         <span class="macro">assert_eq!</span>(
             <span class="ident">GuestAddress</span>(<span class="ident">FIRST_ADDR_PAST_32BITS</span> <span class="op">-</span> <span class="ident">bios_len</span>),
             <span class="ident">regions</span>[<span class="number">1</span>].<span class="number">0</span>
