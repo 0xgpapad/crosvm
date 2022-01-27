@@ -4091,6 +4091,14 @@
 <span id="4091">4091</span>
 <span id="4092">4092</span>
 <span id="4093">4093</span>
+<span id="4094">4094</span>
+<span id="4095">4095</span>
+<span id="4096">4096</span>
+<span id="4097">4097</span>
+<span id="4098">4098</span>
+<span id="4099">4099</span>
+<span id="4100">4100</span>
+<span id="4101">4101</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -6142,9 +6150,13 @@
         }
         <span class="string">&quot;protected-vm&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">cfg</span>.<span class="ident">protected_vm</span> <span class="op">=</span> <span class="ident">ProtectionType::Protected</span>;
+            <span class="comment">// Balloon device only works for unprotected VMs.</span>
+            <span class="ident">cfg</span>.<span class="ident">balloon</span> <span class="op">=</span> <span class="bool-val">false</span>;
         }
         <span class="string">&quot;protected-vm-without-firmware&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">cfg</span>.<span class="ident">protected_vm</span> <span class="op">=</span> <span class="ident">ProtectionType::ProtectedWithoutFirmware</span>;
+            <span class="comment">// Balloon device only works for unprotected VMs.</span>
+            <span class="ident">cfg</span>.<span class="ident">balloon</span> <span class="op">=</span> <span class="bool-val">false</span>;
         }
         <span class="string">&quot;battery&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">parse_battery_options</span>(<span class="ident">value</span>)<span class="question-mark">?</span>;
@@ -6160,6 +6172,9 @@
                     <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;expected a valid port number&quot;</span>),
                 })<span class="question-mark">?</span>;
             <span class="ident">cfg</span>.<span class="ident">gdb</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">port</span>);
+        }
+        <span class="string">&quot;no-balloon&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">cfg</span>.<span class="ident">balloon</span> <span class="op">=</span> <span class="bool-val">false</span>;
         }
         <span class="string">&quot;balloon_bias_mib&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">cfg</span>.<span class="ident">balloon_bias</span> <span class="op">=</span>
@@ -6689,6 +6704,7 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
                               Possible key values:
                               type=goldfish - type of battery emulation, defaults to goldfish&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;gdb&quot;</span>, <span class="string">&quot;PORT&quot;</span>, <span class="string">&quot;(EXPERIMENTAL) gdb on the given port&quot;</span>),
+          <span class="ident">Argument::flag</span>(<span class="string">&quot;no-balloon&quot;</span>, <span class="string">&quot;Don&#39;t use virtio-balloon device in the guest&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;balloon_bias_mib&quot;</span>, <span class="string">&quot;N&quot;</span>, <span class="string">&quot;Amount to bias balance of memory between host and guest as the balloon inflates, in MiB.&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;vhost-user-blk&quot;</span>, <span class="string">&quot;SOCKET_PATH&quot;</span>, <span class="string">&quot;Path to a socket for vhost-user block&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;vhost-user-console&quot;</span>, <span class="string">&quot;SOCKET_PATH&quot;</span>, <span class="string">&quot;Path to a socket for vhost-user console&quot;</span>),

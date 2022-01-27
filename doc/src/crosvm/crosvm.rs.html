@@ -530,6 +530,8 @@
 <span id="530">530</span>
 <span id="531">531</span>
 <span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -931,6 +933,7 @@
     <span class="kw">pub</span> <span class="ident">battery_type</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BatteryType</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gdb&quot;</span>))]</span>
     <span class="kw">pub</span> <span class="ident">gdb</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">balloon</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">balloon_bias</span>: <span class="ident">i64</span>,
     <span class="kw">pub</span> <span class="ident">vhost_user_blk</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">VhostUserOption</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">vhost_user_console</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">VhostUserOption</span><span class="op">&gt;</span>,
@@ -1033,6 +1036,7 @@
             <span class="ident">battery_type</span>: <span class="prelude-val">None</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gdb&quot;</span>))]</span>
             <span class="ident">gdb</span>: <span class="prelude-val">None</span>,
+            <span class="ident">balloon</span>: <span class="bool-val">true</span>,
             <span class="ident">balloon_bias</span>: <span class="number">0</span>,
             <span class="ident">vhost_user_blk</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">vhost_user_console</span>: <span class="ident">Vec::new</span>(),
