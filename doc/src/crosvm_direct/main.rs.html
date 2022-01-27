@@ -4119,6 +4119,7 @@
 <span id="4119">4119</span>
 <span id="4120">4120</span>
 <span id="4121">4121</span>
+<span id="4122">4122</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -5133,6 +5134,7 @@
                 <span class="ident">params</span>.<span class="ident">subclass</span> <span class="op">=</span> (<span class="ident">class</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>;
                 <span class="ident">params</span>.<span class="ident">programming_interface</span> <span class="op">=</span> <span class="ident">class</span> <span class="kw">as</span> <span class="ident">u8</span>;
             }
+            <span class="string">&quot;multifunction&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {} <span class="comment">// Ignore but allow the multifunction option for compatibility.</span>
             <span class="string">&quot;subsystem_vendor&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">params</span>.<span class="ident">subsystem_vendor_id</span> <span class="op">=</span> <span class="ident">opt</span>.<span class="ident">parse_numeric</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>()<span class="question-mark">?</span>,
             <span class="string">&quot;subsystem_device&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">params</span>.<span class="ident">subsystem_device_id</span> <span class="op">=</span> <span class="ident">opt</span>.<span class="ident">parse_numeric</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>()<span class="question-mark">?</span>,
             <span class="string">&quot;revision&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">params</span>.<span class="ident">revision_id</span> <span class="op">=</span> <span class="ident">opt</span>.<span class="ident">parse_numeric</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>()<span class="question-mark">?</span>,
