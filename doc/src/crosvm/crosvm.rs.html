@@ -532,6 +532,8 @@
 <span id="532">532</span>
 <span id="533">533</span>
 <span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -960,6 +962,7 @@
     <span class="kw">pub</span> <span class="ident">vvu_proxy</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">VhostUserOption</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">coiommu_param</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">devices::CoIommuParameters</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">file_backed_mappings</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FileBackedMappingParameters</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">init_memory</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Config</span> {
@@ -1063,6 +1066,7 @@
             <span class="ident">stub_pci_devices</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">coiommu_param</span>: <span class="prelude-val">None</span>,
             <span class="ident">file_backed_mappings</span>: <span class="ident">Vec::new</span>(),
+            <span class="ident">init_memory</span>: <span class="prelude-val">None</span>,
         }
     }
 }

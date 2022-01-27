@@ -637,6 +637,9 @@
 <span id="637">637</span>
 <span id="638">638</span>
 <span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1079,12 +1082,15 @@
         <span class="ident">base_features</span>: <span class="ident">u64</span>,
         <span class="ident">command_tube</span>: <span class="ident">Tube</span>,
         <span class="ident">inflate_tube</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
+        <span class="ident">init_balloon_size</span>: <span class="ident">u64</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Balloon</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">Balloon</span> {
             <span class="ident">command_tube</span>: <span class="prelude-val">Some</span>(<span class="ident">command_tube</span>),
             <span class="ident">inflate_tube</span>,
             <span class="ident">config</span>: <span class="ident">Arc::new</span>(<span class="ident">BalloonConfig</span> {
-                <span class="ident">num_pages</span>: <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>),
+                <span class="ident">num_pages</span>: <span class="ident">AtomicUsize::new</span>(
+                    (<span class="ident">init_balloon_size</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">VIRTIO_BALLOON_PFN_SHIFT</span>) <span class="kw">as</span> <span class="ident">usize</span>,
+                ),
                 <span class="ident">actual_pages</span>: <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>),
             }),
             <span class="ident">kill_evt</span>: <span class="prelude-val">None</span>,
