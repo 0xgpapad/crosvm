@@ -274,20 +274,20 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [8/44] Compiling C object src/mesa/libmesa.a.p/util_u_math.c.o
 [9/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_debug_describe.c.o
 [10/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_hash_table.c.o
-[11/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_format.c.o
-[12/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_texture.c.o
-[13/44] Generating src/gallium/u_format_table.c with a custom command (wrapped by meson to capture output)
-[14/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_cso_cache_cso_cache.c.o
-[15/44] Compiling C object src/gallium/libgallium.a.p/meson-generated_.._u_format_table.c.o
-[16/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_cso_cache_cso_hash.c.o
+[11/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_texture.c.o
+[12/44] Generating src/gallium/u_format_table.c with a custom command (wrapped by meson to capture output)
+[13/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_format.c.o
+[14/44] Compiling C object src/gallium/libgallium.a.p/meson-generated_.._u_format_table.c.o
+[15/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_cso_cache_cso_hash.c.o
+[16/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_cso_cache_cso_cache.c.o
 [17/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_scan.c.o
 [18/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_build.c.o
-[19/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_dump.c.o
-[20/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_parse.c.o
+[19/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_parse.c.o
+[20/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_dump.c.o
 [21/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_info.c.o
 [22/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_iterate.c.o
-[23/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_strings.c.o
-[24/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_sanity.c.o
+[23/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_sanity.c.o
+[24/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_strings.c.o
 [25/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_util.c.o
 [26/44] Compiling C object src/libvirgl.a.p/iov.c.o
 [27/44] Compiling C object src/libvirgl.a.p/virgl_util.c.o
