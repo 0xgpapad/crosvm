@@ -534,6 +534,8 @@
 <span id="534">534</span>
 <span id="535">535</span>
 <span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -868,6 +870,7 @@
     <span class="kw">pub</span> <span class="ident">vhost_vsock_device</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VhostVsockDeviceParameter</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">vhost_net_device_path</span>: <span class="ident">PathBuf</span>,
     <span class="kw">pub</span> <span class="ident">vcpu_count</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">vcpu_cgroup_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">rt_cpus</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">vcpu_affinity</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VcpuAffinity</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">cpu_clusters</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span>,
@@ -972,6 +975,7 @@
             <span class="ident">vhost_vsock_device</span>: <span class="prelude-val">None</span>,
             <span class="ident">vhost_net_device_path</span>: <span class="ident">PathBuf::from</span>(<span class="ident">VHOST_NET_PATH</span>),
             <span class="ident">vcpu_count</span>: <span class="prelude-val">None</span>,
+            <span class="ident">vcpu_cgroup_path</span>: <span class="prelude-val">None</span>,
             <span class="ident">rt_cpus</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">vcpu_affinity</span>: <span class="prelude-val">None</span>,
             <span class="ident">cpu_clusters</span>: <span class="ident">Vec::new</span>(),
