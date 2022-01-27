@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../building_crosvm/index.html"><strong aria-hidden="true">2.</strong> Building Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../building_crosvm/linux.html"><strong aria-hidden="true">2.1.</strong> For Linux</a></li><li class="chapter-item expanded "><a href="../building_crosvm/chromium_os.html"><strong aria-hidden="true">2.2.</strong> For Chromium OS</a></li></ol></li><li class="chapter-item expanded "><a href="../running_crosvm/index.html"><strong aria-hidden="true">3.</strong> Running Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../running_crosvm/basic_usage.html"><strong aria-hidden="true">3.1.</strong> Basic Usage</a></li><li class="chapter-item expanded "><a href="../running_crosvm/usage.html"><strong aria-hidden="true">3.2.</strong> Command Line Options</a></li><li class="chapter-item expanded "><a href="../running_crosvm/requirements.html"><strong aria-hidden="true">3.3.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="../running_crosvm/features.html"><strong aria-hidden="true">3.4.</strong> Features</a></li><li class="chapter-item expanded "><a href="../running_crosvm/devices.html"><strong aria-hidden="true">3.5.</strong> Devices</a></li></ol></li><li class="chapter-item expanded "><a href="../architecture.html"><strong aria-hidden="true">4.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../contributing.html"><strong aria-hidden="true">5.</strong> Contributing</a></li><li class="spacer"></li><li class="chapter-item expanded "><a href="../onboarding.html"><strong aria-hidden="true">6.</strong> Onboarding Resources</a></li><li class="chapter-item expanded "><a href="../appendix/index.html"><strong aria-hidden="true">7.</strong> Appendix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../appendix/example_usage.html"><strong aria-hidden="true">7.1.</strong> Example Usage (Outdated)</a></li><li class="chapter-item expanded "><a href="../appendix/sandboxing.html" class="active"><strong aria-hidden="true">7.2.</strong> Sandboxing</a></li><li class="chapter-item expanded "><a href="../appendix/seccomp.html"><strong aria-hidden="true">7.3.</strong> Seccomp</a></li><li class="chapter-item expanded "><a href="../appendix/minijail.html"><strong aria-hidden="true">7.4.</strong> Minijail</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="../api.html">API Documentation</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../building_crosvm/index.html"><strong aria-hidden="true">2.</strong> Building Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../building_crosvm/linux.html"><strong aria-hidden="true">2.1.</strong> For Linux</a></li><li class="chapter-item expanded "><a href="../building_crosvm/chromium_os.html"><strong aria-hidden="true">2.2.</strong> For Chromium OS</a></li></ol></li><li class="chapter-item expanded "><a href="../running_crosvm/index.html"><strong aria-hidden="true">3.</strong> Running Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../running_crosvm/example_usage.html"><strong aria-hidden="true">3.1.</strong> Example Usage</a></li><li class="chapter-item expanded "><a href="../running_crosvm/advanced_usage.html"><strong aria-hidden="true">3.2.</strong> Advanced Usage</a></li><li class="chapter-item expanded "><a href="../running_crosvm/custom_kernel_rootfs.html"><strong aria-hidden="true">3.3.</strong> Custom Kernel / Rootfs</a></li><li class="chapter-item expanded "><a href="../running_crosvm/requirements.html"><strong aria-hidden="true">3.4.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="../running_crosvm/features.html"><strong aria-hidden="true">3.5.</strong> Features</a></li><li class="chapter-item expanded "><a href="../running_crosvm/devices.html"><strong aria-hidden="true">3.6.</strong> Devices</a></li></ol></li><li class="chapter-item expanded "><a href="../architecture.html"><strong aria-hidden="true">4.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../contributing.html"><strong aria-hidden="true">5.</strong> Contributing</a></li><li class="spacer"></li><li class="chapter-item expanded "><a href="../onboarding.html"><strong aria-hidden="true">6.</strong> Onboarding Resources</a></li><li class="chapter-item expanded "><a href="../appendix/index.html"><strong aria-hidden="true">7.</strong> Appendix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../appendix/sandboxing.html" class="active"><strong aria-hidden="true">7.1.</strong> Sandboxing</a></li><li class="chapter-item expanded "><a href="../appendix/seccomp.html"><strong aria-hidden="true">7.2.</strong> Seccomp</a></li><li class="chapter-item expanded "><a href="../appendix/minijail.html"><strong aria-hidden="true">7.3.</strong> Minijail</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="../api.html">API Documentation</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -164,21 +164,19 @@ graph BT
     class crosvm,guest,kernel system;
     style guest_kernel fill:#d23369,stroke:#777
 </pre>
-<p>Generally speaking, sandboxing is achieved in crosvm by isolating each
-virtualized devices into its own process. A process is always somewhat isolated
-from another by virtue of being in a different address space. Depending on the
-operating system, crosvm will use additional measures to sandbox the child
-processes of crosvm by limiting each process to just what it needs to function.</p>
-<p>In the example diagram above, the virtio block device exists as a child process
-of crosvm. It has been limited to having just the FD needed to access the
-backing file on the host and has no ability to open new files. A similar setup
-exists for other devices like virtio net.</p>
+<p>Generally speaking, sandboxing is achieved in crosvm by isolating each virtualized devices into its
+own process. A process is always somewhat isolated from another by virtue of being in a different
+address space. Depending on the operating system, crosvm will use additional measures to sandbox the
+child processes of crosvm by limiting each process to just what it needs to function.</p>
+<p>In the example diagram above, the virtio block device exists as a child process of crosvm. It has
+been limited to having just the FD needed to access the backing file on the host and has no ability
+to open new files. A similar setup exists for other devices like virtio net.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../appendix/example_usage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../appendix/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                             <a rel="next" href="../appendix/seccomp.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
@@ -190,7 +188,7 @@ exists for other devices like virtio net.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../appendix/example_usage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../appendix/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                     <a rel="next" href="../appendix/seccomp.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">

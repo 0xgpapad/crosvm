@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="building_crosvm/index.html"><strong aria-hidden="true">2.</strong> Building Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="building_crosvm/linux.html"><strong aria-hidden="true">2.1.</strong> For Linux</a></li><li class="chapter-item expanded "><a href="building_crosvm/chromium_os.html"><strong aria-hidden="true">2.2.</strong> For Chromium OS</a></li></ol></li><li class="chapter-item expanded "><a href="running_crosvm/index.html"><strong aria-hidden="true">3.</strong> Running Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="running_crosvm/basic_usage.html"><strong aria-hidden="true">3.1.</strong> Basic Usage</a></li><li class="chapter-item expanded "><a href="running_crosvm/usage.html"><strong aria-hidden="true">3.2.</strong> Command Line Options</a></li><li class="chapter-item expanded "><a href="running_crosvm/requirements.html"><strong aria-hidden="true">3.3.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="running_crosvm/features.html"><strong aria-hidden="true">3.4.</strong> Features</a></li><li class="chapter-item expanded "><a href="running_crosvm/devices.html"><strong aria-hidden="true">3.5.</strong> Devices</a></li></ol></li><li class="chapter-item expanded "><a href="architecture.html"><strong aria-hidden="true">4.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="contributing.html" class="active"><strong aria-hidden="true">5.</strong> Contributing</a></li><li class="spacer"></li><li class="chapter-item expanded "><a href="onboarding.html"><strong aria-hidden="true">6.</strong> Onboarding Resources</a></li><li class="chapter-item expanded "><a href="appendix/index.html"><strong aria-hidden="true">7.</strong> Appendix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="appendix/example_usage.html"><strong aria-hidden="true">7.1.</strong> Example Usage (Outdated)</a></li><li class="chapter-item expanded "><a href="appendix/sandboxing.html"><strong aria-hidden="true">7.2.</strong> Sandboxing</a></li><li class="chapter-item expanded "><a href="appendix/seccomp.html"><strong aria-hidden="true">7.3.</strong> Seccomp</a></li><li class="chapter-item expanded "><a href="appendix/minijail.html"><strong aria-hidden="true">7.4.</strong> Minijail</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="api.html">API Documentation</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="building_crosvm/index.html"><strong aria-hidden="true">2.</strong> Building Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="building_crosvm/linux.html"><strong aria-hidden="true">2.1.</strong> For Linux</a></li><li class="chapter-item expanded "><a href="building_crosvm/chromium_os.html"><strong aria-hidden="true">2.2.</strong> For Chromium OS</a></li></ol></li><li class="chapter-item expanded "><a href="running_crosvm/index.html"><strong aria-hidden="true">3.</strong> Running Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="running_crosvm/example_usage.html"><strong aria-hidden="true">3.1.</strong> Example Usage</a></li><li class="chapter-item expanded "><a href="running_crosvm/advanced_usage.html"><strong aria-hidden="true">3.2.</strong> Advanced Usage</a></li><li class="chapter-item expanded "><a href="running_crosvm/custom_kernel_rootfs.html"><strong aria-hidden="true">3.3.</strong> Custom Kernel / Rootfs</a></li><li class="chapter-item expanded "><a href="running_crosvm/requirements.html"><strong aria-hidden="true">3.4.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="running_crosvm/features.html"><strong aria-hidden="true">3.5.</strong> Features</a></li><li class="chapter-item expanded "><a href="running_crosvm/devices.html"><strong aria-hidden="true">3.6.</strong> Devices</a></li></ol></li><li class="chapter-item expanded "><a href="architecture.html"><strong aria-hidden="true">4.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="contributing.html" class="active"><strong aria-hidden="true">5.</strong> Contributing</a></li><li class="spacer"></li><li class="chapter-item expanded "><a href="onboarding.html"><strong aria-hidden="true">6.</strong> Onboarding Resources</a></li><li class="chapter-item expanded "><a href="appendix/index.html"><strong aria-hidden="true">7.</strong> Appendix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="appendix/sandboxing.html"><strong aria-hidden="true">7.1.</strong> Sandboxing</a></li><li class="chapter-item expanded "><a href="appendix/seccomp.html"><strong aria-hidden="true">7.2.</strong> Seccomp</a></li><li class="chapter-item expanded "><a href="appendix/minijail.html"><strong aria-hidden="true">7.3.</strong> Minijail</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="api.html">API Documentation</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -136,19 +136,15 @@
                     <main>
                         <h1 id="contributing"><a class="header" href="#contributing">Contributing</a></h1>
 <h2 id="intro"><a class="header" href="#intro">Intro</a></h2>
-<p>This article goes into detail about multiple areas of interest to contributors,
-which includes reviewers, developers, and integrators who each share an interest
-in guiding crosvm's direction.</p>
+<p>This article goes into detail about multiple areas of interest to contributors, which includes
+reviewers, developers, and integrators who each share an interest in guiding crosvm's direction.</p>
 <h2 id="contributor-license-agreement"><a class="header" href="#contributor-license-agreement">Contributor License Agreement</a></h2>
-<p>Contributions to this project must be accompanied by a Contributor License
-Agreement (CLA). You (or your employer) retain the copyright to your
-contribution; this simply gives us permission to use and redistribute your
-contributions as part of the project. Head over to
-<a href="https://cla.developers.google.com/">https://cla.developers.google.com/</a> to see your current agreements on file or
-to sign a new one.</p>
-<p>You generally only need to submit a CLA once, so if you've already submitted one
-(even if it was for a different project), you probably don't need to do it
-again.</p>
+<p>Contributions to this project must be accompanied by a Contributor License Agreement (CLA). You (or
+your employer) retain the copyright to your contribution; this simply gives us permission to use and
+redistribute your contributions as part of the project. Head over to
+<a href="https://cla.developers.google.com/">https://cla.developers.google.com/</a> to see your current agreements on file or to sign a new one.</p>
+<p>You generally only need to submit a CLA once, so if you've already submitted one (even if it was for
+a different project), you probably don't need to do it again.</p>
 <h2 id="bug-reports"><a class="header" href="#bug-reports">Bug Reports</a></h2>
 <p>We use the Chromium issue tracker. Please use
 <a href="https://bugs.chromium.org/p/chromium/issues/list?q=component:OS%3ESystems%3EContainers"><code>OS&gt;Systems&gt;Containers</code></a>
@@ -159,23 +155,20 @@ component.</p>
 <li>Prefer mechanism to policy.</li>
 <li>Use existing protocols when they are adequate, such as virtio.</li>
 <li>Prefer security over code re-use and speed of development.</li>
-<li>Only the version of Rust in use by the Chrome OS toolchain is supported.
-This is ordinarily the stable version of Rust, but can be behind a version
-for a few weeks.</li>
+<li>Only the version of Rust in use by the Chrome OS toolchain is supported. This is ordinarily the
+stable version of Rust, but can be behind a version for a few weeks.</li>
 <li>Avoid distribution specific code.</li>
 </ul>
 <h2 id="code-health"><a class="header" href="#code-health">Code Health</a></h2>
 <h3 id="scripts"><a class="header" href="#scripts">Scripts</a></h3>
-<p>In the <code>bin/</code> directory of the crosvm repository, there is the <code>clippy</code> script
-which lints the Rust code and the <code>fmt</code> script which will format the crosvm Rust
-code inplace.</p>
+<p>In the <code>bin/</code> directory of the crosvm repository, there is the <code>clippy</code> script which lints the Rust
+code and the <code>fmt</code> script which will format the crosvm Rust code inplace.</p>
 <h3 id="running-tests"><a class="header" href="#running-tests">Running tests</a></h3>
 <p>The <code>./test_all</code> script will use docker containers to run all tests for crosvm.</p>
-<p>For more details on using the docker containers for running tests locally,
-including faster, iterative test runs, see <code>ci/README.md</code>.</p>
+<p>For more details on using the docker containers for running tests locally, including faster,
+iterative test runs, see <code>ci/README.md</code>.</p>
 <h3 id="style-guidelines"><a class="header" href="#style-guidelines">Style guidelines</a></h3>
-<p>To format all code, crosvm defers to rustfmt. In addition, the code adheres to
-the following rules:</p>
+<p>To format all code, crosvm defers to rustfmt. In addition, the code adheres to the following rules:</p>
 <p>The <code>use</code> statements for each module should be grouped in this order</p>
 <ol>
 <li><code>std</code></li>
@@ -184,34 +177,30 @@ the following rules:</p>
 <li>crosvm crates</li>
 <li><code>crate</code></li>
 </ol>
-<p>crosvm uses the <a href="https://github.com/dtolnay/remain">remain</a> crate to keep error
-enums sorted, along with the <code>#[sorted]</code> attribute to keep their corresponding
-match statements in the same order.</p>
+<p>crosvm uses the <a href="https://github.com/dtolnay/remain">remain</a> crate to keep error enums sorted, along
+with the <code>#[sorted]</code> attribute to keep their corresponding match statements in the same order.</p>
 <h2 id="submitting-code"><a class="header" href="#submitting-code">Submitting Code</a></h2>
-<p>Since crosvm is one of Chromium OS projects, please read through
-<a href="https://chromium.googlesource.com/chromiumos/docs/+/HEAD/contributing.md">Chrome OS Contributing Guide</a> first. This section describes the crosvm-specific
-workflow.</p>
+<p>Since crosvm is one of Chromium OS projects, please read through <a href="https://chromium.googlesource.com/chromiumos/docs/+/HEAD/contributing.md">Chrome OS Contributing Guide</a>
+first. This section describes the crosvm-specific workflow.</p>
 <h3 id="creating-a-cl"><a class="header" href="#creating-a-cl">Creating a CL</a></h3>
-<p>We use <a href="https://chromium-review.googlesource.com/">Chromium Gerrit</a> for code
-reviewing. All crosvm CLs are listed at the <a href="https://chromium-review.googlesource.com/q/project:chromiumos%252Fplatform%252Fcrosvm">crosvm component</a>.</p>
+<p>We use <a href="https://chromium-review.googlesource.com/">Chromium Gerrit</a> for code reviewing. All crosvm
+CLs are listed at the <a href="https://chromium-review.googlesource.com/q/project:chromiumos%252Fplatform%252Fcrosvm">crosvm component</a>.</p>
 <blockquote>
 <p>Note: We don't accept any pull requests on the <a href="https://github.com/google/crosvm">GitHub mirror</a>.</p>
 </blockquote>
 <h4 id="for-chromium-os-developers-chromiumos-cl"><a class="header" href="#for-chromium-os-developers-chromiumos-cl">For Chromium OS Developers {#chromiumos-cl}</a></h4>
-<p>If you have already set up the <code>chromiumos</code> repository and the <code>repo</code> command,
-you can simply create and upload your CL in a similar manner as other Chromium
-OS projects.</p>
-<p><code>repo start</code> will create a branch tracking <code>cros/chromeos</code> so you can develop
-with the latest, CQ-tested code as a foundation.</p>
-<p>However, changes are not acceped to the <code>cros/chromeos</code> branch, and should be
-submitted to <code>cros/main</code> instead.</p>
-<p>Use <code>repo upload -D main</code> to upload changes to the main branch, which works fine
-in most cases where gerrit can rebase the commit cleanly. If not, please rebase
-to <code>cros/main</code> manually.</p>
+<p>If you have already set up the <code>chromiumos</code> repository and the <code>repo</code> command, you can simply create
+and upload your CL in a similar manner as other Chromium OS projects.</p>
+<p><code>repo start</code> will create a branch tracking <code>cros/chromeos</code> so you can develop with the latest,
+CQ-tested code as a foundation.</p>
+<p>However, changes are not acceped to the <code>cros/chromeos</code> branch, and should be submitted to
+<code>cros/main</code> instead.</p>
+<p>Use <code>repo upload -D main</code> to upload changes to the main branch, which works fine in most cases where
+gerrit can rebase the commit cleanly. If not, please rebase to <code>cros/main</code> manually.</p>
 <h4 id="for-non-chromium-os-developers"><a class="header" href="#for-non-chromium-os-developers">For non-Chromium OS Developers</a></h4>
-<p>If you are not interested in other Chromium OS components, you can simply clone
-and contribute crosvm only. Before you make a commit locally, please set up
-<a href="https://gerrit-review.googlesource.com/Documentation/user-changeid.html">Gerrit's Change-Id hook</a> on your system.</p>
+<p>If you are not interested in other Chromium OS components, you can simply clone and contribute
+crosvm only. Before you make a commit locally, please set up <a href="https://gerrit-review.googlesource.com/Documentation/user-changeid.html">Gerrit's Change-Id hook</a> on your
+system.</p>
 <pre><code class="language-bash">$ git clone https://chromium.googlesource.com/chromiumos/platform/crosvm
 # Modify code and make a git commit with a commit message following this rule:
 # https://chromium.googlesource.com/chromiumos/docs/+/HEAD/contributing.md#Commit-messages
@@ -222,49 +211,43 @@ $ git push origin HEAD:refs/for/main
 <h3 id="code-review"><a class="header" href="#code-review">Code review</a></h3>
 <p>Your change must be reviewed and approved by one of <a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/HEAD/OWNERS">crosvm owners</a>.</p>
 <h3 id="presubmit-checking-presubmit"><a class="header" href="#presubmit-checking-presubmit">Presubmit checking {#presubmit}</a></h3>
-<p>Once your change is reviewed, it will need to go through two layers of presubmit
-checks.</p>
-<p>The review will trigger Kokoro to run crosvm specific tests. If you want to
-check kokoro results before a review, you can set 'Commit Queue +1' in gerrit to
-trigger a dry-run.</p>
-<p>If you upload further changes after the you were given 'Code Review +2', Kokoro
-will automatically trigger another test run. But you can also always comment
-'kokoro rerun' to manually trigger another build if needed.</p>
-<p>When Kokoro passes, it will set Verified +1 and the change is ready to be sent
-to the
+<p>Once your change is reviewed, it will need to go through two layers of presubmit checks.</p>
+<p>The review will trigger Kokoro to run crosvm specific tests. If you want to check kokoro results
+before a review, you can set 'Commit Queue +1' in gerrit to trigger a dry-run.</p>
+<p>If you upload further changes after the you were given 'Code Review +2', Kokoro will automatically
+trigger another test run. But you can also always comment 'kokoro rerun' to manually trigger another
+build if needed.</p>
+<p>When Kokoro passes, it will set Verified +1 and the change is ready to be sent to the
 <a href="https://chromium.googlesource.com/chromiumos/docs/+/HEAD/contributing.md#send-your-changes-to-the-commit-queue">ChromeOS commit queue</a>
 by setting CQ+2.</p>
-<p>Note: This is different from other ChromeOS repositories, where Verified +1 bit
-is set by the developers to indicate that they successfully tested a change. The
-Verified bit can only be set by Kokoro in the crosvm repository.</p>
+<p>Note: This is different from other ChromeOS repositories, where Verified +1 bit is set by the
+developers to indicate that they successfully tested a change. The Verified bit can only be set by
+Kokoro in the crosvm repository.</p>
 <h3 id="postsubmit-merging-to-chrome-os-chromiumos-postsubmit"><a class="header" href="#postsubmit-merging-to-chrome-os-chromiumos-postsubmit">Postsubmit merging to Chrome OS {#chromiumos-postsubmit}</a></h3>
 <p>Crosvm has a unique setup to integrate with ChromeOS infrastructure.</p>
 <p>The chromeos checkout tracks the
 <a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/refs/heads/chromeos">cros/chromeos</a>
 branch of crosvm, not the
-<a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/refs/heads/main">cros/main</a>
-branch.</p>
-<p>While upstream development is happening on the <code>main</code> branch, changes submitted
-to that branch are only tested by the crosvm kokoro CI system, not by the
-ChromeOS CQ.</p>
+<a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/refs/heads/main">cros/main</a> branch.</p>
+<p>While upstream development is happening on the <code>main</code> branch, changes submitted to that branch are
+only tested by the crosvm kokoro CI system, not by the ChromeOS CQ.</p>
 <p>There is a
 <a href="https://chromium-review.googlesource.com/q/project:chromiumos%252Fplatform%252Fcrosvm+branch:chromeos">daily process</a>
-that creates a commit to merge changes from <code>main</code> into the <code>chromeos</code> branch,
-which is then tested through the CQ and watched by the crosvm-uprev rotation.</p>
+that creates a commit to merge changes from <code>main</code> into the <code>chromeos</code> branch, which is then tested
+through the CQ and watched by the crosvm-uprev rotation.</p>
 <h2 id="contributing-to-the-documentation"><a class="header" href="#contributing-to-the-documentation">Contributing to the documentation</a></h2>
 <p><a href="https://google.github.io/crosvm/">The book of crosvm</a> is build with <a href="https://rust-lang.github.io/mdBook/">mdBook</a>. Each markdown files must follow
 <a href="https://github.com/google/styleguide/blob/gh-pages/docguide/style.md">Google Markdown style guide</a>.</p>
-<p>To render the book locally, you need to install mdbook and <a href="https://github.com/badboy/mdbook-mermaid">mdbook-mermaid</a>,
-which should be installed when you run <code>./tools/install-deps</code>script.</p>
+<p>To render the book locally, you need to install mdbook and <a href="https://github.com/badboy/mdbook-mermaid">mdbook-mermaid</a>, which should be
+installed when you run <code>./tools/install-deps</code>script.</p>
 <pre><code class="language-bash">cd crosvm/docs/book/
 mdbook build
 </code></pre>
 <blockquote>
-<p>Note: If you make a certain size of changes, it's recommended to reinstall
-mdbook manually with <code>cargo install mdbook</code>, as <code>./tools/install-deps</code> only
-installs a binary with some convenient features disabled. For example, the
-full version of mdbook allows you to edit files while checking rendered
-results.</p>
+<p>Note: If you make a certain size of changes, it's recommended to reinstall mdbook manually with
+<code>cargo install mdbook</code>, as <code>./tools/install-deps</code> only installs a binary with some convenient
+features disabled. For example, the full version of mdbook allows you to edit files while checking
+rendered results.</p>
 </blockquote>
 
                     </main>

@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../building_crosvm/index.html"><strong aria-hidden="true">2.</strong> Building Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../building_crosvm/linux.html"><strong aria-hidden="true">2.1.</strong> For Linux</a></li><li class="chapter-item expanded "><a href="../building_crosvm/chromium_os.html"><strong aria-hidden="true">2.2.</strong> For Chromium OS</a></li></ol></li><li class="chapter-item expanded "><a href="../running_crosvm/index.html"><strong aria-hidden="true">3.</strong> Running Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../running_crosvm/basic_usage.html"><strong aria-hidden="true">3.1.</strong> Basic Usage</a></li><li class="chapter-item expanded "><a href="../running_crosvm/usage.html"><strong aria-hidden="true">3.2.</strong> Command Line Options</a></li><li class="chapter-item expanded "><a href="../running_crosvm/requirements.html" class="active"><strong aria-hidden="true">3.3.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="../running_crosvm/features.html"><strong aria-hidden="true">3.4.</strong> Features</a></li><li class="chapter-item expanded "><a href="../running_crosvm/devices.html"><strong aria-hidden="true">3.5.</strong> Devices</a></li></ol></li><li class="chapter-item expanded "><a href="../architecture.html"><strong aria-hidden="true">4.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../contributing.html"><strong aria-hidden="true">5.</strong> Contributing</a></li><li class="spacer"></li><li class="chapter-item expanded "><a href="../onboarding.html"><strong aria-hidden="true">6.</strong> Onboarding Resources</a></li><li class="chapter-item expanded "><a href="../appendix/index.html"><strong aria-hidden="true">7.</strong> Appendix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../appendix/example_usage.html"><strong aria-hidden="true">7.1.</strong> Example Usage (Outdated)</a></li><li class="chapter-item expanded "><a href="../appendix/sandboxing.html"><strong aria-hidden="true">7.2.</strong> Sandboxing</a></li><li class="chapter-item expanded "><a href="../appendix/seccomp.html"><strong aria-hidden="true">7.3.</strong> Seccomp</a></li><li class="chapter-item expanded "><a href="../appendix/minijail.html"><strong aria-hidden="true">7.4.</strong> Minijail</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="../api.html">API Documentation</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../building_crosvm/index.html"><strong aria-hidden="true">2.</strong> Building Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../building_crosvm/linux.html"><strong aria-hidden="true">2.1.</strong> For Linux</a></li><li class="chapter-item expanded "><a href="../building_crosvm/chromium_os.html"><strong aria-hidden="true">2.2.</strong> For Chromium OS</a></li></ol></li><li class="chapter-item expanded "><a href="../running_crosvm/index.html"><strong aria-hidden="true">3.</strong> Running Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../running_crosvm/example_usage.html"><strong aria-hidden="true">3.1.</strong> Example Usage</a></li><li class="chapter-item expanded "><a href="../running_crosvm/advanced_usage.html"><strong aria-hidden="true">3.2.</strong> Advanced Usage</a></li><li class="chapter-item expanded "><a href="../running_crosvm/custom_kernel_rootfs.html"><strong aria-hidden="true">3.3.</strong> Custom Kernel / Rootfs</a></li><li class="chapter-item expanded "><a href="../running_crosvm/requirements.html" class="active"><strong aria-hidden="true">3.4.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="../running_crosvm/features.html"><strong aria-hidden="true">3.5.</strong> Features</a></li><li class="chapter-item expanded "><a href="../running_crosvm/devices.html"><strong aria-hidden="true">3.6.</strong> Devices</a></li></ol></li><li class="chapter-item expanded "><a href="../architecture.html"><strong aria-hidden="true">4.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="../contributing.html"><strong aria-hidden="true">5.</strong> Contributing</a></li><li class="spacer"></li><li class="chapter-item expanded "><a href="../onboarding.html"><strong aria-hidden="true">6.</strong> Onboarding Resources</a></li><li class="chapter-item expanded "><a href="../appendix/index.html"><strong aria-hidden="true">7.</strong> Appendix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../appendix/sandboxing.html"><strong aria-hidden="true">7.1.</strong> Sandboxing</a></li><li class="chapter-item expanded "><a href="../appendix/seccomp.html"><strong aria-hidden="true">7.2.</strong> Seccomp</a></li><li class="chapter-item expanded "><a href="../appendix/minijail.html"><strong aria-hidden="true">7.3.</strong> Minijail</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="../api.html">API Documentation</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -135,25 +135,21 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="system-requirements"><a class="header" href="#system-requirements">System Requirements</a></h1>
-<p>A Linux kernel with KVM support (check for <code>/dev/kvm</code>) is required to run
-crosvm. In order to run certain devices, there are additional system
-requirements:</p>
+<p>A Linux kernel with KVM support (check for <code>/dev/kvm</code>) is required to run crosvm. In order to run
+certain devices, there are additional system requirements:</p>
 <ul>
-<li><code>virtio-wayland</code> - The <code>memfd_create</code> syscall, introduced in Linux 3.17, and
-a Wayland compositor.</li>
-<li><code>vsock</code> - Host Linux kernel with vhost-vsock support, introduced in Linux
-4.8.</li>
-<li><code>multiprocess</code> - Host Linux kernel with seccomp-bpf and Linux namespacing
-support.</li>
-<li><code>virtio-net</code> - Host Linux kernel with TUN/TAP support (check for
-<code>/dev/net/tun</code>) and running with <code>CAP_NET_ADMIN</code> privileges.</li>
+<li><code>virtio-wayland</code> - The <code>memfd_create</code> syscall, introduced in Linux 3.17, and a Wayland compositor.</li>
+<li><code>vsock</code> - Host Linux kernel with vhost-vsock support, introduced in Linux 4.8.</li>
+<li><code>multiprocess</code> - Host Linux kernel with seccomp-bpf and Linux namespacing support.</li>
+<li><code>virtio-net</code> - Host Linux kernel with TUN/TAP support (check for <code>/dev/net/tun</code>) and running with
+<code>CAP_NET_ADMIN</code> privileges.</li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../running_crosvm/usage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../running_crosvm/custom_kernel_rootfs.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                             <a rel="next" href="../running_crosvm/features.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
@@ -165,7 +161,7 @@ support.</li>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../running_crosvm/usage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../running_crosvm/custom_kernel_rootfs.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                     <a rel="next" href="../running_crosvm/features.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">

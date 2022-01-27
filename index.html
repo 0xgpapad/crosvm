@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="building_crosvm/index.html"><strong aria-hidden="true">2.</strong> Building Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="building_crosvm/linux.html"><strong aria-hidden="true">2.1.</strong> For Linux</a></li><li class="chapter-item expanded "><a href="building_crosvm/chromium_os.html"><strong aria-hidden="true">2.2.</strong> For Chromium OS</a></li></ol></li><li class="chapter-item expanded "><a href="running_crosvm/index.html"><strong aria-hidden="true">3.</strong> Running Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="running_crosvm/basic_usage.html"><strong aria-hidden="true">3.1.</strong> Basic Usage</a></li><li class="chapter-item expanded "><a href="running_crosvm/usage.html"><strong aria-hidden="true">3.2.</strong> Command Line Options</a></li><li class="chapter-item expanded "><a href="running_crosvm/requirements.html"><strong aria-hidden="true">3.3.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="running_crosvm/features.html"><strong aria-hidden="true">3.4.</strong> Features</a></li><li class="chapter-item expanded "><a href="running_crosvm/devices.html"><strong aria-hidden="true">3.5.</strong> Devices</a></li></ol></li><li class="chapter-item expanded "><a href="architecture.html"><strong aria-hidden="true">4.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">5.</strong> Contributing</a></li><li class="spacer"></li><li class="chapter-item expanded "><a href="onboarding.html"><strong aria-hidden="true">6.</strong> Onboarding Resources</a></li><li class="chapter-item expanded "><a href="appendix/index.html"><strong aria-hidden="true">7.</strong> Appendix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="appendix/example_usage.html"><strong aria-hidden="true">7.1.</strong> Example Usage (Outdated)</a></li><li class="chapter-item expanded "><a href="appendix/sandboxing.html"><strong aria-hidden="true">7.2.</strong> Sandboxing</a></li><li class="chapter-item expanded "><a href="appendix/seccomp.html"><strong aria-hidden="true">7.3.</strong> Seccomp</a></li><li class="chapter-item expanded "><a href="appendix/minijail.html"><strong aria-hidden="true">7.4.</strong> Minijail</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="api.html">API Documentation</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="building_crosvm/index.html"><strong aria-hidden="true">2.</strong> Building Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="building_crosvm/linux.html"><strong aria-hidden="true">2.1.</strong> For Linux</a></li><li class="chapter-item expanded "><a href="building_crosvm/chromium_os.html"><strong aria-hidden="true">2.2.</strong> For Chromium OS</a></li></ol></li><li class="chapter-item expanded "><a href="running_crosvm/index.html"><strong aria-hidden="true">3.</strong> Running Crosvm</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="running_crosvm/example_usage.html"><strong aria-hidden="true">3.1.</strong> Example Usage</a></li><li class="chapter-item expanded "><a href="running_crosvm/advanced_usage.html"><strong aria-hidden="true">3.2.</strong> Advanced Usage</a></li><li class="chapter-item expanded "><a href="running_crosvm/custom_kernel_rootfs.html"><strong aria-hidden="true">3.3.</strong> Custom Kernel / Rootfs</a></li><li class="chapter-item expanded "><a href="running_crosvm/requirements.html"><strong aria-hidden="true">3.4.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="running_crosvm/features.html"><strong aria-hidden="true">3.5.</strong> Features</a></li><li class="chapter-item expanded "><a href="running_crosvm/devices.html"><strong aria-hidden="true">3.6.</strong> Devices</a></li></ol></li><li class="chapter-item expanded "><a href="architecture.html"><strong aria-hidden="true">4.</strong> Architecture</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">5.</strong> Contributing</a></li><li class="spacer"></li><li class="chapter-item expanded "><a href="onboarding.html"><strong aria-hidden="true">6.</strong> Onboarding Resources</a></li><li class="chapter-item expanded "><a href="appendix/index.html"><strong aria-hidden="true">7.</strong> Appendix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="appendix/sandboxing.html"><strong aria-hidden="true">7.1.</strong> Sandboxing</a></li><li class="chapter-item expanded "><a href="appendix/seccomp.html"><strong aria-hidden="true">7.2.</strong> Seccomp</a></li><li class="chapter-item expanded "><a href="appendix/minijail.html"><strong aria-hidden="true">7.3.</strong> Minijail</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="api.html">API Documentation</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -136,23 +136,19 @@
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <p>The crosvm project is a hosted (a.k.a.
-<a href="https://en.wikipedia.org/wiki/Hypervisor#Classification">type-2</a>) virtual
-machine monitor.</p>
-<p>crosvm runs untrusted operating systems along with virtualized devices.
-Initially intended to be used with KVM and Linux, crosvm supports multiple kinds
-of hypervisors. crosvm is focussed on safety within the programming language and
-a sandbox around the virtual devices to protect the host from attack in case of
-exploits in crosvm itself.</p>
-<p>Other programs similar to crosvm are QEMU and VirtualBox. An operating system,
-made of a root file system image and a kernel binary, are given as input to
-crosvm and then crosvm will run the operating system using the platform's
-hypervisor.</p>
+<a href="https://en.wikipedia.org/wiki/Hypervisor#Classification">type-2</a>) virtual machine monitor.</p>
+<p>crosvm runs untrusted operating systems along with virtualized devices. Initially intended to be
+used with KVM and Linux, crosvm supports multiple kinds of hypervisors. crosvm is focussed on safety
+within the programming language and a sandbox around the virtual devices to protect the host from
+attack in case of exploits in crosvm itself.</p>
+<p>Other programs similar to crosvm are QEMU and VirtualBox. An operating system, made of a root file
+system image and a kernel binary, are given as input to crosvm and then crosvm will run the
+operating system using the platform's hypervisor.</p>
 <ul>
 <li><a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/">Source code</a>
 <ul>
 <li><a href="https://github.com/google/crosvm">GitHub mirror</a></li>
-<li><a href="https://google.github.io/crosvm/doc/crosvm/">API documentation</a>, useful
-for searching API.</li>
+<li><a href="https://google.github.io/crosvm/doc/crosvm/">API documentation</a>, useful for searching API.</li>
 <li>Files for this book are under
 <a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/HEAD/docs/">/docs/</a>.</li>
 </ul>
