@@ -536,6 +536,8 @@
 <span id="536">536</span>
 <span id="537">537</span>
 <span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -889,6 +891,7 @@
     <span class="kw">pub</span> <span class="ident">initrd_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">socket_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">balloon_control</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">plugin_root</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">plugin_mounts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BindMount</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">plugin_gid_maps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">GidMap</span><span class="op">&gt;</span>,
@@ -994,6 +997,7 @@
             <span class="ident">initrd_path</span>: <span class="prelude-val">None</span>,
             <span class="ident">params</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">socket_path</span>: <span class="prelude-val">None</span>,
+            <span class="ident">balloon_control</span>: <span class="prelude-val">None</span>,
             <span class="ident">plugin_root</span>: <span class="prelude-val">None</span>,
             <span class="ident">plugin_mounts</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">plugin_gid_maps</span>: <span class="ident">Vec::new</span>(),

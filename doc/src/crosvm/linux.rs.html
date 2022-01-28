@@ -3884,6 +3884,14 @@
 <span id="3884">3884</span>
 <span id="3885">3885</span>
 <span id="3886">3886</span>
+<span id="3887">3887</span>
+<span id="3888">3888</span>
+<span id="3889">3889</span>
+<span id="3890">3890</span>
+<span id="3891">3891</span>
+<span id="3892">3892</span>
+<span id="3893">3893</span>
+<span id="3894">3894</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -6857,15 +6865,23 @@
     <span class="ident">control_tubes</span>.<span class="ident">push</span>(<span class="ident">TaggedControlTube::VmMemory</span>(<span class="ident">wayland_host_tube</span>));
 
     <span class="kw">let</span> (<span class="ident">balloon_host_tube</span>, <span class="ident">balloon_device_tube</span>) <span class="op">=</span> <span class="kw">if</span> <span class="ident">cfg</span>.<span class="ident">balloon</span> {
-        <span class="comment">// Balloon gets a special socket so balloon requests can be forwarded from the main process.</span>
-        <span class="kw">let</span> (<span class="ident">balloon_host_tube</span>, <span class="ident">balloon_device_tube</span>) <span class="op">=</span>
-            <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
-        <span class="comment">// Set recv timeout to avoid deadlock on sending BalloonControlCommand before guest is</span>
-        <span class="comment">// ready.</span>
-        <span class="ident">balloon_host_tube</span>
-            .<span class="ident">set_recv_timeout</span>(<span class="prelude-val">Some</span>(<span class="ident">Duration::from_millis</span>(<span class="number">100</span>)))
-            .<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
-        (<span class="prelude-val">Some</span>(<span class="ident">balloon_host_tube</span>), <span class="prelude-val">Some</span>(<span class="ident">balloon_device_tube</span>))
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">path</span>) <span class="op">=</span> <span class="ident">cfg</span>.<span class="ident">balloon_control</span> {
+            (
+                <span class="prelude-val">None</span>,
+                <span class="prelude-val">Some</span>(<span class="ident">Tube::new</span>(
+                    <span class="ident">UnixSeqpacket::connect</span>(<span class="ident">path</span>).<span class="ident">context</span>(<span class="string">&quot;failed to create balloon control&quot;</span>)<span class="question-mark">?</span>,
+                )),
+            )
+        } <span class="kw">else</span> {
+            <span class="comment">// Balloon gets a special socket so balloon requests can be forwarded</span>
+            <span class="comment">// from the main process.</span>
+            <span class="kw">let</span> (<span class="ident">host</span>, <span class="ident">device</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
+            <span class="comment">// Set recv timeout to avoid deadlock on sending BalloonControlCommand</span>
+            <span class="comment">// before the guest is ready.</span>
+            <span class="ident">host</span>.<span class="ident">set_recv_timeout</span>(<span class="prelude-val">Some</span>(<span class="ident">Duration::from_millis</span>(<span class="number">100</span>)))
+                .<span class="ident">context</span>(<span class="string">&quot;failed to set timeout&quot;</span>)<span class="question-mark">?</span>;
+            (<span class="prelude-val">Some</span>(<span class="ident">host</span>), <span class="prelude-val">Some</span>(<span class="ident">device</span>))
+        }
     } <span class="kw">else</span> {
         (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>)
     };

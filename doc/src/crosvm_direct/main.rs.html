@@ -4132,6 +4132,27 @@
 <span id="4132">4132</span>
 <span id="4133">4133</span>
 <span id="4134">4134</span>
+<span id="4135">4135</span>
+<span id="4136">4136</span>
+<span id="4137">4137</span>
+<span id="4138">4138</span>
+<span id="4139">4139</span>
+<span id="4140">4140</span>
+<span id="4141">4141</span>
+<span id="4142">4142</span>
+<span id="4143">4143</span>
+<span id="4144">4144</span>
+<span id="4145">4145</span>
+<span id="4146">4146</span>
+<span id="4147">4147</span>
+<span id="4148">4148</span>
+<span id="4149">4149</span>
+<span id="4150">4150</span>
+<span id="4151">4151</span>
+<span id="4152">4152</span>
+<span id="4153">4153</span>
+<span id="4154">4154</span>
+<span id="4155">4155</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -5808,6 +5829,21 @@
             }
             <span class="ident">cfg</span>.<span class="ident">socket_path</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">socket_path</span>);
         }
+        <span class="string">&quot;balloon-control&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">if</span> <span class="ident">cfg</span>.<span class="ident">balloon_control</span>.<span class="ident">is_some</span>() {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::TooManyArguments</span>(
+                    <span class="string">&quot;`balloon-control` already given&quot;</span>.<span class="ident">to_owned</span>(),
+                ));
+            }
+            <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="ident">value</span>.<span class="ident">unwrap</span>());
+            <span class="kw">if</span> <span class="ident">path</span>.<span class="ident">is_dir</span>() <span class="op">|</span><span class="op">|</span> <span class="op">!</span><span class="ident">path</span>.<span class="ident">exists</span>() {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
+                    <span class="ident">value</span>: <span class="ident">path</span>.<span class="ident">to_string_lossy</span>().<span class="ident">into_owned</span>(),
+                    <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;path is directory or missing&quot;</span>),
+                });
+            }
+            <span class="ident">cfg</span>.<span class="ident">balloon_control</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">path</span>);
+        }
         <span class="string">&quot;disable-sandbox&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">cfg</span>.<span class="ident">sandbox</span> <span class="op">=</span> <span class="bool-val">false</span>;
         }
@@ -6556,6 +6592,11 @@
             }
         }
     }
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">cfg</span>.<span class="ident">balloon</span> <span class="op">&amp;&amp;</span> <span class="ident">cfg</span>.<span class="ident">balloon_control</span>.<span class="ident">is_some</span>() {
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::ExpectedArgument</span>(
+            <span class="string">&quot;&#39;balloon-control&#39; requires enabled balloon&quot;</span>.<span class="ident">to_owned</span>(),
+        ));
+    }
     <span class="ident">set_default_serial_parameters</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cfg</span>.<span class="ident">serial_parameters</span>);
     <span class="prelude-val">Ok</span>(())
 }
@@ -6671,6 +6712,7 @@
                                 <span class="string">&quot;socket&quot;</span>,
                                 <span class="string">&quot;PATH&quot;</span>,
                                 <span class="string">&quot;Path to put the control socket. If PATH is a directory, a name will be generated.&quot;</span>),
+          <span class="ident">Argument::value</span>(<span class="string">&quot;balloon-control&quot;</span>, <span class="string">&quot;PATH&quot;</span>, <span class="string">&quot;Path for balloon controller socket.&quot;</span>),
           <span class="ident">Argument::flag</span>(<span class="string">&quot;disable-sandbox&quot;</span>, <span class="string">&quot;Run all devices in one, non-sandboxed process.&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;cid&quot;</span>, <span class="string">&quot;CID&quot;</span>, <span class="string">&quot;Context ID for virtual sockets.&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;shared-dir&quot;</span>, <span class="string">&quot;PATH:TAG[:type=TYPE:writeback=BOOL:timeout=SECONDS:uidmap=UIDMAP:gidmap=GIDMAP:cache=CACHE:dax=BOOL,posix_acl=BOOL]&quot;</span>,
