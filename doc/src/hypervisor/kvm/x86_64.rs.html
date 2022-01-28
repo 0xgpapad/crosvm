@@ -3183,7 +3183,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">xcrs</span>() {
         <span class="kw">let</span> <span class="ident">kvm</span> <span class="op">=</span> <span class="ident">Kvm::new</span>().<span class="ident">unwrap</span>();
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">kvm</span>.<span class="ident">check_capability</span>(<span class="kw-2">&amp;</span><span class="ident">HypervisorCap::Xcrs</span>) {
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">kvm</span>.<span class="ident">check_capability</span>(<span class="ident">HypervisorCap::Xcrs</span>) {
             <span class="kw">return</span>;
         }
 
