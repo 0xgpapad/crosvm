@@ -1184,43 +1184,6 @@
 <span id="1184">1184</span>
 <span id="1185">1185</span>
 <span id="1186">1186</span>
-<span id="1187">1187</span>
-<span id="1188">1188</span>
-<span id="1189">1189</span>
-<span id="1190">1190</span>
-<span id="1191">1191</span>
-<span id="1192">1192</span>
-<span id="1193">1193</span>
-<span id="1194">1194</span>
-<span id="1195">1195</span>
-<span id="1196">1196</span>
-<span id="1197">1197</span>
-<span id="1198">1198</span>
-<span id="1199">1199</span>
-<span id="1200">1200</span>
-<span id="1201">1201</span>
-<span id="1202">1202</span>
-<span id="1203">1203</span>
-<span id="1204">1204</span>
-<span id="1205">1205</span>
-<span id="1206">1206</span>
-<span id="1207">1207</span>
-<span id="1208">1208</span>
-<span id="1209">1209</span>
-<span id="1210">1210</span>
-<span id="1211">1211</span>
-<span id="1212">1212</span>
-<span id="1213">1213</span>
-<span id="1214">1214</span>
-<span id="1215">1215</span>
-<span id="1216">1216</span>
-<span id="1217">1217</span>
-<span id="1218">1218</span>
-<span id="1219">1219</span>
-<span id="1220">1220</span>
-<span id="1221">1221</span>
-<span id="1222">1222</span>
-<span id="1223">1223</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1250,6 +1213,9 @@
 
 <span class="kw">use</span> <span class="ident">libc</span>::{<span class="ident">EINVAL</span>, <span class="ident">EIO</span>, <span class="ident">ENODEV</span>, <span class="ident">ENOTSUP</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">balloon_control::BalloonStats</span>;
+<span class="kw">use</span> <span class="ident">balloon_control</span>::{<span class="ident">BalloonTubeCommand</span>, <span class="ident">BalloonTubeResult</span>};
 
 <span class="kw">use</span> <span class="ident">base</span>::{
     <span class="ident">error</span>, <span class="ident">with_as_descriptor</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">SysError</span>, <span class="ident">Event</span>, <span class="ident">ExternalMapping</span>, <span class="ident">Fd</span>,
@@ -1341,52 +1307,12 @@
     <span class="ident">Stats</span>,
 }
 
-<span class="comment">// Balloon commands that are send on the balloon command tube.</span>
-<span class="comment">//</span>
-<span class="comment">// This is the same as BalloonControlCommand above, but includes an ID for the</span>
-<span class="comment">// Stats request so that we can discard stale stats if any previous stats</span>
-<span class="comment">// request failed or timed out.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BalloonTubeCommand</span> {
-    <span class="ident">Adjust</span> { <span class="ident">num_bytes</span>: <span class="ident">u64</span> },
-    <span class="ident">Stats</span> { <span class="ident">id</span>: <span class="ident">u64</span> },
-}
-
-<span class="comment">// BalloonStats holds stats returned from the stats_queue.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BalloonStats</span> {
-    <span class="kw">pub</span> <span class="ident">swap_in</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">swap_out</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">major_faults</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">minor_faults</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">free_memory</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">total_memory</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">available_memory</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">disk_caches</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">hugetlb_allocations</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">hugetlb_failures</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">shared_memory</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">unevictable_memory</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-}
-
 <span class="comment">// BalloonControlResult holds results for BalloonControlCommand defined above.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BalloonControlResult</span> {
     <span class="ident">Stats</span> {
         <span class="ident">stats</span>: <span class="ident">BalloonStats</span>,
         <span class="ident">balloon_actual</span>: <span class="ident">u64</span>,
-    },
-}
-
-<span class="comment">// BalloonTubeResult are results to BalloonTubeCommand defined above. This is</span>
-<span class="comment">// the same as BalloonControlResult, but with an added ID so that we can detect</span>
-<span class="comment">// stale balloon stats values queued to the balloon command tube.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BalloonTubeResult</span> {
-    <span class="ident">Stats</span> {
-        <span class="ident">stats</span>: <span class="ident">BalloonStats</span>,
-        <span class="ident">balloon_actual</span>: <span class="ident">u64</span>,
-        <span class="ident">id</span>: <span class="ident">u64</span>,
     },
 }
 

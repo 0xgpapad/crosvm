@@ -654,10 +654,10 @@
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span> <span class="kw">as</span> <span class="ident">ThisError</span>;
 
+<span class="kw">use</span> <span class="ident">balloon_control</span>::{<span class="ident">BalloonStats</span>, <span class="ident">BalloonTubeCommand</span>, <span class="ident">BalloonTubeResult</span>};
 <span class="kw">use</span> <span class="ident">base</span>::{<span class="self">self</span>, <span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">AsyncTube</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>, <span class="ident">Tube</span>};
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">select6</span>, <span class="ident">EventAsync</span>, <span class="ident">Executor</span>};
 <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">DataInit</span>, <span class="ident">Le16</span>, <span class="ident">Le32</span>, <span class="ident">Le64</span>};
-<span class="kw">use</span> <span class="ident">vm_control</span>::{<span class="ident">BalloonStats</span>, <span class="ident">BalloonTubeCommand</span>, <span class="ident">BalloonTubeResult</span>};
 <span class="kw">use</span> <span class="ident">vm_memory</span>::{<span class="ident">GuestAddress</span>, <span class="ident">GuestMemory</span>};
 
 <span class="kw">use</span> <span class="kw">super</span>::{

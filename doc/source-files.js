@@ -9,6 +9,7 @@ sourcesIndex["assertions"] = {"name":"","files":["lib.rs","mechanism.rs"]};
 sourcesIndex["async_task"] = {"name":"","files":["header.rs","lib.rs","raw.rs","runnable.rs","state.rs","task.rs","utils.rs"]};
 sourcesIndex["async_trait"] = {"name":"","files":["args.rs","expand.rs","lib.rs","lifetime.rs","parse.rs","receiver.rs"]};
 sourcesIndex["audio_streams"] = {"name":"","files":["audio_streams.rs","capture.rs","shm_streams.rs"]};
+sourcesIndex["balloon_control"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["base"] = {"name":"","files":["async_types.rs","event.rs","ioctl.rs","lib.rs","mmap.rs","shm.rs","timer.rs","tube.rs","wait_context.rs"]};
 sourcesIndex["bit_field"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["bit_field_derive"] = {"name":"","files":["bit_field_derive.rs"]};
