@@ -453,8 +453,6 @@
 <span id="453">453</span>
 <span id="454">454</span>
 <span id="455">455</span>
-<span id="456">456</span>
-<span id="457">457</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -826,11 +824,9 @@
     <span class="ident">Watchdog</span>,
     <span class="ident">S390Tsch</span>,
     <span class="ident">Epr</span>,
-    <span class="doccomment">/// The cpu triggered a system level event which is specified by the type field.</span>
-    <span class="doccomment">/// The first field is the event type and the second field is flags.</span>
-    <span class="doccomment">/// The possible event types are shutdown, reset, or crash.  So far there</span>
-    <span class="doccomment">/// are not any flags defined.</span>
-    <span class="ident">SystemEvent</span>(<span class="ident">u32</span> <span class="comment">/* event_type */</span>, <span class="ident">u64</span> <span class="comment">/* flags */</span>),
+    <span class="ident">SystemEventShutdown</span>,
+    <span class="ident">SystemEventReset</span>,
+    <span class="ident">SystemEventCrash</span>,
 }
 
 <span class="doccomment">/// A device type to create with `Vm.create_device`.</span>

@@ -1467,6 +1467,17 @@
 <span id="1467">1467</span>
 <span id="1468">1468</span>
 <span id="1469">1469</span>
+<span id="1470">1470</span>
+<span id="1471">1471</span>
+<span id="1472">1472</span>
+<span id="1473">1473</span>
+<span id="1474">1474</span>
+<span id="1475">1475</span>
+<span id="1476">1476</span>
+<span id="1477">1477</span>
+<span id="1478">1478</span>
+<span id="1479">1479</span>
+<span id="1480">1480</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2489,7 +2500,18 @@
                 <span class="comment">// field is valid</span>
                 <span class="kw">let</span> <span class="ident">event_type</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">run</span>.<span class="ident">__bindgen_anon_1</span>.<span class="ident">system_event</span>.<span class="ident">type_</span> };
                 <span class="kw">let</span> <span class="ident">event_flags</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">run</span>.<span class="ident">__bindgen_anon_1</span>.<span class="ident">system_event</span>.<span class="ident">flags</span> };
-                <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEvent</span>(<span class="ident">event_type</span>, <span class="ident">event_flags</span>))
+                <span class="kw">match</span> <span class="ident">event_type</span> {
+                    <span class="ident">KVM_SYSTEM_EVENT_SHUTDOWN</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventShutdown</span>),
+                    <span class="ident">KVM_SYSTEM_EVENT_RESET</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventReset</span>),
+                    <span class="ident">KVM_SYSTEM_EVENT_CRASH</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventCrash</span>),
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
+                        <span class="macro">error!</span>(
+                            <span class="string">&quot;Unknown KVM system event {} with flags {}&quot;</span>,
+                            <span class="ident">event_type</span>, <span class="ident">event_flags</span>
+                        );
+                        <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">EINVAL</span>))
+                    }
+                }
             }
             <span class="ident">r</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;unknown kvm exit reason: {}&quot;</span>, <span class="ident">r</span>),
         }
