@@ -4153,6 +4153,12 @@
 <span id="4153">4153</span>
 <span id="4154">4154</span>
 <span id="4155">4155</span>
+<span id="4156">4156</span>
+<span id="4157">4157</span>
+<span id="4158">4158</span>
+<span id="4159">4159</span>
+<span id="4160">4160</span>
+<span id="4161">4161</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -6605,6 +6611,7 @@
     <span class="ident">Success</span>,
     <span class="ident">VmReset</span>,
     <span class="ident">VmStop</span>,
+    <span class="ident">VmCrash</span>,
 }
 
 <span class="kw">fn</span> <span class="ident">run_vm</span>(<span class="ident">args</span>: <span class="ident">std::env::Args</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">CommandStatus</span>, ()<span class="op">&gt;</span> {
@@ -6894,6 +6901,10 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
             <span class="prelude-val">Ok</span>(<span class="ident">platform::ExitState::Reset</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="macro">info!</span>(<span class="string">&quot;crosvm has exited normally due to reset request&quot;</span>);
                 <span class="prelude-val">Ok</span>(<span class="ident">CommandStatus::VmReset</span>)
+            }
+            <span class="prelude-val">Ok</span>(<span class="ident">platform::ExitState::Crash</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="macro">info!</span>(<span class="string">&quot;crosvm has exited due to a VM crash&quot;</span>);
+                <span class="prelude-val">Ok</span>(<span class="ident">CommandStatus::VmCrash</span>)
             }
             <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="macro">error!</span>(<span class="string">&quot;crosvm has exited with error: {:#}&quot;</span>, <span class="ident">e</span>);
@@ -7550,6 +7561,7 @@ with a &#39;--backing_file&#39;.&quot;</span>
     <span class="kw">let</span> <span class="ident">exit_code</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">crosvm_main</span>() {
         <span class="prelude-val">Ok</span>(<span class="ident">CommandStatus::Success</span> <span class="op">|</span> <span class="ident">CommandStatus::VmStop</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
         <span class="prelude-val">Ok</span>(<span class="ident">CommandStatus::VmReset</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="number">32</span>,
+        <span class="prelude-val">Ok</span>(<span class="ident">CommandStatus::VmCrash</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="number">33</span>,
         <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
     };
     <span class="ident">std::process::exit</span>(<span class="ident">exit_code</span>);
