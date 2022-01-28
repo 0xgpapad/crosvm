@@ -142,8 +142,8 @@ so as not to repeat the intricate sequence of syscalls used to make a secure iso
 The fact that minijail was written, maintained, and continuously tested by a professional security
 team more than makes up for its being written in an memory unsafe language.</p>
 <p>The exact configuration of the sandbox varies by device, but they are mostly alike. See
-<code>create_base_minijail</code> from <code>linux.rs</code>. The set of security constraints explicitly used in crosvm
-are:</p>
+<code>create_base_minijail</code> from <code>linux/jail_helpers.rs</code>. The set of security constraints explicitly used
+in crosvm are:</p>
 <ul>
 <li>PID Namespace
 <ul>

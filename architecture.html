@@ -143,14 +143,14 @@
 <li>Written in Rust for security and safety</li>
 </ul>
 <p>A typical session of crosvm starts in <code>main.rs</code> where command line parsing is done to build up a
-<code>Config</code> structure. The <code>Config</code> is used by <code>run_config</code> in <code>linux.rs</code> to setup and execute a VM.
-Broken down into rough steps:</p>
+<code>Config</code> structure. The <code>Config</code> is used by <code>run_config</code> in <code>linux/mod.rs</code> to setup and execute a
+VM. Broken down into rough steps:</p>
 <ol>
 <li>Load the linux kernel from an ELF file.</li>
 <li>Create a handful of control sockets used by the virtual devices.</li>
 <li>Invoke the architecture specific VM builder <code>Arch::build_vm</code> (located in <code>x86_64/src/lib.rs</code> or
 <code>aarch64/src/lib.rs</code>).</li>
-<li><code>Arch::build_vm</code> will itself invoke the provided <code>create_devices</code> function from <code>linux.rs</code></li>
+<li><code>Arch::build_vm</code> will itself invoke the provided <code>create_devices</code> function from <code>linux/mod.rs</code></li>
 <li><code>create_devices</code> creates every PCI device, including the virtio devices, that were configured in
 <code>Config</code>, along with matching <a href="https://android.googlesource.com/platform/external/minijail">minijail</a> configs for each.</li>
 <li><code>Arch::generate_pci_root</code>, using a list of every PCI device with optional <code>Minijail</code>, will
@@ -167,12 +167,12 @@ descriptors that were specifically allowed by that device's security policy. Thi
 surprising behavior to be aware of such as why some file descriptors which were once valid are now
 invalid.</p>
 <h2 id="sandboxing-policy"><a class="header" href="#sandboxing-policy">Sandboxing Policy</a></h2>
-<p>Every sandbox is made with <a href="https://android.googlesource.com/platform/external/minijail">minijail</a> and starts with <code>create_base_minijail</code> in <code>linux.rs</code> which set
-some very restrictive settings. Linux namespaces and seccomp filters are used extensively. Each
-seccomp policy can be found under <code>seccomp/{arch}/{device}.policy</code> and should start by
-<code>@include</code>-ing the <code>common_device.policy</code>. With the exception of architecture specific devices (such
-as <code>Pl030</code> on ARM or <code>I8042</code> on x86_64), every device will need a different policy for each
-supported architecture.</p>
+<p>Every sandbox is made with <a href="https://android.googlesource.com/platform/external/minijail">minijail</a> and starts with <code>create_base_minijail</code> in
+<code>linux/jail_helpers.rs</code> which set some very restrictive settings. Linux namespaces and seccomp
+filters are used extensively. Each seccomp policy can be found under
+<code>seccomp/{arch}/{device}.policy</code> and should start by <code>@include</code>-ing the <code>common_device.policy</code>. With
+the exception of architecture specific devices (such as <code>Pl030</code> on ARM or <code>I8042</code> on x86_64), every
+device will need a different policy for each supported architecture.</p>
 <h2 id="the-vm-control-sockets"><a class="header" href="#the-vm-control-sockets">The VM Control Sockets</a></h2>
 <p>For the operations that devices need to perform on the global VM state, such as mapping into guest
 memory address space, there are the vm control sockets. There are a few kinds, split by the type of
