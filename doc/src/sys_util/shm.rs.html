@@ -450,6 +450,18 @@
 <span id="450">450</span>
 <span id="451">451</span>
 <span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -461,8 +473,8 @@
 
 <span class="kw">use</span> <span class="ident">libc</span>::{
     <span class="self">self</span>, <span class="ident">c_char</span>, <span class="ident">c_int</span>, <span class="ident">c_long</span>, <span class="ident">c_uint</span>, <span class="ident">close</span>, <span class="ident">fcntl</span>, <span class="ident">ftruncate64</span>, <span class="ident">off64_t</span>, <span class="ident">syscall</span>,
-    <span class="ident">SYS_memfd_create</span>, <span class="ident">EINVAL</span>, <span class="ident">F_ADD_SEALS</span>, <span class="ident">F_GET_SEALS</span>, <span class="ident">F_SEAL_GROW</span>, <span class="ident">F_SEAL_SEAL</span>, <span class="ident">F_SEAL_SHRINK</span>,
-    <span class="ident">F_SEAL_WRITE</span>, <span class="ident">MFD_ALLOW_SEALING</span>,
+    <span class="ident">SYS_memfd_create</span>, <span class="ident">EINVAL</span>, <span class="ident">F_ADD_SEALS</span>, <span class="ident">F_GET_SEALS</span>, <span class="ident">F_SEAL_FUTURE_WRITE</span>, <span class="ident">F_SEAL_GROW</span>,
+    <span class="ident">F_SEAL_SEAL</span>, <span class="ident">F_SEAL_SHRINK</span>, <span class="ident">F_SEAL_WRITE</span>, <span class="ident">MFD_ALLOW_SEALING</span>,
 };
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
@@ -502,7 +514,7 @@
         <span class="self">self</span>.<span class="number">0</span>
     }
 
-    <span class="doccomment">/// True of the grow seal bit is present.</span>
+    <span class="doccomment">/// True if the grow seal bit is present.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">grow_seal</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="ident">F_SEAL_GROW</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
@@ -514,7 +526,7 @@
         <span class="self">self</span>.<span class="number">0</span> <span class="op">|</span><span class="op">=</span> <span class="ident">F_SEAL_GROW</span>;
     }
 
-    <span class="doccomment">/// True of the shrink seal bit is present.</span>
+    <span class="doccomment">/// True if the shrink seal bit is present.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">shrink_seal</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="ident">F_SEAL_SHRINK</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
@@ -526,7 +538,7 @@
         <span class="self">self</span>.<span class="number">0</span> <span class="op">|</span><span class="op">=</span> <span class="ident">F_SEAL_SHRINK</span>;
     }
 
-    <span class="doccomment">/// True of the write seal bit is present.</span>
+    <span class="doccomment">/// True if the write seal bit is present.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_seal</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="ident">F_SEAL_WRITE</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
@@ -536,6 +548,18 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_write_seal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="number">0</span> <span class="op">|</span><span class="op">=</span> <span class="ident">F_SEAL_WRITE</span>;
+    }
+
+    <span class="doccomment">/// True if the future write seal bit is present.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">future_write_seal</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="ident">F_SEAL_FUTURE_WRITE</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
+    }
+
+    <span class="doccomment">/// Sets the future write seal bit.</span>
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_future_write_seal</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="self">self</span>.<span class="number">0</span> <span class="op">|</span><span class="op">=</span> <span class="ident">F_SEAL_FUTURE_WRITE</span>;
     }
 
     <span class="doccomment">/// True of the seal seal bit is present.</span>

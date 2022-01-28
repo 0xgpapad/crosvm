@@ -256,7 +256,7 @@ Configuration summary:
 
 Build targets in project: 7
 NOTICE: Future-deprecated features used:
- * 0.56.0: {'meson.build_root', 'Dependency.get_pkgconfig_variable'}
+ * 0.56.0: {'Dependency.get_pkgconfig_variable', 'meson.build_root'}
 
 virglrenderer 0.9.0
 
@@ -265,12 +265,12 @@ virglrenderer 0.9.0
 
 Found ninja-1.10.0 at /usr/bin/ninja
 [1/44] Compiling C object src/mesa/libmesa.a.p/util_bitscan.c.o
-[2/44] Compiling C object src/mesa/libmesa.a.p/util_os_misc.c.o
-[3/44] Compiling C object src/mesa/libmesa.a.p/util_os_file.c.o
-[4/44] Compiling C object src/mesa/libmesa.a.p/util_u_cpu_detect.c.o
-[5/44] Compiling C object src/mesa/libmesa.a.p/util_hash_table.c.o
-[6/44] Compiling C object src/mesa/libmesa.a.p/util_ralloc.c.o
-[7/44] Compiling C object src/mesa/libmesa.a.p/util_u_debug.c.o
+[2/44] Compiling C object src/mesa/libmesa.a.p/util_os_file.c.o
+[3/44] Compiling C object src/mesa/libmesa.a.p/util_os_misc.c.o
+[4/44] Compiling C object src/mesa/libmesa.a.p/util_hash_table.c.o
+[5/44] Compiling C object src/mesa/libmesa.a.p/util_u_cpu_detect.c.o
+[6/44] Compiling C object src/mesa/libmesa.a.p/util_u_debug.c.o
+[7/44] Compiling C object src/mesa/libmesa.a.p/util_ralloc.c.o
 [8/44] Compiling C object src/mesa/libmesa.a.p/util_u_math.c.o
 [9/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_debug_describe.c.o
 [10/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_hash_table.c.o
@@ -288,14 +288,14 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [22/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_iterate.c.o
 [23/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_strings.c.o
 [24/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_sanity.c.o
-[25/44] Compiling C object src/libvirgl.a.p/iov.c.o
-[26/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_util.c.o
+[25/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_util.c.o
+[26/44] Compiling C object src/libvirgl.a.p/iov.c.o
 [27/44] Compiling C object src/libvirgl.a.p/virgl_context.c.o
 [28/44] Compiling C object src/libvirgl.a.p/virgl_util.c.o
 [29/44] Compiling C object src/libvirgl.a.p/virgl_resource.c.o
 [30/44] Compiling C object src/libvirgl.a.p/vrend_debug.c.o
-[31/44] Compiling C object src/libvirgl.a.p/vrend_blitter.c.o
-[32/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
+[31/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
+[32/44] Compiling C object src/libvirgl.a.p/vrend_blitter.c.o
 [33/44] Compiling C object src/libvirgl.a.p/vrend_object.c.o
 [34/44] Compiling C object src/libvirgl.a.p/vrend_formats.c.o
 [35/44] Compiling C object src/libvirgl.a.p/vrend_decode.c.o
