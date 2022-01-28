@@ -836,6 +836,8 @@
 <span id="836">836</span>
 <span id="837">837</span>
 <span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1515,6 +1517,7 @@
         );
 
         <span class="comment">// Calculating the offset of used_event within Avail structure</span>
+        <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deref_nullptr</span>)]</span>
         <span class="kw">let</span> <span class="ident">used_event_offset</span>: <span class="ident">u64</span> <span class="op">=</span>
             <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span>(<span class="kw-2">*</span>(<span class="ident">::std::ptr::null</span>::<span class="op">&lt;</span><span class="ident">Avail</span><span class="op">&gt;</span>())).<span class="ident">used_event</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="ident">u64</span> };
         <span class="kw">let</span> <span class="ident">used_event_address</span> <span class="op">=</span> <span class="ident">GuestAddress</span>(<span class="ident">AVAIL_OFFSET</span> <span class="op">+</span> <span class="ident">used_event_offset</span>);
@@ -1591,6 +1594,7 @@
         );
 
         <span class="comment">// Calculating the offset of used_event within Avail structure</span>
+        <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deref_nullptr</span>)]</span>
         <span class="kw">let</span> <span class="ident">used_event_offset</span>: <span class="ident">u64</span> <span class="op">=</span>
             <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span>(<span class="kw-2">*</span>(<span class="ident">::std::ptr::null</span>::<span class="op">&lt;</span><span class="ident">Avail</span><span class="op">&gt;</span>())).<span class="ident">used_event</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="ident">u64</span> };
         <span class="kw">let</span> <span class="ident">used_event_address</span> <span class="op">=</span> <span class="ident">GuestAddress</span>(<span class="ident">AVAIL_OFFSET</span> <span class="op">+</span> <span class="ident">used_event_offset</span>);
