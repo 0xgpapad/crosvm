@@ -586,7 +586,6 @@
 <span id="586">586</span>
 <span id="587">587</span>
 <span id="588">588</span>
-<span id="589">589</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -930,7 +929,7 @@
         );
         <span class="self">self</span>.<span class="ident">release_interfaces</span>();
 
-        <span class="kw">let</span> <span class="ident">cur_config</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">device</span>.<span class="ident">lock</span>().<span class="ident">get_active_configuration</span>() {
+        <span class="kw">let</span> <span class="ident">_cur_config</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">device</span>.<span class="ident">lock</span>().<span class="ident">get_active_configuration</span>() {
             <span class="prelude-val">Ok</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">c</span>),
             <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// The device may be in the default state, in which case</span>
@@ -941,12 +940,11 @@
                 <span class="prelude-val">None</span>
             }
         };
-        <span class="kw">if</span> <span class="prelude-val">Some</span>(<span class="ident">config</span>) <span class="op">!</span><span class="op">=</span> <span class="ident">cur_config</span> {
-            <span class="self">self</span>.<span class="ident">device</span>
-                .<span class="ident">lock</span>()
-                .<span class="ident">set_active_configuration</span>(<span class="ident">config</span>)
-                .<span class="ident">map_err</span>(<span class="ident">Error::SetActiveConfig</span>)<span class="question-mark">?</span>;
-        }
+
+        <span class="self">self</span>.<span class="ident">device</span>
+            .<span class="ident">lock</span>()
+            .<span class="ident">set_active_configuration</span>(<span class="ident">config</span>)
+            .<span class="ident">map_err</span>(<span class="ident">Error::SetActiveConfig</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">config_descriptor</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">device</span>
