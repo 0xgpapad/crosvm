@@ -111,7 +111,7 @@
         $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">doc</span>:<span class="ident">meta</span>]</span>)<span class="op">*</span>
         (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Select</span>:<span class="ident">ident</span>, <span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span>:<span class="ident">ident</span>),<span class="kw-2">*</span><span class="op">&gt;</span>),
     )<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> ($(
-        <span class="attribute">#[<span class="ident">must_use</span> <span class="op">=</span> <span class="string">&quot;Combinations of futures don&#39;t do anything unless run in an executor.&quot;</span>]</span>
+
         <span class="macro">paste::item!</span> {
             <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">Select</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Unpin</span>),<span class="kw-2">*</span><span class="op">&gt;</span> {
                 $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span>: <span class="ident">MaybeDone</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">Fut</span><span class="op">&gt;</span>,)<span class="op">*</span>
