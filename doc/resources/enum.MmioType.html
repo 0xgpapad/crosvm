@@ -2,7 +2,7 @@
     Low,
     High,
 }</code></pre></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Manages allocating system resources such as address space and interrupt numbers.</p>
-<h1 id="example---use-the-systemaddress-builder" class="section-header"><a href="#example---use-the-systemaddress-builder">Example - Use the <code>SystemAddress</code> builder.</a></h1>
+<h1 id="example---use-the-systemallocator-builder" class="section-header"><a href="#example---use-the-systemallocator-builder">Example - Use the <code>SystemAllocator</code> builder.</a></h1>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code>  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">a</span>) <span class="op">=</span> <span class="ident">SystemAllocator::builder</span>()
           .<span class="ident">add_io_addresses</span>(<span class="number">0x1000</span>, <span class="number">0x10000</span>)
           .<span class="ident">add_high_mmio_addresses</span>(<span class="number">0x10000000</span>, <span class="number">0x10000000</span>)

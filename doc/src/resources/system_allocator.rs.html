@@ -312,6 +312,8 @@
 <span id="312">312</span>
 <span id="313">313</span>
 <span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -324,7 +326,7 @@
 
 <span class="doccomment">/// Manages allocating system resources such as address space and interrupt numbers.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// # Example - Use the `SystemAddress` builder.</span>
+<span class="doccomment">/// # Example - Use the `SystemAllocator` builder.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">/// # use resources::{Alloc, MmioType, SystemAllocator};</span>
@@ -385,6 +387,8 @@
     <span class="doccomment">/// * `high_size` - The size of high MMIO space.</span>
     <span class="doccomment">/// * `low_base` - The starting address of low MMIO space.</span>
     <span class="doccomment">/// * `low_size` - The size of low MMIO space.</span>
+    <span class="doccomment">/// * `platform_base` - The starting address of platform MMIO space.</span>
+    <span class="doccomment">/// * `platform_size` - The size of platform MMIO space.</span>
     <span class="doccomment">/// * `first_irq` - The first irq number to give out.</span>
     <span class="kw">fn</span> <span class="ident">new</span>(
         <span class="ident">io_base</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
