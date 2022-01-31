@@ -329,6 +329,9 @@
 <span id="329">329</span>
 <span id="330">330</span>
 <span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -337,9 +340,12 @@
 <span class="doccomment">//! depends on &quot;gpu&quot; feature</span>
 <span class="kw">use</span> <span class="ident">std::collections::HashSet</span>;
 <span class="kw">use</span> <span class="ident">std::env</span>;
+<span class="kw">use</span> <span class="ident">std::path::PathBuf</span>;
 
 <span class="kw">use</span> <span class="ident">devices::virtio::vhost::user::vmm::Gpu</span> <span class="kw">as</span> <span class="ident">VhostUserGpu</span>;
 <span class="kw">use</span> <span class="ident">devices::virtio::GpuRenderServerParameters</span>;
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::VhostUserOption</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 

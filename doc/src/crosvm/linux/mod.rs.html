@@ -1800,6 +1800,8 @@
 <span id="1800">1800</span>
 <span id="1801">1801</span>
 <span id="1802">1802</span>
+<span id="1803">1803</span>
+<span id="1804">1804</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1812,9 +1814,10 @@
 <span class="kw">use</span> <span class="ident">std::io::stdin</span>;
 <span class="kw">use</span> <span class="ident">std::iter</span>;
 <span class="kw">use</span> <span class="ident">std::mem</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix</span>::{<span class="ident">net::UnixStream</span>, <span class="ident">prelude::OpenOptionsExt</span>};
-<span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
-<span class="kw">use</span> <span class="ident">std::str</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">std::os::unix::net::UnixStream</span>;
+<span class="kw">use</span> <span class="ident">std::os::unix::prelude::OpenOptionsExt</span>;
+<span class="kw">use</span> <span class="ident">std::path::Path</span>;
 <span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">mpsc</span>, <span class="ident">Arc</span>, <span class="ident">Barrier</span>};
 <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
@@ -1831,6 +1834,7 @@
 <span class="kw">use</span> <span class="ident">base</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">devices::serial_device::SerialHardware</span>;
 <span class="kw">use</span> <span class="ident">devices::vfio</span>::{<span class="ident">VfioCommonSetup</span>, <span class="ident">VfioCommonTrait</span>};
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">devices::virtio</span>::{<span class="self">self</span>, <span class="ident">EventDevice</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">devices::Ac97Dev</span>;
@@ -1852,7 +1856,7 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gdb&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::gdb</span>::{<span class="ident">gdb_thread</span>, <span class="ident">GdbStub</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Config</span>, <span class="ident">Executable</span>, <span class="ident">SharedDir</span>, <span class="ident">SharedDirKind</span>, <span class="ident">VfioType</span>, <span class="ident">VhostUserOption</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Config</span>, <span class="ident">Executable</span>, <span class="ident">SharedDir</span>, <span class="ident">SharedDirKind</span>, <span class="ident">VfioType</span>};
 <span class="kw">use</span> <span class="ident">arch</span>::{
     <span class="self">self</span>, <span class="ident">LinuxArch</span>, <span class="ident">RunnableLinuxVm</span>, <span class="ident">VcpuAffinity</span>, <span class="ident">VirtioDeviceStub</span>, <span class="ident">VmComponents</span>, <span class="ident">VmImage</span>,
 };

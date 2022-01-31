@@ -186,6 +186,7 @@
 <span id="186">186</span>
 <span id="187">187</span>
 <span id="188">188</span>
+<span id="189">189</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -337,6 +338,7 @@
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">gid</span>: <span class="ident">gid_t</span>,
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">add_current_user_as_root_to_jail</span>(<span class="ident">jail</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Minijail</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Ids</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">crosvm_uid</span> <span class="op">=</span> <span class="ident">geteuid</span>();
     <span class="kw">let</span> <span class="ident">crosvm_gid</span> <span class="op">=</span> <span class="ident">getegid</span>();
