@@ -138,14 +138,14 @@
 <p>To see the usage information for your version of crosvm, run <code>crosvm</code> or <code>crosvm run --help</code>.</p>
 <h2 id="boot-a-kernel"><a class="header" href="#boot-a-kernel">Boot a Kernel</a></h2>
 <p>To run a very basic VM with just a kernel and default devices:</p>
-<pre><code class="language-bash">$ crosvm run &quot;${KERNEL_PATH}&quot;
+<pre><code class="language-sh">crosvm run &quot;${KERNEL_PATH}&quot;
 </code></pre>
 <p>The uncompressed kernel image, also known as vmlinux, can be found in your kernel build directory in
 the case of x86 at <code>arch/x86/boot/compressed/vmlinux</code>.</p>
 <h2 id="rootfs"><a class="header" href="#rootfs">Rootfs</a></h2>
 <h3 id="with-a-disk-image"><a class="header" href="#with-a-disk-image">With a disk image</a></h3>
 <p>In most cases, you will want to give the VM a virtual block device to use as a root file system:</p>
-<pre><code class="language-bash">$ crosvm run -r &quot;${ROOT_IMAGE}&quot; &quot;${KERNEL_PATH}&quot;
+<pre><code class="language-sh">crosvm run -r &quot;${ROOT_IMAGE}&quot; &quot;${KERNEL_PATH}&quot;
 </code></pre>
 <p>The root image must be a path to a disk image formatted in a way that the kernel can read. Typically
 this is a squashfs image made with <code>mksquashfs</code> or an ext4 image made with <code>mkfs.ext4</code>. By using the
@@ -155,7 +155,7 @@ only be given once. More disks can be given with <code>-d</code> or <code>--rwdi
 <blockquote>
 <p><strong>WARNING:</strong> Writable disks are at risk of corruption by a malicious or malfunctioning guest OS.</p>
 </blockquote>
-<pre><code class="language-bash">crosvm run --rwdisk &quot;${ROOT_IMAGE}&quot; -p &quot;root=/dev/vda&quot; vmlinux
+<pre><code class="language-sh">crosvm run --rwdisk &quot;${ROOT_IMAGE}&quot; -p &quot;root=/dev/vda&quot; vmlinux
 </code></pre>
 <blockquote>
 <p><strong>NOTE:</strong> If more disks arguments are added prior to the desired rootfs image, the <code>root=/dev/vda</code>
@@ -164,20 +164,20 @@ must be adjusted to the appropriate letter.</p>
 <h3 id="with-virtiofs"><a class="header" href="#with-virtiofs">With virtiofs</a></h3>
 <p>Linux kernel 5.4+ is required for using virtiofs. This is convenient for testing. The file system
 must be named &quot;mtd*&quot; or &quot;ubi*&quot;.</p>
-<pre><code class="language-bash">crosvm run --shared-dir &quot;/:mtdfake:type=fs:cache=always&quot; \
+<pre><code class="language-sh">crosvm run --shared-dir &quot;/:mtdfake:type=fs:cache=always&quot; \
     -p &quot;rootfstype=virtiofs root=mtdfake&quot; vmlinux
 </code></pre>
 <h2 id="network-device"><a class="header" href="#network-device">Network device</a></h2>
 <p>The most convenient way to provide a network device to a guest is to setup a persistent TAP
 interface on the host. This section will explain how to do this for basic IPv4 connectivity.</p>
-<pre><code class="language-bash">sudo ip tuntap add mode tap user $USER vnet_hdr crosvm_tap
+<pre><code class="language-sh">sudo ip tuntap add mode tap user $USER vnet_hdr crosvm_tap
 sudo ip addr add 192.168.10.1/24 dev crosvm_tap
 sudo ip link set crosvm_tap up
 </code></pre>
 <p>These commands create a TAP interface named <code>crosvm_tap</code> that is accessible to the current user,
 configure the host to use the IP address <code>192.168.10.1</code>, and bring the interface up.</p>
 <p>The next step is to make sure that traffic from/to this interface is properly routed:</p>
-<pre><code class="language-bash">sudo sysctl net.ipv4.ip_forward=1
+<pre><code class="language-sh">sudo sysctl net.ipv4.ip_forward=1
 # Network interface used to connect to the internet.
 HOST_DEV=$(ip route get 8.8.8.8 | awk -- '{printf $5}')
 sudo iptables -t nat -A POSTROUTING -o &quot;${HOST_DEV}&quot; -j MASQUERADE
@@ -185,14 +185,14 @@ sudo iptables -A FORWARD -i &quot;${HOST_DEV}&quot; -o crosvm_tap -m state --sta
 sudo iptables -A FORWARD -i crosvm_tap -o &quot;${HOST_DEV}&quot; -j ACCEPT
 </code></pre>
 <p>The interface is now configured and can be used by crosvm:</p>
-<pre><code class="language-bash">crosvm run \
+<pre><code class="language-sh">crosvm run \
   ...
   --tap-name crosvm_tap \
   ...
 </code></pre>
 <p>Provided the guest kernel had support for <code>VIRTIO_NET</code>, the network device should be visible and
 configurable from the guest:</p>
-<pre><code class="language-bash"># Replace with the actual network interface name of the guest
+<pre><code class="language-sh"># Replace with the actual network interface name of the guest
 # (use &quot;ip addr&quot; to list the interfaces)
 GUEST_DEV=enp0s5
 sudo ip addr add 192.168.10.2/24 dev &quot;${GUEST_DEV}&quot;
@@ -213,9 +213,9 @@ running. To tell crosvm to stop and exit, for example:</p>
 <p><strong>NOTE:</strong> If the socket path given is for a directory, a socket name underneath that path will be
 generated based on crosvm's PID.</p>
 </blockquote>
-<pre><code class="language-bash">$ crosvm run -s /run/crosvm.sock ${USUAL_CROSVM_ARGS}
+<pre><code class="language-sh">crosvm run -s /run/crosvm.sock ${USUAL_CROSVM_ARGS}
     &lt;in another shell&gt;
-$ crosvm stop /run/crosvm.sock
+crosvm stop /run/crosvm.sock
 </code></pre>
 <blockquote>
 <p><strong>WARNING:</strong> The guest OS will not be notified or gracefully shutdown.</p>
@@ -237,10 +237,10 @@ to use.</p>
 <p>crosvm supports <a href="https://sourceware.org/gdb/onlinedocs/gdb/Remote-Protocol.html">GDB Remote Serial Protocol</a> to allow developers to debug guest kernel via GDB.</p>
 <p>You can enable the feature by <code>--gdb</code> flag:</p>
 <pre><code class="language-sh"># Use uncompressed vmlinux
-$ crosvm run --gdb &lt;port&gt; ${USUAL_CROSVM_ARGS} vmlinux
+crosvm run --gdb &lt;port&gt; ${USUAL_CROSVM_ARGS} vmlinux
 </code></pre>
 <p>Then, you can start GDB in another shell.</p>
-<pre><code class="language-sh">$ gdb vmlinux
+<pre><code class="language-sh">gdb vmlinux
 (gdb) target remote :&lt;port&gt;
 (gdb) hbreak start_kernel
 (gdb) c

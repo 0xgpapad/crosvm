@@ -137,7 +137,7 @@
                         <h1 id="building-for-linux"><a class="header" href="#building-for-linux">Building for Linux</a></h1>
 <h2 id="checking-out"><a class="header" href="#checking-out">Checking out</a></h2>
 <p>Obtain the source code via git clone.</p>
-<pre><code>git clone https://chromium.googlesource.com/chromiumos/platform/crosvm
+<pre><code class="language-sh">git clone https://chromium.googlesource.com/chromiumos/platform/crosvm
 </code></pre>
 <h2 id="setting-up-the-development-environment"><a class="header" href="#setting-up-the-development-environment">Setting up the development environment</a></h2>
 <p>Crosvm uses submodules to manage external dependencies. Initialize them via:</p>
@@ -150,7 +150,7 @@ git config push.recurseSubmodules no
 </code></pre>
 <p>Crosvm development best works on Debian derivatives. First install rust via https://rustup.rs/. Then
 for the rest, we provide a script to install the necessary packages on Debian:</p>
-<pre><code>$ ./tools/install-deps
+<pre><code class="language-sh">./tools/install-deps
 </code></pre>
 <p>For other systems, please see below for instructions on
 <a href="#using-the-development-container">Using the development container</a>.</p>
@@ -158,9 +158,9 @@ for the rest, we provide a script to install the necessary packages on Debian:</
 <p>Crosvm is built and tested on x86, aarch64 and armhf. Your host needs to be set up to allow
 installation of foreign architecture packages.</p>
 <p>On Debian this is as easy as:</p>
-<pre><code class="language-sh">$ sudo dpkg --add-architecture arm64
-$ sudo dpkg --add-architecture armhf
-$ sudo apt update
+<pre><code class="language-sh">sudo dpkg --add-architecture arm64
+sudo dpkg --add-architecture armhf
+sudo apt update
 </code></pre>
 <p>On ubuntu this is a little harder and needs some
 <a href="https://askubuntu.com/questions/430705/how-to-use-apt-get-to-download-multi-arch-library">manual modifications</a>
@@ -168,18 +168,18 @@ of APT sources.</p>
 <p>For other systems (<strong>including gLinux</strong>), please see below for instructions on
 <a href="#using-the-development-container">Using the development container</a>.</p>
 <p>With that enabled, the following scripts will install the needed packages:</p>
-<pre><code class="language-sh">$ ./tools/install-aarch64-deps
-$ ./tools/install-armhf-deps
+<pre><code class="language-sh">./tools/install-aarch64-deps
+./tools/install-armhf-deps
 </code></pre>
 <h3 id="using-the-development-container"><a class="header" href="#using-the-development-container">Using the development container</a></h3>
 <p>We provide a Debian container with the required packages installed. With
 <a href="https://docs.docker.com/get-docker/">Docker installed</a>, it can be started with:</p>
-<pre><code class="language-sh">$ ./tools/dev_container
+<pre><code class="language-sh">./tools/dev_container
 </code></pre>
 <p>The container image is big and may take a while to download when first used. Once started, you can
 follow all instructions in this document within the container shell.</p>
 <p>Instead of using the interactive shell, commands to execute can be provided directly:</p>
-<pre><code class="language-sh">$ ./tools/dev_container cargo build
+<pre><code class="language-sh">./tools/dev_container cargo build
 </code></pre>
 <p>Note: The container and build artifacts are preserved between calls to <code>./tools/dev_container</code>. If
 you wish to start fresh, use the <code>--reset</code> flag.</p>
@@ -194,8 +194,8 @@ flag. (e.g. <code>cargo build --features=gdb</code>)</p>
 that you are working on.</p>
 <p>If you are working on aarch64 specific code, you can use the <code>set_test_target</code> tool to instruct
 cargo to build for aarch64 and run tests on a VM:</p>
-<pre><code class="language-sh">$ ./tools/set_test_target vm:aarch64 &amp;&amp; source .envrc
-$ cd mycrate &amp;&amp; cargo test
+<pre><code class="language-sh">./tools/set_test_target vm:aarch64 &amp;&amp; source .envrc
+cd mycrate &amp;&amp; cargo test
 </code></pre>
 <p>The script will start a VM for testing and write environment variables for cargo to <code>.envrc</code>. With
 those <code>cargo build</code> will build for aarch64 and <code>cargo test</code> will run tests inside the VM.</p>
@@ -203,34 +203,34 @@ those <code>cargo build</code> will build for aarch64 and <code>cargo test</code
 <h3 id="running-all-tests"><a class="header" href="#running-all-tests">Running all tests</a></h3>
 <p>Crosvm cannot use <code>cargo test --workspace</code> because of various restrictions of cargo. So we have our
 own test runner:</p>
-<pre><code class="language-sh">$ ./tools/run_tests
+<pre><code class="language-sh">./tools/run_tests
 </code></pre>
 <p>Which will run all tests locally. Since we have some architecture-dependent code, we also have the
 option of running tests within an aarch64 VM:</p>
-<pre><code class="language-sh">$ ./tools/run_tests --target=vm:aarch64
+<pre><code class="language-sh">./tools/run_tests --target=vm:aarch64
 </code></pre>
 <p>When working on a machine that does not support cross-compilation (e.g. gLinux), you can use the dev
 container to build and run the tests.</p>
-<pre><code class="language-sh">$ ./tools/dev_container ./tools/run_tests --target=vm:aarch64
+<pre><code class="language-sh">./tools/dev_container ./tools/run_tests --target=vm:aarch64
 </code></pre>
 <p>It is also possible to run tests on a remote machine via ssh. The target architecture is
 automatically detected:</p>
-<pre><code class="language-sh">$ ./tools/run_tests --target=ssh:hostname
+<pre><code class="language-sh">./tools/run_tests --target=ssh:hostname
 </code></pre>
 <p>However, it is your responsibility to make sure the required libraries for crosvm are installed and
 password-less authentication is set up. See <code>./tools/impl/testvm/cloud_init.yaml</code> for hints on what
 the VM has installed.</p>
 <h3 id="presubmit-checks"><a class="header" href="#presubmit-checks">Presubmit checks</a></h3>
 <p>To verify changes before submitting, use the <code>presubmit</code> script:</p>
-<pre><code>$ ./tools/presubmit
+<pre><code class="language-sh">./tools/presubmit
 </code></pre>
 <p>This will run clippy, formatters and runs all tests. The presubmits will use the dev container to
 build for other platforms if your host is not set up to do so.</p>
 <p>To run checks faster, they can be run in parallel in multiple tmux panes:</p>
-<pre><code>$ ./tools/presubmit --tmux
+<pre><code class="language-sh">./tools/presubmit --tmux
 </code></pre>
 <p>The <code>--quick</code> variant will skip some slower checks, like building for other platforms altogether:</p>
-<pre><code>$ ./tools/presubmit --quick
+<pre><code class="language-sh">./tools/presubmit --quick
 </code></pre>
 <h2 id="known-issues"><a class="header" href="#known-issues">Known issues</a></h2>
 <ul>

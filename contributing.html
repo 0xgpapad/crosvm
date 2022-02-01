@@ -182,7 +182,9 @@ with the <code>#[sorted]</code> attribute to keep their corresponding match stat
 <h2 id="submitting-code"><a class="header" href="#submitting-code">Submitting Code</a></h2>
 <p>Since crosvm is one of Chromium OS projects, please read through <a href="https://chromium.googlesource.com/chromiumos/docs/+/HEAD/contributing.md">Chrome OS Contributing Guide</a>
 first. This section describes the crosvm-specific workflow.</p>
-<h3 id="creating-a-cl"><a class="header" href="#creating-a-cl">Creating a CL</a></h3>
+<h3 id="trying-crosvm"><a class="header" href="#trying-crosvm">Trying crosvm</a></h3>
+<p>Please see <a href="https://google.github.io/crosvm/">the book of crosvm</a>.</p>
+<h3 id="sending-for-code-review"><a class="header" href="#sending-for-code-review">Sending for code review</a></h3>
 <p>We use <a href="https://chromium-review.googlesource.com/">Chromium Gerrit</a> for code reviewing. All crosvm
 CLs are listed at the <a href="https://chromium-review.googlesource.com/q/project:chromiumos%252Fplatform%252Fcrosvm">crosvm component</a>.</p>
 <blockquote>
@@ -198,15 +200,14 @@ CQ-tested code as a foundation.</p>
 <p>Use <code>repo upload -D main</code> to upload changes to the main branch, which works fine in most cases where
 gerrit can rebase the commit cleanly. If not, please rebase to <code>cros/main</code> manually.</p>
 <h4 id="for-non-chromium-os-developers"><a class="header" href="#for-non-chromium-os-developers">For non-Chromium OS Developers</a></h4>
-<p>If you are not interested in other Chromium OS components, you can simply clone and contribute
-crosvm only. Before you make a commit locally, please set up <a href="https://gerrit-review.googlesource.com/Documentation/user-changeid.html">Gerrit's Change-Id hook</a> on your
-system.</p>
-<pre><code class="language-bash">$ git clone https://chromium.googlesource.com/chromiumos/platform/crosvm
-# Modify code and make a git commit with a commit message following this rule:
+<p>If you are not interested in other Chromium OS components, you can simply
+<a href="https://google.github.io/crosvm/building_crosvm/linux.html">clone and contribute crosvm only</a>.
+Before you make a commit locally, please set up <a href="https://gerrit-review.googlesource.com/Documentation/user-changeid.html">Gerrit's Change-Id hook</a> on your system.</p>
+<pre><code class="language-sh"># Modify code and make a git commit with a commit message following this rule:
 # https://chromium.googlesource.com/chromiumos/docs/+/HEAD/contributing.md#Commit-messages
-$ git commit
+git commit
 # Push your commit to Chromium Gerrit (https://chromium-review.googlesource.com/).
-$ git push origin HEAD:refs/for/main
+git push origin HEAD:refs/for/main
 </code></pre>
 <h3 id="code-review"><a class="header" href="#code-review">Code review</a></h3>
 <p>Your change must be reviewed and approved by one of <a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/HEAD/OWNERS">crosvm owners</a>.</p>
@@ -240,7 +241,7 @@ through the CQ and watched by the crosvm-uprev rotation.</p>
 <a href="https://github.com/google/styleguide/blob/gh-pages/docguide/style.md">Google Markdown style guide</a>.</p>
 <p>To render the book locally, you need to install mdbook and <a href="https://github.com/badboy/mdbook-mermaid">mdbook-mermaid</a>, which should be
 installed when you run <code>./tools/install-deps</code>script.</p>
-<pre><code class="language-bash">cd crosvm/docs/book/
+<pre><code class="language-sh">cd crosvm/docs/book/
 mdbook build
 </code></pre>
 <blockquote>

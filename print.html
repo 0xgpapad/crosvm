@@ -162,7 +162,7 @@ operating system using the platform's hypervisor.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="building-for-linux"><a class="header" href="#building-for-linux">Building for Linux</a></h1>
 <h2 id="checking-out"><a class="header" href="#checking-out">Checking out</a></h2>
 <p>Obtain the source code via git clone.</p>
-<pre><code>git clone https://chromium.googlesource.com/chromiumos/platform/crosvm
+<pre><code class="language-sh">git clone https://chromium.googlesource.com/chromiumos/platform/crosvm
 </code></pre>
 <h2 id="setting-up-the-development-environment"><a class="header" href="#setting-up-the-development-environment">Setting up the development environment</a></h2>
 <p>Crosvm uses submodules to manage external dependencies. Initialize them via:</p>
@@ -175,7 +175,7 @@ git config push.recurseSubmodules no
 </code></pre>
 <p>Crosvm development best works on Debian derivatives. First install rust via https://rustup.rs/. Then
 for the rest, we provide a script to install the necessary packages on Debian:</p>
-<pre><code>$ ./tools/install-deps
+<pre><code class="language-sh">./tools/install-deps
 </code></pre>
 <p>For other systems, please see below for instructions on
 <a href="building_crosvm/linux.html#using-the-development-container">Using the development container</a>.</p>
@@ -183,9 +183,9 @@ for the rest, we provide a script to install the necessary packages on Debian:</
 <p>Crosvm is built and tested on x86, aarch64 and armhf. Your host needs to be set up to allow
 installation of foreign architecture packages.</p>
 <p>On Debian this is as easy as:</p>
-<pre><code class="language-sh">$ sudo dpkg --add-architecture arm64
-$ sudo dpkg --add-architecture armhf
-$ sudo apt update
+<pre><code class="language-sh">sudo dpkg --add-architecture arm64
+sudo dpkg --add-architecture armhf
+sudo apt update
 </code></pre>
 <p>On ubuntu this is a little harder and needs some
 <a href="https://askubuntu.com/questions/430705/how-to-use-apt-get-to-download-multi-arch-library">manual modifications</a>
@@ -193,18 +193,18 @@ of APT sources.</p>
 <p>For other systems (<strong>including gLinux</strong>), please see below for instructions on
 <a href="building_crosvm/linux.html#using-the-development-container">Using the development container</a>.</p>
 <p>With that enabled, the following scripts will install the needed packages:</p>
-<pre><code class="language-sh">$ ./tools/install-aarch64-deps
-$ ./tools/install-armhf-deps
+<pre><code class="language-sh">./tools/install-aarch64-deps
+./tools/install-armhf-deps
 </code></pre>
 <h3 id="using-the-development-container"><a class="header" href="#using-the-development-container">Using the development container</a></h3>
 <p>We provide a Debian container with the required packages installed. With
 <a href="https://docs.docker.com/get-docker/">Docker installed</a>, it can be started with:</p>
-<pre><code class="language-sh">$ ./tools/dev_container
+<pre><code class="language-sh">./tools/dev_container
 </code></pre>
 <p>The container image is big and may take a while to download when first used. Once started, you can
 follow all instructions in this document within the container shell.</p>
 <p>Instead of using the interactive shell, commands to execute can be provided directly:</p>
-<pre><code class="language-sh">$ ./tools/dev_container cargo build
+<pre><code class="language-sh">./tools/dev_container cargo build
 </code></pre>
 <p>Note: The container and build artifacts are preserved between calls to <code>./tools/dev_container</code>. If
 you wish to start fresh, use the <code>--reset</code> flag.</p>
@@ -219,8 +219,8 @@ flag. (e.g. <code>cargo build --features=gdb</code>)</p>
 that you are working on.</p>
 <p>If you are working on aarch64 specific code, you can use the <code>set_test_target</code> tool to instruct
 cargo to build for aarch64 and run tests on a VM:</p>
-<pre><code class="language-sh">$ ./tools/set_test_target vm:aarch64 &amp;&amp; source .envrc
-$ cd mycrate &amp;&amp; cargo test
+<pre><code class="language-sh">./tools/set_test_target vm:aarch64 &amp;&amp; source .envrc
+cd mycrate &amp;&amp; cargo test
 </code></pre>
 <p>The script will start a VM for testing and write environment variables for cargo to <code>.envrc</code>. With
 those <code>cargo build</code> will build for aarch64 and <code>cargo test</code> will run tests inside the VM.</p>
@@ -228,34 +228,34 @@ those <code>cargo build</code> will build for aarch64 and <code>cargo test</code
 <h3 id="running-all-tests"><a class="header" href="#running-all-tests">Running all tests</a></h3>
 <p>Crosvm cannot use <code>cargo test --workspace</code> because of various restrictions of cargo. So we have our
 own test runner:</p>
-<pre><code class="language-sh">$ ./tools/run_tests
+<pre><code class="language-sh">./tools/run_tests
 </code></pre>
 <p>Which will run all tests locally. Since we have some architecture-dependent code, we also have the
 option of running tests within an aarch64 VM:</p>
-<pre><code class="language-sh">$ ./tools/run_tests --target=vm:aarch64
+<pre><code class="language-sh">./tools/run_tests --target=vm:aarch64
 </code></pre>
 <p>When working on a machine that does not support cross-compilation (e.g. gLinux), you can use the dev
 container to build and run the tests.</p>
-<pre><code class="language-sh">$ ./tools/dev_container ./tools/run_tests --target=vm:aarch64
+<pre><code class="language-sh">./tools/dev_container ./tools/run_tests --target=vm:aarch64
 </code></pre>
 <p>It is also possible to run tests on a remote machine via ssh. The target architecture is
 automatically detected:</p>
-<pre><code class="language-sh">$ ./tools/run_tests --target=ssh:hostname
+<pre><code class="language-sh">./tools/run_tests --target=ssh:hostname
 </code></pre>
 <p>However, it is your responsibility to make sure the required libraries for crosvm are installed and
 password-less authentication is set up. See <code>./tools/impl/testvm/cloud_init.yaml</code> for hints on what
 the VM has installed.</p>
 <h3 id="presubmit-checks"><a class="header" href="#presubmit-checks">Presubmit checks</a></h3>
 <p>To verify changes before submitting, use the <code>presubmit</code> script:</p>
-<pre><code>$ ./tools/presubmit
+<pre><code class="language-sh">./tools/presubmit
 </code></pre>
 <p>This will run clippy, formatters and runs all tests. The presubmits will use the dev container to
 build for other platforms if your host is not set up to do so.</p>
 <p>To run checks faster, they can be run in parallel in multiple tmux panes:</p>
-<pre><code>$ ./tools/presubmit --tmux
+<pre><code class="language-sh">./tools/presubmit --tmux
 </code></pre>
 <p>The <code>--quick</code> variant will skip some slower checks, like building for other platforms altogether:</p>
-<pre><code>$ ./tools/presubmit --quick
+<pre><code class="language-sh">./tools/presubmit --quick
 </code></pre>
 <h2 id="known-issues"><a class="header" href="#known-issues">Known issues</a></h2>
 <ul>
@@ -449,14 +449,14 @@ cargo run --features=gpu,x,virgl_renderer -- run \
 <p>To see the usage information for your version of crosvm, run <code>crosvm</code> or <code>crosvm run --help</code>.</p>
 <h2 id="boot-a-kernel"><a class="header" href="#boot-a-kernel">Boot a Kernel</a></h2>
 <p>To run a very basic VM with just a kernel and default devices:</p>
-<pre><code class="language-bash">$ crosvm run &quot;${KERNEL_PATH}&quot;
+<pre><code class="language-sh">crosvm run &quot;${KERNEL_PATH}&quot;
 </code></pre>
 <p>The uncompressed kernel image, also known as vmlinux, can be found in your kernel build directory in
 the case of x86 at <code>arch/x86/boot/compressed/vmlinux</code>.</p>
 <h2 id="rootfs"><a class="header" href="#rootfs">Rootfs</a></h2>
 <h3 id="with-a-disk-image"><a class="header" href="#with-a-disk-image">With a disk image</a></h3>
 <p>In most cases, you will want to give the VM a virtual block device to use as a root file system:</p>
-<pre><code class="language-bash">$ crosvm run -r &quot;${ROOT_IMAGE}&quot; &quot;${KERNEL_PATH}&quot;
+<pre><code class="language-sh">crosvm run -r &quot;${ROOT_IMAGE}&quot; &quot;${KERNEL_PATH}&quot;
 </code></pre>
 <p>The root image must be a path to a disk image formatted in a way that the kernel can read. Typically
 this is a squashfs image made with <code>mksquashfs</code> or an ext4 image made with <code>mkfs.ext4</code>. By using the
@@ -466,7 +466,7 @@ only be given once. More disks can be given with <code>-d</code> or <code>--rwdi
 <blockquote>
 <p><strong>WARNING:</strong> Writable disks are at risk of corruption by a malicious or malfunctioning guest OS.</p>
 </blockquote>
-<pre><code class="language-bash">crosvm run --rwdisk &quot;${ROOT_IMAGE}&quot; -p &quot;root=/dev/vda&quot; vmlinux
+<pre><code class="language-sh">crosvm run --rwdisk &quot;${ROOT_IMAGE}&quot; -p &quot;root=/dev/vda&quot; vmlinux
 </code></pre>
 <blockquote>
 <p><strong>NOTE:</strong> If more disks arguments are added prior to the desired rootfs image, the <code>root=/dev/vda</code>
@@ -475,20 +475,20 @@ must be adjusted to the appropriate letter.</p>
 <h3 id="with-virtiofs"><a class="header" href="#with-virtiofs">With virtiofs</a></h3>
 <p>Linux kernel 5.4+ is required for using virtiofs. This is convenient for testing. The file system
 must be named &quot;mtd*&quot; or &quot;ubi*&quot;.</p>
-<pre><code class="language-bash">crosvm run --shared-dir &quot;/:mtdfake:type=fs:cache=always&quot; \
+<pre><code class="language-sh">crosvm run --shared-dir &quot;/:mtdfake:type=fs:cache=always&quot; \
     -p &quot;rootfstype=virtiofs root=mtdfake&quot; vmlinux
 </code></pre>
 <h2 id="network-device"><a class="header" href="#network-device">Network device</a></h2>
 <p>The most convenient way to provide a network device to a guest is to setup a persistent TAP
 interface on the host. This section will explain how to do this for basic IPv4 connectivity.</p>
-<pre><code class="language-bash">sudo ip tuntap add mode tap user $USER vnet_hdr crosvm_tap
+<pre><code class="language-sh">sudo ip tuntap add mode tap user $USER vnet_hdr crosvm_tap
 sudo ip addr add 192.168.10.1/24 dev crosvm_tap
 sudo ip link set crosvm_tap up
 </code></pre>
 <p>These commands create a TAP interface named <code>crosvm_tap</code> that is accessible to the current user,
 configure the host to use the IP address <code>192.168.10.1</code>, and bring the interface up.</p>
 <p>The next step is to make sure that traffic from/to this interface is properly routed:</p>
-<pre><code class="language-bash">sudo sysctl net.ipv4.ip_forward=1
+<pre><code class="language-sh">sudo sysctl net.ipv4.ip_forward=1
 # Network interface used to connect to the internet.
 HOST_DEV=$(ip route get 8.8.8.8 | awk -- '{printf $5}')
 sudo iptables -t nat -A POSTROUTING -o &quot;${HOST_DEV}&quot; -j MASQUERADE
@@ -496,14 +496,14 @@ sudo iptables -A FORWARD -i &quot;${HOST_DEV}&quot; -o crosvm_tap -m state --sta
 sudo iptables -A FORWARD -i crosvm_tap -o &quot;${HOST_DEV}&quot; -j ACCEPT
 </code></pre>
 <p>The interface is now configured and can be used by crosvm:</p>
-<pre><code class="language-bash">crosvm run \
+<pre><code class="language-sh">crosvm run \
   ...
   --tap-name crosvm_tap \
   ...
 </code></pre>
 <p>Provided the guest kernel had support for <code>VIRTIO_NET</code>, the network device should be visible and
 configurable from the guest:</p>
-<pre><code class="language-bash"># Replace with the actual network interface name of the guest
+<pre><code class="language-sh"># Replace with the actual network interface name of the guest
 # (use &quot;ip addr&quot; to list the interfaces)
 GUEST_DEV=enp0s5
 sudo ip addr add 192.168.10.2/24 dev &quot;${GUEST_DEV}&quot;
@@ -524,9 +524,9 @@ running. To tell crosvm to stop and exit, for example:</p>
 <p><strong>NOTE:</strong> If the socket path given is for a directory, a socket name underneath that path will be
 generated based on crosvm's PID.</p>
 </blockquote>
-<pre><code class="language-bash">$ crosvm run -s /run/crosvm.sock ${USUAL_CROSVM_ARGS}
+<pre><code class="language-sh">crosvm run -s /run/crosvm.sock ${USUAL_CROSVM_ARGS}
     &lt;in another shell&gt;
-$ crosvm stop /run/crosvm.sock
+crosvm stop /run/crosvm.sock
 </code></pre>
 <blockquote>
 <p><strong>WARNING:</strong> The guest OS will not be notified or gracefully shutdown.</p>
@@ -548,10 +548,10 @@ to use.</p>
 <p>crosvm supports <a href="https://sourceware.org/gdb/onlinedocs/gdb/Remote-Protocol.html">GDB Remote Serial Protocol</a> to allow developers to debug guest kernel via GDB.</p>
 <p>You can enable the feature by <code>--gdb</code> flag:</p>
 <pre><code class="language-sh"># Use uncompressed vmlinux
-$ crosvm run --gdb &lt;port&gt; ${USUAL_CROSVM_ARGS} vmlinux
+crosvm run --gdb &lt;port&gt; ${USUAL_CROSVM_ARGS} vmlinux
 </code></pre>
 <p>Then, you can start GDB in another shell.</p>
-<pre><code class="language-sh">$ gdb vmlinux
+<pre><code class="language-sh">gdb vmlinux
 (gdb) target remote :&lt;port&gt;
 (gdb) hbreak start_kernel
 (gdb) c
@@ -965,7 +965,9 @@ with the <code>#[sorted]</code> attribute to keep their corresponding match stat
 <h2 id="submitting-code"><a class="header" href="#submitting-code">Submitting Code</a></h2>
 <p>Since crosvm is one of Chromium OS projects, please read through <a href="https://chromium.googlesource.com/chromiumos/docs/+/HEAD/contributing.md">Chrome OS Contributing Guide</a>
 first. This section describes the crosvm-specific workflow.</p>
-<h3 id="creating-a-cl"><a class="header" href="#creating-a-cl">Creating a CL</a></h3>
+<h3 id="trying-crosvm"><a class="header" href="#trying-crosvm">Trying crosvm</a></h3>
+<p>Please see <a href="https://google.github.io/crosvm/">the book of crosvm</a>.</p>
+<h3 id="sending-for-code-review"><a class="header" href="#sending-for-code-review">Sending for code review</a></h3>
 <p>We use <a href="https://chromium-review.googlesource.com/">Chromium Gerrit</a> for code reviewing. All crosvm
 CLs are listed at the <a href="https://chromium-review.googlesource.com/q/project:chromiumos%252Fplatform%252Fcrosvm">crosvm component</a>.</p>
 <blockquote>
@@ -981,15 +983,14 @@ CQ-tested code as a foundation.</p>
 <p>Use <code>repo upload -D main</code> to upload changes to the main branch, which works fine in most cases where
 gerrit can rebase the commit cleanly. If not, please rebase to <code>cros/main</code> manually.</p>
 <h4 id="for-non-chromium-os-developers"><a class="header" href="#for-non-chromium-os-developers">For non-Chromium OS Developers</a></h4>
-<p>If you are not interested in other Chromium OS components, you can simply clone and contribute
-crosvm only. Before you make a commit locally, please set up <a href="https://gerrit-review.googlesource.com/Documentation/user-changeid.html">Gerrit's Change-Id hook</a> on your
-system.</p>
-<pre><code class="language-bash">$ git clone https://chromium.googlesource.com/chromiumos/platform/crosvm
-# Modify code and make a git commit with a commit message following this rule:
+<p>If you are not interested in other Chromium OS components, you can simply
+<a href="https://google.github.io/crosvm/building_crosvm/linux.html">clone and contribute crosvm only</a>.
+Before you make a commit locally, please set up <a href="https://gerrit-review.googlesource.com/Documentation/user-changeid.html">Gerrit's Change-Id hook</a> on your system.</p>
+<pre><code class="language-sh"># Modify code and make a git commit with a commit message following this rule:
 # https://chromium.googlesource.com/chromiumos/docs/+/HEAD/contributing.md#Commit-messages
-$ git commit
+git commit
 # Push your commit to Chromium Gerrit (https://chromium-review.googlesource.com/).
-$ git push origin HEAD:refs/for/main
+git push origin HEAD:refs/for/main
 </code></pre>
 <h3 id="code-review"><a class="header" href="#code-review">Code review</a></h3>
 <p>Your change must be reviewed and approved by one of <a href="https://chromium.googlesource.com/chromiumos/platform/crosvm/+/HEAD/OWNERS">crosvm owners</a>.</p>
@@ -1023,7 +1024,7 @@ through the CQ and watched by the crosvm-uprev rotation.</p>
 <a href="https://github.com/google/styleguide/blob/gh-pages/docguide/style.md">Google Markdown style guide</a>.</p>
 <p>To render the book locally, you need to install mdbook and <a href="https://github.com/badboy/mdbook-mermaid">mdbook-mermaid</a>, which should be
 installed when you run <code>./tools/install-deps</code>script.</p>
-<pre><code class="language-bash">cd crosvm/docs/book/
+<pre><code class="language-sh">cd crosvm/docs/book/
 mdbook build
 </code></pre>
 <blockquote>
