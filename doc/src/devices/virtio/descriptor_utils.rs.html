@@ -1560,6 +1560,9 @@
 <span id="1560">1560</span>
 <span id="1561">1561</span>
 <span id="1562">1562</span>
+<span id="1563">1563</span>
+<span id="1564">1564</span>
+<span id="1565">1565</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1574,6 +1577,7 @@
 <span class="kw">use</span> <span class="ident">std::result</span>;
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
+<span class="kw">use</span> <span class="ident">anyhow::Context</span>;
 <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">FileReadWriteAtVolatile</span>, <span class="ident">FileReadWriteVolatile</span>};
 <span class="kw">use</span> <span class="ident">cros_async::MemRegion</span>;
 <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">DataInit</span>, <span class="ident">Le16</span>, <span class="ident">Le32</span>, <span class="ident">Le64</span>, <span class="ident">VolatileMemoryError</span>, <span class="ident">VolatileSlice</span>};
@@ -1592,8 +1596,8 @@
     <span class="ident">DescriptorChainOverflow</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;descriptor guest memory error: {0}&quot;</span>)]</span>
     <span class="ident">GuestMemoryError</span>(<span class="ident">vm_memory::GuestMemoryError</span>),
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid descriptor chain&quot;</span>)]</span>
-    <span class="ident">InvalidChain</span>,
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid descriptor chain: {0:#}&quot;</span>)]</span>
+    <span class="ident">InvalidChain</span>(<span class="ident">anyhow::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;descriptor I/O error: {0}&quot;</span>)]</span>
     <span class="ident">IoError</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;`DescriptorChain` split is out of bounds: {0}&quot;</span>)]</span>
@@ -2364,18 +2368,20 @@
         <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">size</span> <span class="op">+</span> <span class="ident">spaces_between_regions</span>;
         <span class="ident">buffers_start_addr</span> <span class="op">=</span> <span class="ident">buffers_start_addr</span>
             .<span class="ident">checked_add</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">u64</span>)
-            .<span class="ident">ok_or</span>(<span class="ident">Error::InvalidChain</span>)<span class="question-mark">?</span>;
+            .<span class="ident">context</span>(<span class="string">&quot;Invalid buffers_start_addr)&quot;</span>)
+            .<span class="ident">map_err</span>(<span class="ident">Error::InvalidChain</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">memory</span>.<span class="ident">write_obj_at_addr</span>(
             <span class="ident">desc</span>,
             <span class="ident">descriptor_array_addr</span>
                 .<span class="ident">checked_add</span>(<span class="ident">index</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">virtq_desc</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">u64</span>)
-                .<span class="ident">ok_or</span>(<span class="ident">Error::InvalidChain</span>)<span class="question-mark">?</span>,
+                .<span class="ident">context</span>(<span class="string">&quot;Invalid descriptor_array_addr&quot;</span>)
+                .<span class="ident">map_err</span>(<span class="ident">Error::InvalidChain</span>)<span class="question-mark">?</span>,
         );
     }
 
     <span class="ident">DescriptorChain::checked_new</span>(<span class="ident">memory</span>, <span class="ident">descriptor_array_addr</span>, <span class="number">0x100</span>, <span class="number">0</span>, <span class="number">0</span>)
-        .<span class="ident">ok_or</span>(<span class="ident">Error::InvalidChain</span>)
+        .<span class="ident">map_err</span>(<span class="ident">Error::InvalidChain</span>)
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>

@@ -838,6 +838,20 @@
 <span id="838">838</span>
 <span id="839">839</span>
 <span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -846,6 +860,7 @@
 <span class="kw">use</span> <span class="ident">std::num::Wrapping</span>;
 <span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">fence</span>, <span class="ident">Ordering</span>};
 
+<span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">bail</span>, <span class="ident">Context</span>};
 <span class="kw">use</span> <span class="ident">base::error</span>;
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">AsyncError</span>, <span class="ident">EventAsync</span>};
 <span class="kw">use</span> <span class="ident">virtio_sys::virtio_ring::VIRTIO_RING_F_EVENT_IDX</span>;
@@ -925,15 +940,18 @@
         <span class="ident">queue_size</span>: <span class="ident">u16</span>,
         <span class="ident">index</span>: <span class="ident">u16</span>,
         <span class="ident">required_flags</span>: <span class="ident">u16</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">DescriptorChain</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">DescriptorChain</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">index</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">queue_size</span> {
-            <span class="kw">return</span> <span class="prelude-val">None</span>;
+            <span class="macro">bail!</span>(<span class="string">&quot;index ({}) &gt;= queue_size ({})&quot;</span>, <span class="ident">index</span>, <span class="ident">queue_size</span>);
         }
 
-        <span class="kw">let</span> <span class="ident">desc_head</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">checked_offset</span>(<span class="ident">desc_table</span>, (<span class="ident">index</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">*</span> <span class="number">16</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">desc_head</span> <span class="op">=</span> <span class="ident">mem</span>
+            .<span class="ident">checked_offset</span>(<span class="ident">desc_table</span>, (<span class="ident">index</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">*</span> <span class="number">16</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;desc_table checked_offset failed&quot;</span>)<span class="question-mark">?</span>;
         <span class="comment">// These reads can&#39;t fail unless Guest memory is hopelessly broken.</span>
         <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">GuestAddress</span>(<span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>(<span class="ident">desc_head</span>).<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">u64</span>);
-        <span class="ident">mem</span>.<span class="ident">checked_offset</span>(<span class="ident">desc_head</span>, <span class="number">16</span>)<span class="question-mark">?</span>;
+        <span class="ident">mem</span>.<span class="ident">checked_offset</span>(<span class="ident">desc_head</span>, <span class="number">16</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;desc_head checked_offset failed&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">len</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">desc_head</span>.<span class="ident">unchecked_add</span>(<span class="number">8</span>)).<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">flags</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">desc_head</span>.<span class="ident">unchecked_add</span>(<span class="number">12</span>)).<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">next</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">desc_head</span>.<span class="ident">unchecked_add</span>(<span class="number">14</span>)).<span class="ident">unwrap</span>();
@@ -950,9 +968,9 @@
         };
 
         <span class="kw">if</span> <span class="ident">chain</span>.<span class="ident">is_valid</span>() <span class="op">&amp;&amp;</span> <span class="ident">chain</span>.<span class="ident">flags</span> <span class="op">&amp;</span> <span class="ident">required_flags</span> <span class="op">=</span><span class="op">=</span> <span class="ident">required_flags</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">chain</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">chain</span>)
         } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
+            <span class="macro">bail!</span>(<span class="string">&quot;chain is invalid&quot;</span>)
         }
     }
 
@@ -1001,17 +1019,22 @@
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">has_next</span>() {
             <span class="comment">// Once we see a write-only descriptor, all subsequent descriptors must be write-only.</span>
             <span class="kw">let</span> <span class="ident">required_flags</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">flags</span> <span class="op">&amp;</span> <span class="ident">VIRTQ_DESC_F_WRITE</span>;
-            <span class="ident">DescriptorChain::checked_new</span>(
+            <span class="kw">match</span> <span class="ident">DescriptorChain::checked_new</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mem</span>,
                 <span class="self">self</span>.<span class="ident">desc_table</span>,
                 <span class="self">self</span>.<span class="ident">queue_size</span>,
                 <span class="self">self</span>.<span class="ident">next</span>,
                 <span class="ident">required_flags</span>,
-            )
-            .<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">mut</span> <span class="ident">c</span><span class="op">|</span> {
-                <span class="ident">c</span>.<span class="ident">ttl</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ttl</span> <span class="op">-</span> <span class="number">1</span>;
-                <span class="ident">c</span>
-            })
+            ) {
+                <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">c</span>.<span class="ident">ttl</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ttl</span> <span class="op">-</span> <span class="number">1</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">c</span>)
+                }
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="macro">error!</span>(<span class="string">&quot;{:#}&quot;</span>, <span class="ident">e</span>);
+                    <span class="prelude-val">None</span>
+                }
+            }
         } <span class="kw">else</span> {
             <span class="prelude-val">None</span>
         }
@@ -1271,6 +1294,11 @@
         <span class="kw">let</span> <span class="ident">descriptor_index</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">desc_idx_addr</span>).<span class="ident">unwrap</span>();
 
         <span class="ident">DescriptorChain::checked_new</span>(<span class="ident">mem</span>, <span class="self">self</span>.<span class="ident">desc_table</span>, <span class="ident">queue_size</span>, <span class="ident">descriptor_index</span>, <span class="number">0</span>)
+            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+                <span class="macro">error!</span>(<span class="string">&quot;{:#}&quot;</span>, <span class="ident">e</span>);
+                <span class="ident">e</span>
+            })
+            .<span class="ident">ok</span>()
     }
 
     <span class="doccomment">/// Remove the first available descriptor chain from the queue.</span>
