@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Error",""]],"struct":[["ScatterGatherBuffer","See xHCI spec 3.2.8 for scatter/gather transfer. It’s used in bulk/interrupt transfers. See 3.2.10 for details."]]});

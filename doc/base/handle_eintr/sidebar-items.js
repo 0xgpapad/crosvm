@@ -1,1 +1,0 @@
-initSidebarItems({"trait":[["InterruptibleResult","Trait for determining if a result indicates the operation was interrupted."]]});

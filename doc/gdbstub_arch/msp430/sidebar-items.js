@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Msp430","Implements `Arch` for standard 16-bit TI-MSP430 MCUs."]],"mod":[["reg","`Register` structs for various TI-MSP430 CPUs."]]});

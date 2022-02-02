@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["arm","Implementations for various ARM architectures."],["mips","Implementations for the MIPS architecture."],["msp430","Implementations for the TI-MSP430 family of MCUs."],["ppc","Implementations for various PowerPC architectures."],["riscv","Implementations for the RISC-V architecture."],["x86","Implementations for various x86 architectures."]]});

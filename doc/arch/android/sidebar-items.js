@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["create_android_fdt","Creates a flattened device tree containing all of the parameters used by Android."]]});

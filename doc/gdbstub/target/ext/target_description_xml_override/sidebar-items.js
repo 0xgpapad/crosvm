@@ -1,1 +1,0 @@
-initSidebarItems({"trait":[["TargetDescriptionXmlOverride","Target Extension - Override the target description XML specified by `Target::Arch`."]],"type":[["TargetDescriptionXmlOverrideOps","See `TargetDescriptionXmlOverride`."]]});

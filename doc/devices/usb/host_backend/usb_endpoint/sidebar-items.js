@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["UsbEndpoint","Isochronous, Bulk or Interrupt endpoint."]]});

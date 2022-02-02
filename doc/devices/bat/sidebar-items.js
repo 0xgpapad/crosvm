@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["GOLDFISHBAT_MMIO_LEN","the GoldFish Battery MMIO length."]],"enum":[["BatteryError","Errors for battery devices."]],"struct":[["GoldfishBattery","GoldFish Battery state"]]});

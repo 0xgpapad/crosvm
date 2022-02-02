@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Simulator","A libtpm2-based TPM simulator."]]});

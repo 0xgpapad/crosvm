@@ -1,1 +1,0 @@
-initSidebarItems({"type":[["Pid","Process ID"],["Tid","Thread ID"]]});

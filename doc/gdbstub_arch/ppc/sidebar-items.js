@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["PowerPcAltivec32","Implements `Arch` for 32-bit PowerPC + AltiVec SIMD."]],"mod":[["reg","`Register` structs for PowerPC architectures"]]});

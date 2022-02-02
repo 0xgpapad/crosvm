@@ -1,1 +1,0 @@
-initSidebarItems({"macro":[["const_assert","Macro that fails to compile if a given const expression is not true."]]});

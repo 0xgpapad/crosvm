@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["NetError",""],["Token",""]],"fn":[["build_config",""],["process_ctrl",""],["process_rx",""],["process_tx",""],["validate_and_configure_tap",""],["virtio_features_to_tap_offload","Converts virtio-net feature bits to tap’s offload bits."]],"struct":[["Net",""],["VirtioNetConfig",""],["virtio_net_ctrl_hdr",""]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["HostBackendDeviceProvider","Host backend device provider is a xhci backend device provider that would provide pass through devices."]],"struct":[["ProviderInner","ProviderInner listens to control socket."]]});

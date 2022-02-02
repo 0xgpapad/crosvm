@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["ExecuteCommand",""],["TPM_Manufacture",""],["_TPM_Init",""],["_plat__SetNvAvail",""],["_plat__Signal_PowerOn",""]]});

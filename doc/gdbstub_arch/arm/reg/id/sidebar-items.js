@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ArmCoreRegId","32-bit ARM core register identifier."]]});

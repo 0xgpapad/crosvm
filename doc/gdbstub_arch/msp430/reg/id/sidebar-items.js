@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Msp430RegId","TI-MSP430 register identifier."]]});

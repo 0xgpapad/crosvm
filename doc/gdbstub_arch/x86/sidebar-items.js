@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["X86_64_SSE","Implements `Arch` for 64-bit x86 + SSE Extensions."],["X86_SSE","Implements `Arch` for 32-bit x86 + SSE Extensions."]],"mod":[["reg","`Register` structs for x86 architectures."]]});

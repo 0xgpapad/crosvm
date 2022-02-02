@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ReadWriteCapability",""]],"fn":[["file_descriptor_proto",""]],"struct":[["ComponentDisk","Generated files are compatible only with the same version of protobuf runtime."],["CompositeDisk",""]]});

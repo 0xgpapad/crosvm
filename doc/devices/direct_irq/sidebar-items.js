@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["DirectIrqError",""]],"struct":[["DirectIrq",""]]});

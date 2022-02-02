@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["HEADER_LEN",""]],"struct":[["SDT","SDT represents for System Description Table. The structure SDT is a generic format for creating various ACPI tables like DSDT/FADT/MADT."]]});

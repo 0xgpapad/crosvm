@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["id","`RegId` definitions for RISC-V architectures."]],"struct":[["RiscvCoreRegs","RISC-V Integer registers."]]});
