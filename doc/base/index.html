@@ -45,8 +45,11 @@ It is thread safe while PollContext is not. It requires user to pass in a refere
 EpollEvents while PollContext does not. Always use PollContext if you don’t need to access the
 same epoll from different threads.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.EpollEvents.html" title="base::EpollEvents struct">EpollEvents</a></div><div class="item-right docblock-short"><p>EpollEvents wraps raw epoll_events, it should only be used with EpollContext.</p>
-</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Error.html" title="base::Error struct">Error</a></div><div class="item-right docblock-short"><p>An error number, retrieved from errno (man 3 errno), set by a libc
-function that returned an error.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Error.html" title="base::Error struct">Error</a></div><div class="item-right docblock-short"><p>A system error
+In Unix systems, retrieved from errno (man 3 errno), set by a libc
+function that returned an error.
+On Windows, retrieved from GetLastError, set by a Windows function
+that returned an error</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Event.html" title="base::Event struct">Event</a></div><div class="item-right docblock-short"><p>See <a href="struct.EventFd.html">EventFd</a> for struct- and method-level
 documentation.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.EventFd.html" title="base::EventFd struct">EventFd</a></div><div class="item-right docblock-short"><p>A safe wrapper around a Linux eventfd (man 2 eventfd).</p>

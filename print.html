@@ -1174,6 +1174,7 @@ directive near the top:</p>
 <p>The common device policy for <code>x86_64</code> is:</p>
 <pre><code>@frequency ./common_device.frequency
 brk: 1
+clock_gettime: 1
 clone: arg0 &amp; CLONE_THREAD
 close: 1
 dup2: 1

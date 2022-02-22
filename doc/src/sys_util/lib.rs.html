@@ -679,8 +679,6 @@
 <span id="678">678</span>
 <span id="679">679</span>
 <span id="680">680</span>
-<span id="681">681</span>
-<span id="682">682</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -711,7 +709,6 @@
 <span class="kw">mod</span> <span class="ident">clock</span>;
 <span class="kw">mod</span> <span class="ident">descriptor</span>;
 <span class="kw">mod</span> <span class="ident">descriptor_reflection</span>;
-<span class="kw">mod</span> <span class="ident">errno</span>;
 <span class="kw">mod</span> <span class="ident">eventfd</span>;
 <span class="kw">mod</span> <span class="ident">file_flags</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_traits</span>;
@@ -741,7 +738,6 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::capabilities::drop_capabilities</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::clock</span>::{<span class="ident">Clock</span>, <span class="ident">FakeClock</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::errno</span>::{<span class="ident">errno_result</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::eventfd</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::file_flags</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fork</span>::<span class="kw-2">*</span>;
@@ -765,7 +761,7 @@
     <span class="ident">SerializeDescriptors</span>,
 };
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">poll_token_derive</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util_core</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util_core</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>, <span class="kw-2">*</span>};
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::file_traits</span>::{
     <span class="ident">AsRawFds</span>, <span class="ident">FileAllocate</span>, <span class="ident">FileGetLen</span>, <span class="ident">FileReadWriteAtVolatile</span>, <span class="ident">FileReadWriteVolatile</span>, <span class="ident">FileSetLen</span>,

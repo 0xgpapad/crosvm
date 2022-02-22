@@ -1171,7 +1171,7 @@
 <span class="kw">use</span> <span class="ident">data_model::volatile_memory</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">data_model::DataInit</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">errno</span>, <span class="ident">pagesize</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">pagesize</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">ErrnoError</span>};
 
 <span class="attribute">#[<span class="ident">sorted</span>]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">thiserror::Error</span>)]</span>
@@ -1193,7 +1193,7 @@
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;`remove_mapping` is unsupported&quot;</span>)]</span>
     <span class="ident">RemoveMappingIsUnsupported</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;mmap related system call failed: {0}&quot;</span>)]</span>
-    <span class="ident">SystemCallFailed</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">errno::Error</span>),
+    <span class="ident">SystemCallFailed</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">ErrnoError</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to write from memory to file: {0}&quot;</span>)]</span>
     <span class="ident">WriteFromMemory</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">io::Error</span>),
 }
@@ -1319,7 +1319,7 @@
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">!</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span> {
             <span class="prelude-val">Ok</span>(())
         } <span class="kw">else</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">Error::SystemCallFailed</span>(<span class="ident">errno::Error::last</span>()))
+            <span class="prelude-val">Err</span>(<span class="ident">Error::SystemCallFailed</span>(<span class="ident">ErrnoError::last</span>()))
         }
     }
 }
@@ -1539,7 +1539,7 @@
         };
         <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">libc::mmap</span>(<span class="ident">addr</span>, <span class="ident">size</span>, <span class="ident">prot</span>, <span class="ident">flags</span>, <span class="ident">fd</span>, <span class="ident">offset</span>);
         <span class="kw">if</span> <span class="ident">addr</span> <span class="op">==</span> <span class="ident">libc::MAP_FAILED</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::SystemCallFailed</span>(<span class="ident">errno::Error::last</span>()));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::SystemCallFailed</span>(<span class="ident">ErrnoError::last</span>()));
         }
         <span class="comment">// This is safe because we call madvise with a valid address and size.</span>
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">libc::madvise</span>(<span class="ident">addr</span>, <span class="ident">size</span>, <span class="ident">libc::MADV_DONTDUMP</span>);
@@ -1570,7 +1570,7 @@
             )
         };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">==</span> <span class="op">-</span><span class="number">1</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">Error::SystemCallFailed</span>(<span class="ident">errno::Error::last</span>()))
+            <span class="prelude-val">Err</span>(<span class="ident">Error::SystemCallFailed</span>(<span class="ident">ErrnoError::last</span>()))
         } <span class="kw">else</span> {
             <span class="prelude-val">Ok</span>(())
         }
@@ -1588,7 +1588,7 @@
             )
         };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">==</span> <span class="op">-</span><span class="number">1</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::SystemCallFailed</span>(<span class="ident">errno::Error::last</span>()));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::SystemCallFailed</span>(<span class="ident">ErrnoError::last</span>()));
         }
         <span class="prelude-val">Ok</span>(())
     }

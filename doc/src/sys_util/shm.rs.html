@@ -461,8 +461,6 @@
 <span id="460">460</span>
 <span id="461">461</span>
 <span id="462">462</span>
-<span id="463">463</span>
-<span id="464">464</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -479,7 +477,7 @@
 };
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">errno</span>, <span class="ident">errno_result</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">errno_result</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
 
 <span class="doccomment">/// A shared memory file descriptor and its size.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
@@ -583,9 +581,7 @@
     <span class="doccomment">/// Note that the given name may not have NUL characters anywhere in it, or this will return an</span>
     <span class="doccomment">/// error.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">named</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">name</span>: <span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SharedMemory</span><span class="op">&gt;</span> {
-        <span class="ident"><span class="self">Self</span>::new</span>(<span class="prelude-val">Some</span>(
-            <span class="kw-2">&amp;</span><span class="ident">CString::new</span>(<span class="ident">name</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">errno::Error::new</span>(<span class="ident">EINVAL</span>))<span class="question-mark">?</span>,
-        ))
+        <span class="ident"><span class="self">Self</span>::new</span>(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">CString::new</span>(<span class="ident">name</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">Error::new</span>(<span class="ident">EINVAL</span>))<span class="question-mark">?</span>))
     }
 
     <span class="doccomment">/// Convenience function for `SharedMemory::new` that has an arbitrary and unspecified name.</span>
@@ -686,7 +682,7 @@
                     .<span class="ident">trim_end_matches</span>(<span class="string">&quot; (deleted)&quot;</span>)
                     .<span class="ident">to_owned</span>()
             })
-            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">errno::Error::new</span>(<span class="ident">EINVAL</span>))
+            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Error::new</span>(<span class="ident">EINVAL</span>))
     }
 }
 
@@ -765,7 +761,7 @@
     <span class="kw">unsafe</span> {
         <span class="kw">let</span> <span class="ident">fd</span> <span class="op">=</span> <span class="ident">memfd_create</span>(<span class="string">b&quot;/test_memfd_create\0&quot;</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">c_char</span>, <span class="number">0</span>);
         <span class="kw">if</span> <span class="ident">fd</span> <span class="op">&lt;</span> <span class="number">0</span> {
-            <span class="kw">if</span> <span class="ident">errno::Error::last</span>().<span class="ident">errno</span>() <span class="op">==</span> <span class="ident">libc::ENOSYS</span> {
+            <span class="kw">if</span> <span class="ident">Error::last</span>().<span class="ident">errno</span>() <span class="op">==</span> <span class="ident">libc::ENOSYS</span> {
                 <span class="kw">return</span> <span class="bool-val">false</span>;
             }
             <span class="kw">return</span> <span class="bool-val">true</span>;

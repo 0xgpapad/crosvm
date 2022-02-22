@@ -700,12 +700,6 @@
 <span id="699">699</span>
 <span id="700">700</span>
 <span id="701">701</span>
-<span id="702">702</span>
-<span id="703">703</span>
-<span id="704">704</span>
-<span id="705">705</span>
-<span id="706">706</span>
-<span id="707">707</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -729,7 +723,7 @@
 <span class="kw">use</span> <span class="ident">std::thread::JoinHandle</span>;
 <span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">duration_to_timespec</span>, <span class="ident">errno</span>, <span class="ident">errno_result</span>, <span class="ident">getsid</span>, <span class="ident">Pid</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">duration_to_timespec</span>, <span class="ident">errno_result</span>, <span class="ident">getsid</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">ErrnoError</span>, <span class="ident">Pid</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>};
 
 <span class="kw">const</span> <span class="ident">POLL_RATE</span>: <span class="ident">Duration</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">50</span>);
@@ -740,28 +734,28 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
     <span class="doccomment">/// The signal could not be blocked.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;signal could not be blocked: {0}&quot;</span>)]</span>
-    <span class="ident">BlockSignal</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">BlockSignal</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Failed to check if given signal is in the set of pending signals.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to check whether given signal is in the pending set: {0}&quot;</span>)]</span>
-    <span class="ident">ClearCheckPending</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">ClearCheckPending</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Failed to get pending signals.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to get pending signals: {0}&quot;</span>)]</span>
-    <span class="ident">ClearGetPending</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">ClearGetPending</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Failed to wait for given signal.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to wait for given signal: {0}&quot;</span>)]</span>
-    <span class="ident">ClearWaitPending</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">ClearWaitPending</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Failed to check if the requested signal is in the blocked set already.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to check whether requested signal is in the blocked set: {0}&quot;</span>)]</span>
-    <span class="ident">CompareBlockedSignals</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">CompareBlockedSignals</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Couldn&#39;t create a sigset.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;couldn&#39;t create a sigset: {0}&quot;</span>)]</span>
-    <span class="ident">CreateSigset</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">CreateSigset</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Failed to get session id.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to get session id: {0}&quot;</span>)]</span>
-    <span class="ident">GetSid</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">GetSid</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Failed to send signal to pid.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to send signal: {0}&quot;</span>)]</span>
-    <span class="ident">Kill</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">Kill</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// The signal mask could not be retrieved.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to retrieve signal mask: {}&quot;</span>, <span class="ident">io::Error::from_raw_os_error</span>(<span class="kw-2">*</span>.<span class="number">0</span>))]</span>
     <span class="ident">RetrieveSignalMask</span>(<span class="ident">i32</span>),
@@ -776,16 +770,16 @@
     <span class="ident">TimedOut</span>,
     <span class="doccomment">/// The signal could not be unblocked.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;signal could not be unblocked: {0}&quot;</span>)]</span>
-    <span class="ident">UnblockSignal</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">UnblockSignal</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Failed to convert signum to Signal.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;unrecoginized signal number: {0}&quot;</span>)]</span>
     <span class="ident">UnrecognizedSignum</span>(<span class="ident">i32</span>),
     <span class="doccomment">/// Failed to wait for signal.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to wait for signal: {0}&quot;</span>)]</span>
-    <span class="ident">WaitForSignal</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">WaitForSignal</span>(<span class="ident">ErrnoError</span>),
     <span class="doccomment">/// Failed to wait for pid.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to wait for process: {0}&quot;</span>)]</span>
-    <span class="ident">WaitPid</span>(<span class="ident">errno::Error</span>),
+    <span class="ident">WaitPid</span>(<span class="ident">ErrnoError</span>),
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
@@ -986,10 +980,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is considered unsafe because the given handler will be called asynchronously, interrupting</span>
 <span class="doccomment">/// whatever the thread was doing and therefore must only do async-signal-safe operations.</span>
-<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">register_signal_handler</span>(
-    <span class="ident">num</span>: <span class="ident">c_int</span>,
-    <span class="ident">handler</span>: <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">c_int</span>),
-) -&gt; <span class="ident">errno::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">register_signal_handler</span>(<span class="ident">num</span>: <span class="ident">c_int</span>, <span class="ident">handler</span>: <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">c_int</span>)) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sigact</span>: <span class="ident">sigaction</span> <span class="op">=</span> <span class="ident">mem::zeroed</span>();
     <span class="ident">sigact</span>.<span class="ident">sa_flags</span> <span class="op">=</span> <span class="ident">SA_RESTART</span>;
     <span class="ident">sigact</span>.<span class="ident">sa_sigaction</span> <span class="op">=</span> <span class="ident">handler</span> <span class="kw">as</span> <span class="kw-2">*const</span> () <span class="kw">as</span> <span class="ident">usize</span>;
@@ -1003,7 +994,7 @@
 }
 
 <span class="doccomment">/// Resets the signal handler of signum `num` back to the default.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear_signal_handler</span>(<span class="ident">num</span>: <span class="ident">c_int</span>) -&gt; <span class="ident">errno::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear_signal_handler</span>(<span class="ident">num</span>: <span class="ident">c_int</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="comment">// Safe because sigaction is owned and expected to be initialized ot zeros.</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sigact</span>: <span class="ident">sigaction</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem::zeroed</span>() };
     <span class="ident">sigact</span>.<span class="ident">sa_flags</span> <span class="op">=</span> <span class="ident">SA_RESTART</span>;
@@ -1019,7 +1010,7 @@
 }
 
 <span class="doccomment">/// Returns true if the signal handler for signum `num` is the default.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">has_default_signal_handler</span>(<span class="ident">num</span>: <span class="ident">c_int</span>) -&gt; <span class="ident">errno::Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">has_default_signal_handler</span>(<span class="ident">num</span>: <span class="ident">c_int</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
     <span class="comment">// Safe because sigaction is owned and expected to be initialized ot zeros.</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sigact</span>: <span class="ident">sigaction</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem::zeroed</span>() };
 
@@ -1040,12 +1031,9 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is considered unsafe because the given handler will be called asynchronously, interrupting</span>
 <span class="doccomment">/// whatever the thread was doing and therefore must only do async-signal-safe operations.</span>
-<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">register_rt_signal_handler</span>(
-    <span class="ident">num</span>: <span class="ident">c_int</span>,
-    <span class="ident">handler</span>: <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">c_int</span>),
-) -&gt; <span class="ident">errno::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">register_rt_signal_handler</span>(<span class="ident">num</span>: <span class="ident">c_int</span>, <span class="ident">handler</span>: <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">c_int</span>)) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="op">!</span><span class="ident">valid_rt_signal_num</span>(<span class="ident">num</span>) {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">errno::Error::new</span>(<span class="ident">EINVAL</span>));
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ErrnoError::new</span>(<span class="ident">EINVAL</span>));
     }
 
     <span class="ident">register_signal_handler</span>(<span class="ident">num</span>, <span class="ident">handler</span>)
@@ -1054,7 +1042,7 @@
 <span class="doccomment">/// Creates `sigset` from an array of signal numbers.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is a helper function used when we want to manipulate signals.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_sigset</span>(<span class="ident">signals</span>: <span class="kw-2">&amp;</span>[<span class="ident">c_int</span>]) -&gt; <span class="ident">errno::Result</span><span class="op">&lt;</span><span class="ident">sigset_t</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_sigset</span>(<span class="ident">signals</span>: <span class="kw-2">&amp;</span>[<span class="ident">c_int</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">sigset_t</span><span class="op">&gt;</span> {
     <span class="comment">// sigset will actually be initialized by sigemptyset below.</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sigset</span>: <span class="ident">sigset_t</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem::zeroed</span>() };
 
@@ -1077,7 +1065,7 @@
 
 <span class="doccomment">/// Wait for signal before continuing. The signal number of the consumed signal is returned on</span>
 <span class="doccomment">/// success. EAGAIN means the timeout was reached.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wait_for_signal</span>(<span class="ident">signals</span>: <span class="kw-2">&amp;</span>[<span class="ident">c_int</span>], <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) -&gt; <span class="ident">errno::Result</span><span class="op">&lt;</span><span class="ident">c_int</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wait_for_signal</span>(<span class="ident">signals</span>: <span class="kw-2">&amp;</span>[<span class="ident">c_int</span>], <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">c_int</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">sigset</span> <span class="op">=</span> <span class="ident">create_sigset</span>(<span class="ident">signals</span>)<span class="question-mark">?</span>;
 
     <span class="kw">match</span> <span class="ident">timeout</span> {
@@ -1095,7 +1083,7 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span>: <span class="ident">c_int</span> <span class="op">=</span> <span class="number">0</span>;
             <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="macro">handle_eintr_rc!</span>(<span class="kw">unsafe</span> { <span class="ident">sigwait</span>(<span class="kw-2">&amp;</span><span class="ident">sigset</span>, <span class="kw-2">&amp;mut</span> <span class="ident">ret</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">c_int</span>) });
             <span class="kw">if</span> <span class="ident">err</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-                <span class="prelude-val">Err</span>(<span class="ident">errno::Error::new</span>(<span class="ident">err</span>))
+                <span class="prelude-val">Err</span>(<span class="ident">ErrnoError::new</span>(<span class="ident">err</span>))
             } <span class="kw">else</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">ret</span>)
             }
@@ -1137,12 +1125,12 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">old_sigset</span>: <span class="ident">sigset_t</span> <span class="op">=</span> <span class="ident">mem::zeroed</span>();
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">pthread_sigmask</span>(<span class="ident">SIG_BLOCK</span>, <span class="kw-2">&amp;</span><span class="ident">sigset</span>, <span class="kw-2">&amp;mut</span> <span class="ident">old_sigset</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">sigset_t</span>);
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::BlockSignal</span>(<span class="ident">errno::Error::last</span>()));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::BlockSignal</span>(<span class="ident">ErrnoError::last</span>()));
         }
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">sigismember</span>(<span class="kw-2">&amp;</span><span class="ident">old_sigset</span>, <span class="ident">num</span>);
         <span class="kw">match</span> <span class="ident">ret</span>.<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="number">0</span>) {
             <span class="ident">Ordering::Less</span> =&gt; {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::CompareBlockedSignals</span>(<span class="ident">errno::Error::last</span>()));
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::CompareBlockedSignals</span>(<span class="ident">ErrnoError::last</span>()));
             }
             <span class="ident">Ordering::Greater</span> =&gt; {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::SignalAlreadyBlocked</span>(<span class="ident">num</span>));
@@ -1160,7 +1148,7 @@
     <span class="comment">// Safe - return value is checked.</span>
     <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">pthread_sigmask</span>(<span class="ident">SIG_UNBLOCK</span>, <span class="kw-2">&amp;</span><span class="ident">sigset</span>, <span class="ident">null_mut</span>()) };
     <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::UnblockSignal</span>(<span class="ident">errno::Error::last</span>()));
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::UnblockSignal</span>(<span class="ident">ErrnoError::last</span>()));
     }
     <span class="prelude-val">Ok</span>(())
 }
@@ -1182,11 +1170,11 @@
             <span class="comment">// is not pending, the call will fail with EAGAIN or EINTR.</span>
             <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">sigtimedwait</span>(<span class="kw-2">&amp;</span><span class="ident">sigset</span>, <span class="kw-2">&amp;mut</span> <span class="ident">siginfo</span>, <span class="kw-2">&amp;</span><span class="ident">ts</span>);
             <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
-                <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">errno::Error::last</span>();
+                <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">ErrnoError::last</span>();
                 <span class="kw">match</span> <span class="ident">e</span>.<span class="ident">errno</span>() {
                     <span class="ident">EAGAIN</span> <span class="op">|</span> <span class="ident">EINTR</span> =&gt; {}
                     <span class="kw">_</span> =&gt; {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::ClearWaitPending</span>(<span class="ident">errno::Error::last</span>()));
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::ClearWaitPending</span>(<span class="ident">ErrnoError::last</span>()));
                     }
                 }
             }
@@ -1196,12 +1184,12 @@
             <span class="comment">// See if more instances of the signal are pending.</span>
             <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">sigpending</span>(<span class="kw-2">&amp;mut</span> <span class="ident">chkset</span>);
             <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::ClearGetPending</span>(<span class="ident">errno::Error::last</span>()));
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::ClearGetPending</span>(<span class="ident">ErrnoError::last</span>()));
             }
 
             <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">sigismember</span>(<span class="kw-2">&amp;</span><span class="ident">chkset</span>, <span class="ident">num</span>);
             <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::ClearCheckPending</span>(<span class="ident">errno::Error::last</span>()));
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::ClearCheckPending</span>(<span class="ident">ErrnoError::last</span>()));
             }
 
             <span class="comment">// This is do-while loop condition.</span>
@@ -1239,9 +1227,9 @@
     <span class="doccomment">/// Sends the signal `num` to this killable thread.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The value of `num` must be within [`SIGRTMIN`, `SIGRTMAX`] range.</span>
-    <span class="kw">fn</span> <span class="ident">kill</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">num</span>: <span class="ident">c_int</span>) -&gt; <span class="ident">errno::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">kill</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">num</span>: <span class="ident">c_int</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="op">!</span><span class="ident">valid_rt_signal_num</span>(<span class="ident">num</span>) {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">errno::Error::new</span>(<span class="ident">EINVAL</span>));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ErrnoError::new</span>(<span class="ident">EINVAL</span>));
         }
 
         <span class="comment">// Safe because we ensure we are using a valid pthread handle, a valid signal number, and</span>
@@ -1303,7 +1291,7 @@
         <span class="kw">if</span> <span class="ident">child_running</span> {
             <span class="kw">if</span> <span class="ident">child</span>
                 .<span class="ident">try_wait</span>()
-                .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::WaitPid</span>(<span class="ident">errno::Error::from</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>
+                .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::WaitPid</span>(<span class="ident">ErrnoError::from</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>
                 .<span class="ident">is_some</span>()
             {
                 <span class="ident">child_running</span> <span class="op">=</span> <span class="bool-val">false</span>;
@@ -1316,7 +1304,7 @@
             <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">waitpid</span>(<span class="ident">target</span>, <span class="ident">null_mut</span>(), <span class="ident">WNOHANG</span>) };
             <span class="kw">match</span> <span class="ident">ret</span> {
                 <span class="op">-</span><span class="number">1</span> =&gt; {
-                    <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">errno::Error::last</span>();
+                    <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">ErrnoError::last</span>();
                     <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">errno</span>() <span class="op">==</span> <span class="ident">libc::ECHILD</span> {
                         <span class="comment">// No group members to wait on.</span>
                         <span class="kw">break</span>;
