@@ -87,7 +87,7 @@
 <span class="kw">use</span> <span class="ident">vm_memory</span>::{<span class="ident">GuestAddress</span>, <span class="ident">GuestMemory</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::iommu::memory_mapper</span>::{
-    <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">MemoryMapperError</span>, <span class="ident">MappingInfo</span>, <span class="ident">MemoryMapper</span>, <span class="ident">Permission</span>,
+    <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">MemoryMapperError</span>, <span class="ident">MappingInfo</span>, <span class="ident">MemRegion</span>, <span class="ident">MemoryMapper</span>, <span class="ident">Permission</span>,
 };
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::VfioContainer</span>;
 
@@ -139,7 +139,7 @@
             .<span class="ident">map_err</span>(<span class="ident">MemoryMapperError::Vfio</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_iova</span>: <span class="ident">u64</span>, <span class="ident">_size</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">GuestAddress</span>, <span class="ident">MemoryMapperError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_iova</span>: <span class="ident">u64</span>, <span class="ident">_size</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MemRegion</span><span class="op">&gt;</span>, <span class="ident">MemoryMapperError</span><span class="op">&gt;</span> {
         <span class="prelude-val">Err</span>(<span class="ident">MemoryMapperError::Unimplemented</span>)
     }
 }
