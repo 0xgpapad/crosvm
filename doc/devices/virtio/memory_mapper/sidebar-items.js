@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error",""],["Permission",""]],"struct":[["BasicMemoryMapper",""],["MappingInfo","Manages the mapping from a guest IO virtual address space to the guest physical address space"]],"trait":[["MemoryMapper","A generic interface for vfio and other iommu backends"],["MemoryMapperDescriptors",""]],"type":[["Result",""]]});

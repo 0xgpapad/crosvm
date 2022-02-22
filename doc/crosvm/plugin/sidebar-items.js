@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CommError","An error that occurs when communicating with the plugin process."]],"fn":[["run_config","Run a VM with a plugin process specified by `cfg`."],["run_vcpus",""]]});

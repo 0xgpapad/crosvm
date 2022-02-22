@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Endpoint","Endpoint for vhost-user connection through VFIO."],["Listener","Listener for accepting incoming connections from virtio-vhost-user device through VFIO."]],"trait":[["Device","VFIO device which can be used as virtio-vhost-user device backend."]]});

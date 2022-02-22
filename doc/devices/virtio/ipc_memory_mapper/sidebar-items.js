@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["create_ipc_mapper","Returns a new `IpcMemoryMapper` instance and a response_tx for the iommu to respond to `TranslateRequest`s."]],"struct":[["CreateIpcMapperRet",""],["IpcMemoryMapper","Sends an addr translation request to another process using `Tube`, and gets the translated addr from another `Tube`"],["TranslateRequest",""]],"type":[["Result",""]]});
