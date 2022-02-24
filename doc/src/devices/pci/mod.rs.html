@@ -54,6 +54,8 @@
 <span id="53">53</span>
 <span id="54">54</span>
 <span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -70,6 +72,7 @@
 <span class="kw">mod</span> <span class="ident">ac97_regs</span>;
 <span class="kw">mod</span> <span class="ident">coiommu</span>;
 <span class="kw">mod</span> <span class="ident">msix</span>;
+<span class="kw">mod</span> <span class="ident">pci_address</span>;
 <span class="kw">mod</span> <span class="ident">pci_configuration</span>;
 <span class="kw">mod</span> <span class="ident">pci_device</span>;
 <span class="kw">mod</span> <span class="ident">pci_root</span>;
@@ -81,6 +84,7 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::ac97</span>::{<span class="ident">Ac97Backend</span>, <span class="ident">Ac97Dev</span>, <span class="ident">Ac97Parameters</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::coiommu</span>::{<span class="ident">CoIommuDev</span>, <span class="ident">CoIommuParameters</span>, <span class="ident">CoIommuUnpinPolicy</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::msix</span>::{<span class="ident">MsixCap</span>, <span class="ident">MsixConfig</span>, <span class="ident">MsixStatus</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_address::PciAddress</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_configuration</span>::{
     <span class="ident">PciBarConfiguration</span>, <span class="ident">PciBarIndex</span>, <span class="ident">PciBarPrefetchable</span>, <span class="ident">PciBarRegionType</span>, <span class="ident">PciCapability</span>,
     <span class="ident">PciCapabilityID</span>, <span class="ident">PciClassCode</span>, <span class="ident">PciConfiguration</span>, <span class="ident">PciDisplaySubclass</span>, <span class="ident">PciHeaderType</span>,
@@ -88,7 +92,7 @@
 };
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_device::Error</span> <span class="kw">as</span> <span class="ident">PciDeviceError</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_device::PciDevice</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_root</span>::{<span class="ident">PciAddress</span>, <span class="ident">PciConfigIo</span>, <span class="ident">PciConfigMmio</span>, <span class="ident">PciRoot</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_root</span>::{<span class="ident">PciConfigIo</span>, <span class="ident">PciConfigMmio</span>, <span class="ident">PciRoot</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pcie</span>::{<span class="ident">PciBridge</span>, <span class="ident">PcieRootPort</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::stub</span>::{<span class="ident">StubPciDevice</span>, <span class="ident">StubPciParameters</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::vfio_pci::VfioPciDevice</span>;
