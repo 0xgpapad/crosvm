@@ -1030,7 +1030,6 @@
 <span id="1029">1029</span>
 <span id="1030">1030</span>
 <span id="1031">1031</span>
-<span id="1032">1032</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1089,12 +1088,11 @@
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">anyhow</span>, <span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">base</span>::{
-    <span class="ident">error</span>, <span class="ident">Event</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">SafeDescriptor</span>, <span class="ident">SharedMemory</span>,
-    <span class="ident">SharedMemoryUnix</span>, <span class="ident">UnlinkUnixListener</span>,
+    <span class="ident">clear_fd_flags</span>, <span class="ident">error</span>, <span class="ident">Event</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">SafeDescriptor</span>,
+    <span class="ident">SharedMemory</span>, <span class="ident">SharedMemoryUnix</span>, <span class="ident">UnlinkUnixListener</span>,
 };
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">AsyncWrapper</span>, <span class="ident">Executor</span>};
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
-<span class="kw">use</span> <span class="ident">sys_util::clear_fd_flags</span>;
 <span class="kw">use</span> <span class="ident">vm_memory</span>::{<span class="ident">GuestAddress</span>, <span class="ident">GuestMemory</span>, <span class="ident">MemoryRegion</span>};
 <span class="kw">use</span> <span class="ident">vmm_vhost</span>::{
     <span class="ident">connection::vfio</span>::{<span class="ident">Endpoint</span> <span class="kw">as</span> <span class="ident">VfioEndpoint</span>, <span class="ident">Listener</span> <span class="kw">as</span> <span class="ident">VfioListener</span>},
@@ -1209,7 +1207,7 @@
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vmm_maps</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="ident">contexts</span>.<span class="ident">len</span>());
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">regions</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="ident">contexts</span>.<span class="ident">len</span>());
-    <span class="kw">let</span> <span class="ident">page_size</span> <span class="op">=</span> <span class="ident">sys_util::pagesize</span>() <span class="kw">as</span> <span class="ident">u64</span>;
+    <span class="kw">let</span> <span class="ident">page_size</span> <span class="op">=</span> <span class="ident">base::pagesize</span>() <span class="kw">as</span> <span class="ident">u64</span>;
     <span class="kw">for</span> <span class="ident">region</span> <span class="kw">in</span> <span class="ident">contexts</span> {
         <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">file_offset</span> <span class="op">+</span> <span class="ident">region</span>.<span class="ident">mmap_offset</span>;
         <span class="macro">assert_eq!</span>(<span class="ident">offset</span> <span class="op">%</span> <span class="ident">page_size</span>, <span class="number">0</span>);

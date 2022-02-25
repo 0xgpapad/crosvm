@@ -993,7 +993,7 @@
 
             <span class="kw">match</span> <span class="ident">vfio_map_result</span> {
                 <span class="prelude-val">Ok</span>(()) =&gt; (),
-                <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="kw">match</span> <span class="ident">sys_util::Error::last</span>() {
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="kw">match</span> <span class="ident">base::Error::last</span>() {
                     <span class="ident">err</span> <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">errno</span>() <span class="op">==</span> <span class="ident">libc::EEXIST</span> =&gt; {
                         <span class="comment">// If a mapping already exists in the requested range,</span>
                         <span class="comment">// the device SHOULD reject the request and set status</span>

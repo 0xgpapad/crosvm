@@ -389,7 +389,9 @@
 };
 <span class="kw">use</span> <span class="ident">audio_streams</span>::{<span class="ident">BoxError</span>, <span class="ident">SampleFormat</span>, <span class="ident">StreamDirection</span>, <span class="ident">StreamEffect</span>};
 
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">MemoryMapping</span>, <span class="ident">MemoryMappingBuilder</span>, <span class="ident">SharedMemory</span>, <span class="ident">SharedMemoryUnix</span>};
+<span class="kw">use</span> <span class="ident">base</span>::{
+    <span class="ident">error</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">SysError</span>, <span class="ident">MemoryMapping</span>, <span class="ident">MemoryMappingBuilder</span>, <span class="ident">SharedMemory</span>, <span class="ident">SharedMemoryUnix</span>,
+};
 <span class="kw">use</span> <span class="ident">data_model::VolatileMemory</span>;
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
 
@@ -398,8 +400,6 @@
 <span class="kw">use</span> <span class="ident">std::path::Path</span>;
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 <span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
-
-<span class="kw">use</span> <span class="ident">sys_util::Error</span> <span class="kw">as</span> <span class="ident">SysError</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::shm_vios</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
 

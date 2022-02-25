@@ -1871,7 +1871,7 @@
             <span class="ident">StreamDirection::Playback</span> =&gt; [<span class="number">0</span>, <span class="number">0</span>],
         };
 
-        <span class="comment">// Create a `sys_util::SharedMemory` object from a descriptor backing `self.mem`.</span>
+        <span class="comment">// Create a `base::SharedMemory` object from a descriptor backing `self.mem`.</span>
         <span class="comment">// This creation is expected to succeed because we can assume that `self.mem` was created</span>
         <span class="comment">// from a `SharedMemory` object and its type was generalized to `dyn AsRawDescriptor`.</span>
         <span class="kw">let</span> <span class="ident">desc</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AsRawDescriptor</span> <span class="op">=</span> <span class="self">self</span>
