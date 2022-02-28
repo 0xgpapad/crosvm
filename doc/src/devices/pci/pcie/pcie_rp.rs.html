@@ -482,10 +482,13 @@
 <span id="481">481</span>
 <span id="482">482</span>
 <span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
-<span class="kw">use</span> <span class="ident">std::path::Path</span>;
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
 
@@ -559,10 +562,7 @@
     }
 
     <span class="doccomment">/// Constructs a new PCIE root port which associated with the host physical pcie RP</span>
-    <span class="doccomment">/// As a lot of checking is done on host pcie RP, if the check is failure, this</span>
-    <span class="doccomment">/// physical pcie RP will be ignored, and virtual pcie RP won&#39;t be created.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_from_host</span>(<span class="ident">pcie_host_sysfs</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">pcie_host</span> <span class="op">=</span> <span class="ident">PcieHostRootPort::new</span>(<span class="ident">pcie_host_sysfs</span>)<span class="question-mark">?</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_from_host</span>(<span class="ident">pcie_host</span>: <span class="ident">PcieHostRootPort</span>, <span class="ident">slot_implemented</span>: <span class="ident">bool</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">bus_range</span> <span class="op">=</span> <span class="ident">pcie_host</span>.<span class="ident">get_bus_range</span>();
         <span class="comment">// if physical pcie root port isn&#39;t on bus 0, ignore this physical pcie root port.</span>
         <span class="kw">if</span> <span class="ident">bus_range</span>.<span class="ident">primary</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
@@ -578,7 +578,11 @@
             <span class="ident">pmc_config</span>: <span class="ident">PmcConfig::new</span>(),
             <span class="ident">pmc_cap_reg_idx</span>: <span class="prelude-val">None</span>,
             <span class="ident">pci_address</span>: <span class="prelude-val">None</span>,
-            <span class="ident">slot_control</span>: <span class="prelude-val">Some</span>(<span class="ident">PCIE_SLTCTL_PIC_OFF</span> <span class="op">|</span> <span class="ident">PCIE_SLTCTL_AIC_OFF</span>),
+            <span class="ident">slot_control</span>: <span class="kw">if</span> <span class="ident">slot_implemented</span> {
+                <span class="prelude-val">Some</span>(<span class="ident">PCIE_SLTCTL_PIC_OFF</span> <span class="op">|</span> <span class="ident">PCIE_SLTCTL_AIC_OFF</span>)
+            } <span class="kw">else</span> {
+                <span class="prelude-val">None</span>
+            },
             <span class="ident">slot_status</span>: <span class="number">0</span>,
             <span class="ident">root_control</span>: <span class="number">0</span>,
             <span class="ident">root_status</span>: <span class="number">0</span>,
@@ -885,6 +889,10 @@
         }
 
         <span class="ident">removed_devices</span>
+    }
+
+    <span class="kw">fn</span> <span class="ident">hotplug_implemented</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">slot_control</span>.<span class="ident">is_some</span>()
     }
 
     <span class="kw">fn</span> <span class="ident">get_bridge_window_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (<span class="ident">u64</span>, <span class="ident">u64</span>) {

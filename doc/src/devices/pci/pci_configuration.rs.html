@@ -1274,6 +1274,11 @@
 <span id="1273">1273</span>
 <span id="1274">1274</span>
 <span id="1275">1275</span>
+<span id="1276">1276</span>
+<span id="1277">1277</span>
+<span id="1278">1278</span>
+<span id="1279">1279</span>
+<span id="1280">1280</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1296,6 +1301,7 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">COMMAND_REG_MEMORY_SPACE_MASK</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x0000_0002</span>;
 <span class="kw">const</span> <span class="ident">STATUS_REG</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">STATUS_REG_CAPABILITIES_USED_MASK</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x0010_0000</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CLASS_REG</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">2</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">HEADER_TYPE_REG</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">3</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">HEADER_TYPE_MULTIFUNCTION_MASK</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x0080_0000</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">BAR0_REG</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
@@ -2003,6 +2009,10 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_io</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">region_type</span> <span class="op">==</span> <span class="ident">PciBarRegionType::IoRegion</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_prefetchable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">is_memory</span>() <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">prefetchable</span> <span class="op">==</span> <span class="ident">PciBarPrefetchable::Prefetchable</span>
     }
 }
 

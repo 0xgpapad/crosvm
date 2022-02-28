@@ -320,15 +320,21 @@
 <span id="319">319</span>
 <span id="320">320</span>
 <span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci</span>::{
-    <span class="ident">PciAddress</span>, <span class="ident">PciBarConfiguration</span>, <span class="ident">PciBarPrefetchable</span>, <span class="ident">PciBarRegionType</span>, <span class="ident">PciClassCode</span>,
+    <span class="ident">BarRange</span>, <span class="ident">PciAddress</span>, <span class="ident">PciBarConfiguration</span>, <span class="ident">PciBarPrefetchable</span>, <span class="ident">PciBarRegionType</span>, <span class="ident">PciClassCode</span>,
     <span class="ident">PciConfiguration</span>, <span class="ident">PciDevice</span>, <span class="ident">PciDeviceError</span>, <span class="ident">PciHeaderType</span>, <span class="ident">PciInterruptPin</span>,
     <span class="ident">PciProgrammingInterface</span>, <span class="ident">PciSerialBusSubClass</span>,
 };
+
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::register_space</span>::{<span class="ident">Register</span>, <span class="ident">RegisterSpace</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::usb::host_backend::host_backend_device_provider::HostBackendDeviceProvider</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::usb::xhci::xhci::Xhci</span>;
@@ -558,7 +564,7 @@
     <span class="kw">fn</span> <span class="ident">allocate_io_bars</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
-    ) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">u64</span>, <span class="ident">u64</span>)<span class="op">&gt;</span>, <span class="ident">PciDeviceError</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span>, <span class="ident">PciDeviceError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">pci_address</span>
             .<span class="ident">expect</span>(<span class="string">&quot;assign_address must be called prior to allocate_io_bars&quot;</span>);
@@ -587,7 +593,11 @@
         <span class="self">self</span>.<span class="ident">config_regs</span>
             .<span class="ident">add_pci_bar</span>(<span class="ident">bar0_config</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">PciDeviceError::IoRegistrationFailed</span>(<span class="ident">bar0_addr</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[(<span class="ident">bar0_addr</span>, <span class="ident">XHCI_BAR0_SIZE</span>)])
+        <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[<span class="ident">BarRange</span> {
+            <span class="ident">addr</span>: <span class="ident">bar0_addr</span>,
+            <span class="ident">size</span>: <span class="ident">XHCI_BAR0_SIZE</span>,
+            <span class="ident">prefetchable</span>: <span class="bool-val">false</span>,
+        }])
     }
 
     <span class="kw">fn</span> <span class="ident">get_bar_configuration</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bar_num</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PciBarConfiguration</span><span class="op">&gt;</span> {

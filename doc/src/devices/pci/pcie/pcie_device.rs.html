@@ -249,6 +249,14 @@
 <span id="248">248</span>
 <span id="249">249</span>
 <span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -278,6 +286,14 @@
         <span class="prelude-val">None</span>
     }
     <span class="kw">fn</span> <span class="ident">get_removed_devices</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PciAddress</span><span class="op">&gt;</span>;
+
+    <span class="doccomment">/// Hotplug capability is implemented on this bridge or not.</span>
+    <span class="doccomment">/// Return true, the children pci devices could be connected through hotplug</span>
+    <span class="doccomment">/// Return false, the children pci devices should be connected statically</span>
+    <span class="kw">fn</span> <span class="ident">hotplug_implemented</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span>;
+
+    <span class="doccomment">/// Get bridge window size to cover children&#39;s mmio size</span>
+    <span class="doccomment">/// (u64, u64) -&gt; (non_prefetchable window size, prefetchable_window_size)</span>
     <span class="kw">fn</span> <span class="ident">get_bridge_window_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (<span class="ident">u64</span>, <span class="ident">u64</span>);
 }
 

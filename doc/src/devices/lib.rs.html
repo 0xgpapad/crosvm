@@ -161,9 +161,9 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci</span>::{<span class="ident">Ac97Backend</span>, <span class="ident">Ac97Dev</span>, <span class="ident">Ac97Parameters</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci</span>::{
-    <span class="ident">CoIommuDev</span>, <span class="ident">CoIommuParameters</span>, <span class="ident">CoIommuUnpinPolicy</span>, <span class="ident">PciAddress</span>, <span class="ident">PciBridge</span>, <span class="ident">PciClassCode</span>,
-    <span class="ident">PciConfigIo</span>, <span class="ident">PciConfigMmio</span>, <span class="ident">PciDevice</span>, <span class="ident">PciDeviceError</span>, <span class="ident">PciInterruptPin</span>, <span class="ident">PciRoot</span>, <span class="ident">PcieRootPort</span>,
-    <span class="ident">StubPciDevice</span>, <span class="ident">StubPciParameters</span>, <span class="ident">VfioPciDevice</span>,
+    <span class="ident">BarRange</span>, <span class="ident">CoIommuDev</span>, <span class="ident">CoIommuParameters</span>, <span class="ident">CoIommuUnpinPolicy</span>, <span class="ident">PciAddress</span>, <span class="ident">PciBridge</span>,
+    <span class="ident">PciClassCode</span>, <span class="ident">PciConfigIo</span>, <span class="ident">PciConfigMmio</span>, <span class="ident">PciDevice</span>, <span class="ident">PciDeviceError</span>, <span class="ident">PciInterruptPin</span>, <span class="ident">PciRoot</span>,
+    <span class="ident">PcieHostRootPort</span>, <span class="ident">PcieRootPort</span>, <span class="ident">StubPciDevice</span>, <span class="ident">StubPciParameters</span>, <span class="ident">VfioPciDevice</span>,
 };
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pit</span>::{<span class="ident">Pit</span>, <span class="ident">PitError</span>};

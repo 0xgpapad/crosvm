@@ -201,6 +201,8 @@
 <span id="200">200</span>
 <span id="201">201</span>
 <span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -292,6 +294,8 @@
 }
 
 <span class="kw">impl</span> <span class="ident">PcieHostRootPort</span> {
+    <span class="doccomment">/// Create PcieHostRootPort, host_syfsfs_patch specify host pcie root port</span>
+    <span class="doccomment">/// sysfs path.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">host_sysfs_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">host_config</span> <span class="op">=</span> <span class="ident">PciHostConfig::new</span>(<span class="ident">host_sysfs_path</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">host_name</span> <span class="op">=</span> <span class="ident">host_sysfs_path</span>

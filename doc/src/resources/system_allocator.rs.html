@@ -357,6 +357,7 @@
 <span id="356">356</span>
 <span id="357">357</span>
 <span id="358">358</span>
+<span id="359">359</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -372,6 +373,7 @@
 <span class="doccomment">/// MMIO address Type</span>
 <span class="doccomment">///    Low: address allocated from low_address_space</span>
 <span class="doccomment">///    High: address allocated from high_address_space</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">MmioType</span> {
     <span class="ident">Low</span>,
     <span class="ident">High</span>,

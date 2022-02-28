@@ -469,6 +469,14 @@
 <span id="468">468</span>
 <span id="469">469</span>
 <span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -493,7 +501,7 @@
     <span class="ident">PciBarConfiguration</span>, <span class="ident">PciBarPrefetchable</span>, <span class="ident">PciBarRegionType</span>, <span class="ident">PciClassCode</span>, <span class="ident">PciConfiguration</span>,
     <span class="ident">PciHeaderType</span>, <span class="ident">PciMultimediaSubclass</span>,
 };
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci::pci_device</span>::{<span class="self">self</span>, <span class="ident">PciDevice</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci::pci_device</span>::{<span class="self">self</span>, <span class="ident">BarRange</span>, <span class="ident">PciDevice</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci</span>::{<span class="ident">PciAddress</span>, <span class="ident">PciDeviceError</span>, <span class="ident">PciInterruptPin</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">any</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;linux&quot;</span>, <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;android&quot;</span>)))]</span>
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::snd::vios_backend::Error</span> <span class="kw">as</span> <span class="ident">VioSError</span>;
@@ -790,11 +798,11 @@
         <span class="prelude-val">Some</span>((<span class="ident">gsi</span>, <span class="ident">pin</span>))
     }
 
-    <span class="kw">fn</span> <span class="ident">allocate_io_bars</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">u64</span>, <span class="ident">u64</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">allocate_io_bars</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">pci_address</span>
             .<span class="ident">expect</span>(<span class="string">&quot;allocate_address must be called prior to allocate_io_bars&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">let</span> <span class="ident">mixer_regs_addr</span> <span class="op">=</span> <span class="ident">resources</span>
             .<span class="ident">mmio_allocator</span>(<span class="ident">MmioType::Low</span>)
             .<span class="ident">allocate_with_align</span>(
@@ -819,7 +827,11 @@
         <span class="self">self</span>.<span class="ident">config_regs</span>
             .<span class="ident">add_pci_bar</span>(<span class="ident">mixer_config</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">pci_device::Error::IoRegistrationFailed</span>(<span class="ident">mixer_regs_addr</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="ident">ranges</span>.<span class="ident">push</span>((<span class="ident">mixer_regs_addr</span>, <span class="ident">MIXER_REGS_SIZE</span>));
+        <span class="ident">ranges</span>.<span class="ident">push</span>(<span class="ident">BarRange</span> {
+            <span class="ident">addr</span>: <span class="ident">mixer_regs_addr</span>,
+            <span class="ident">size</span>: <span class="ident">MIXER_REGS_SIZE</span>,
+            <span class="ident">prefetchable</span>: <span class="bool-val">false</span>,
+        });
 
         <span class="kw">let</span> <span class="ident">master_regs_addr</span> <span class="op">=</span> <span class="ident">resources</span>
             .<span class="ident">mmio_allocator</span>(<span class="ident">MmioType::Low</span>)
@@ -845,7 +857,11 @@
         <span class="self">self</span>.<span class="ident">config_regs</span>
             .<span class="ident">add_pci_bar</span>(<span class="ident">master_config</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">pci_device::Error::IoRegistrationFailed</span>(<span class="ident">master_regs_addr</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-        <span class="ident">ranges</span>.<span class="ident">push</span>((<span class="ident">master_regs_addr</span>, <span class="ident">MASTER_REGS_SIZE</span>));
+        <span class="ident">ranges</span>.<span class="ident">push</span>(<span class="ident">BarRange</span> {
+            <span class="ident">addr</span>: <span class="ident">master_regs_addr</span>,
+            <span class="ident">size</span>: <span class="ident">MASTER_REGS_SIZE</span>,
+            <span class="ident">prefetchable</span>: <span class="bool-val">false</span>,
+        });
         <span class="prelude-val">Ok</span>(<span class="ident">ranges</span>)
     }
 

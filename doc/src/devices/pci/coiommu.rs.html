@@ -1599,6 +1599,18 @@
 <span id="1598">1598</span>
 <span id="1599">1599</span>
 <span id="1600">1600</span>
+<span id="1601">1601</span>
+<span id="1602">1602</span>
+<span id="1603">1603</span>
+<span id="1604">1604</span>
+<span id="1605">1605</span>
+<span id="1606">1606</span>
+<span id="1607">1607</span>
+<span id="1608">1608</span>
+<span id="1609">1609</span>
+<span id="1610">1610</span>
+<span id="1611">1611</span>
+<span id="1612">1612</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2022 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1644,7 +1656,7 @@
     <span class="ident">PciBarConfiguration</span>, <span class="ident">PciBarPrefetchable</span>, <span class="ident">PciBarRegionType</span>, <span class="ident">PciClassCode</span>, <span class="ident">PciConfiguration</span>,
     <span class="ident">PciHeaderType</span>, <span class="ident">PciOtherSubclass</span>, <span class="ident">COMMAND_REG</span>, <span class="ident">COMMAND_REG_MEMORY_SPACE_MASK</span>,
 };
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci::pci_device</span>::{<span class="ident">PciDevice</span>, <span class="prelude-ty">Result</span> <span class="kw">as</span> <span class="ident">PciResult</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci::pci_device</span>::{<span class="ident">BarRange</span>, <span class="ident">PciDevice</span>, <span class="prelude-ty">Result</span> <span class="kw">as</span> <span class="ident">PciResult</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci</span>::{<span class="ident">PciAddress</span>, <span class="ident">PciDeviceError</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::vfio::VfioContainer</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">UnpinRequest</span>, <span class="ident">UnpinResponse</span>};
@@ -3038,13 +3050,13 @@
         <span class="self">self</span>.<span class="ident">pci_address</span>.<span class="ident">ok_or</span>(<span class="ident">PciDeviceError::PciAllocationFailed</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">allocate_io_bars</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>) -&gt; <span class="ident">PciResult</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">u64</span>, <span class="ident">u64</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">allocate_io_bars</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>) -&gt; <span class="ident">PciResult</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">pci_address</span>
             .<span class="ident">expect</span>(<span class="string">&quot;allocate_address must be called prior to allocate_io_bars&quot;</span>);
 
         <span class="comment">// Allocate one bar for the structures pointed to by the capability structures.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
         <span class="kw">let</span> <span class="ident">mmio_addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">allocate_bar_address</span>(
             <span class="ident">resources</span>,
@@ -3054,7 +3066,11 @@
             <span class="string">&quot;coiommu-mmiobar&quot;</span>,
         )<span class="question-mark">?</span>;
 
-        <span class="ident">ranges</span>.<span class="ident">push</span>((<span class="ident">mmio_addr</span>, <span class="ident">COIOMMU_MMIO_BAR_SIZE</span>));
+        <span class="ident">ranges</span>.<span class="ident">push</span>(<span class="ident">BarRange</span> {
+            <span class="ident">addr</span>: <span class="ident">mmio_addr</span>,
+            <span class="ident">size</span>: <span class="ident">COIOMMU_MMIO_BAR_SIZE</span>,
+            <span class="ident">prefetchable</span>: <span class="bool-val">false</span>,
+        });
 
         <span class="prelude-val">Ok</span>(<span class="ident">ranges</span>)
     }
@@ -3062,12 +3078,12 @@
     <span class="kw">fn</span> <span class="ident">allocate_device_bars</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
-    ) -&gt; <span class="ident">PciResult</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">u64</span>, <span class="ident">u64</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="ident">PciResult</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">pci_address</span>
             .<span class="ident">expect</span>(<span class="string">&quot;allocate_address must be called prior to allocate_device_bars&quot;</span>);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
         <span class="kw">let</span> <span class="ident">topologymap_addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">allocate_bar_address</span>(
             <span class="ident">resources</span>,
@@ -3077,7 +3093,11 @@
             <span class="string">&quot;coiommu-topology&quot;</span>,
         )<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">topologymap_addr</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">topologymap_addr</span>);
-        <span class="ident">ranges</span>.<span class="ident">push</span>((<span class="ident">topologymap_addr</span>, <span class="ident">COIOMMU_TOPOLOGYMAP_SIZE</span> <span class="kw">as</span> <span class="ident">u64</span>));
+        <span class="ident">ranges</span>.<span class="ident">push</span>(<span class="ident">BarRange</span> {
+            <span class="ident">addr</span>: <span class="ident">topologymap_addr</span>,
+            <span class="ident">size</span>: <span class="ident">COIOMMU_TOPOLOGYMAP_SIZE</span> <span class="kw">as</span> <span class="ident">u64</span>,
+            <span class="ident">prefetchable</span>: <span class="bool-val">false</span>,
+        });
 
         <span class="kw">let</span> <span class="ident">notifymap_addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">allocate_bar_address</span>(
             <span class="ident">resources</span>,
@@ -3087,7 +3107,11 @@
             <span class="string">&quot;coiommu-notifymap&quot;</span>,
         )<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">notifymap_addr</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">notifymap_addr</span>);
-        <span class="ident">ranges</span>.<span class="ident">push</span>((<span class="ident">notifymap_addr</span>, <span class="ident">COIOMMU_NOTIFYMAP_SIZE</span> <span class="kw">as</span> <span class="ident">u64</span>));
+        <span class="ident">ranges</span>.<span class="ident">push</span>(<span class="ident">BarRange</span> {
+            <span class="ident">addr</span>: <span class="ident">notifymap_addr</span>,
+            <span class="ident">size</span>: <span class="ident">COIOMMU_NOTIFYMAP_SIZE</span> <span class="kw">as</span> <span class="ident">u64</span>,
+            <span class="ident">prefetchable</span>: <span class="bool-val">false</span>,
+        });
 
         <span class="prelude-val">Ok</span>(<span class="ident">ranges</span>)
     }

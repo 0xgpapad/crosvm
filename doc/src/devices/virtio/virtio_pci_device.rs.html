@@ -806,6 +806,14 @@
 <span id="805">805</span>
 <span id="806">806</span>
 <span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -826,9 +834,9 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci</span>::{
-    <span class="ident">MsixCap</span>, <span class="ident">MsixConfig</span>, <span class="ident">PciAddress</span>, <span class="ident">PciBarConfiguration</span>, <span class="ident">PciBarPrefetchable</span>, <span class="ident">PciBarRegionType</span>,
-    <span class="ident">PciCapability</span>, <span class="ident">PciCapabilityID</span>, <span class="ident">PciClassCode</span>, <span class="ident">PciConfiguration</span>, <span class="ident">PciDevice</span>, <span class="ident">PciDeviceError</span>,
-    <span class="ident">PciDisplaySubclass</span>, <span class="ident">PciHeaderType</span>, <span class="ident">PciInterruptPin</span>, <span class="ident">PciSubclass</span>,
+    <span class="ident">BarRange</span>, <span class="ident">MsixCap</span>, <span class="ident">MsixConfig</span>, <span class="ident">PciAddress</span>, <span class="ident">PciBarConfiguration</span>, <span class="ident">PciBarPrefetchable</span>,
+    <span class="ident">PciBarRegionType</span>, <span class="ident">PciCapability</span>, <span class="ident">PciCapabilityID</span>, <span class="ident">PciClassCode</span>, <span class="ident">PciConfiguration</span>, <span class="ident">PciDevice</span>,
+    <span class="ident">PciDeviceError</span>, <span class="ident">PciDisplaySubclass</span>, <span class="ident">PciHeaderType</span>, <span class="ident">PciInterruptPin</span>, <span class="ident">PciSubclass</span>,
 };
 
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::virtio_pci_common_config::VirtioPciCommonConfig</span>;
@@ -1338,12 +1346,12 @@
     <span class="kw">fn</span> <span class="ident">allocate_io_bars</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
-    ) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">u64</span>, <span class="ident">u64</span>)<span class="op">&gt;</span>, <span class="ident">PciDeviceError</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span>, <span class="ident">PciDeviceError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">pci_address</span>
             .<span class="ident">expect</span>(<span class="string">&quot;allocaten_address must be called prior to allocate_io_bars&quot;</span>);
         <span class="comment">// Allocate one bar for the structures pointed to by the capability structures.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">let</span> <span class="ident">settings_config_addr</span> <span class="op">=</span> <span class="ident">resources</span>
             .<span class="ident">mmio_allocator</span>(<span class="ident">MmioType::Low</span>)
             .<span class="ident">allocate_with_align</span>(
@@ -1373,7 +1381,11 @@
             .<span class="ident">add_pci_bar</span>(<span class="ident">config</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">PciDeviceError::IoRegistrationFailed</span>(<span class="ident">settings_config_addr</span>, <span class="ident">e</span>))<span class="question-mark">?</span>
             <span class="kw">as</span> <span class="ident">u8</span>;
-        <span class="ident">ranges</span>.<span class="ident">push</span>((<span class="ident">settings_config_addr</span>, <span class="ident">CAPABILITY_BAR_SIZE</span>));
+        <span class="ident">ranges</span>.<span class="ident">push</span>(<span class="ident">BarRange</span> {
+            <span class="ident">addr</span>: <span class="ident">settings_config_addr</span>,
+            <span class="ident">size</span>: <span class="ident">CAPABILITY_BAR_SIZE</span>,
+            <span class="ident">prefetchable</span>: <span class="bool-val">false</span>,
+        });
 
         <span class="comment">// Once the BARs are allocated, the capabilities can be added to the PCI configuration.</span>
         <span class="self">self</span>.<span class="ident">add_settings_pci_capabilities</span>(<span class="ident">settings_bar</span>)<span class="question-mark">?</span>;
@@ -1384,11 +1396,11 @@
     <span class="kw">fn</span> <span class="ident">allocate_device_bars</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
-    ) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">u64</span>, <span class="ident">u64</span>)<span class="op">&gt;</span>, <span class="ident">PciDeviceError</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span>, <span class="ident">PciDeviceError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">pci_address</span>
             .<span class="ident">expect</span>(<span class="string">&quot;allocaten_address must be called prior to allocate_device_bars&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BarRange</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">for</span> <span class="ident">config</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">device</span>.<span class="ident">get_device_bars</span>(<span class="ident">address</span>) {
             <span class="kw">let</span> <span class="ident">device_addr</span> <span class="op">=</span> <span class="ident">resources</span>
                 .<span class="ident">mmio_allocator</span>(<span class="ident">MmioType::High</span>)
@@ -1412,7 +1424,11 @@
                 .<span class="ident">config_regs</span>
                 .<span class="ident">add_pci_bar</span>(<span class="ident">config</span>)
                 .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">PciDeviceError::IoRegistrationFailed</span>(<span class="ident">device_addr</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-            <span class="ident">ranges</span>.<span class="ident">push</span>((<span class="ident">device_addr</span>, <span class="ident">config</span>.<span class="ident">size</span>()));
+            <span class="ident">ranges</span>.<span class="ident">push</span>(<span class="ident">BarRange</span> {
+                <span class="ident">addr</span>: <span class="ident">device_addr</span>,
+                <span class="ident">size</span>: <span class="ident">config</span>.<span class="ident">size</span>(),
+                <span class="ident">prefetchable</span>: <span class="bool-val">false</span>,
+            });
         }
         <span class="prelude-val">Ok</span>(<span class="ident">ranges</span>)
     }
