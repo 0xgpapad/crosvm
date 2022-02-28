@@ -55,6 +55,9 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -76,6 +79,7 @@
 <span class="kw">mod</span> <span class="ident">pci_device</span>;
 <span class="kw">mod</span> <span class="ident">pci_root</span>;
 <span class="kw">mod</span> <span class="ident">pcie</span>;
+<span class="kw">mod</span> <span class="ident">pvpanic</span>;
 <span class="kw">mod</span> <span class="ident">stub</span>;
 <span class="kw">mod</span> <span class="ident">vfio_pci</span>;
 
@@ -92,6 +96,7 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_device</span>::{<span class="ident">BarRange</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">PciDeviceError</span>, <span class="ident">PciDevice</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_root</span>::{<span class="ident">PciConfigIo</span>, <span class="ident">PciConfigMmio</span>, <span class="ident">PciRoot</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pcie</span>::{<span class="ident">PciBridge</span>, <span class="ident">PcieHostRootPort</span>, <span class="ident">PcieRootPort</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pvpanic</span>::{<span class="ident">PvPanicCode</span>, <span class="ident">PvPanicPciDevice</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::stub</span>::{<span class="ident">StubPciDevice</span>, <span class="ident">StubPciParameters</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::vfio_pci::VfioPciDevice</span>;
 
@@ -111,6 +116,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PCI_VENDOR_ID_INTEL</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x8086</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PCI_VENDOR_ID_REDHAT</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x1b36</span>;
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="devices" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
 </body></html>

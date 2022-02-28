@@ -614,6 +614,10 @@
 <span id="613">613</span>
 <span id="614">614</span>
 <span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1198,15 +1202,19 @@
 
             <span class="kw">let</span> <span class="ident">exit_evt</span> <span class="op">=</span> <span class="ident">scoped_exit_evt</span>.<span class="ident">into</span>();
             <span class="kw">let</span> <span class="ident">final_event</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">exit_reason</span> {
-                <span class="ident">ExitState::Stop</span> =&gt; <span class="ident">exit_evt</span>,
-                <span class="ident">ExitState::Reset</span> =&gt; <span class="ident">reset_evt</span>,
-                <span class="ident">ExitState::Crash</span> =&gt; <span class="ident">crash_evt</span>,
+                <span class="ident">ExitState::Stop</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">exit_evt</span>),
+                <span class="ident">ExitState::Reset</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">reset_evt</span>),
+                <span class="ident">ExitState::Crash</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">crash_evt</span>),
+                <span class="comment">// vcpu_loop doesn&#39;t exit with GuestPanic.</span>
+                <span class="ident">ExitState::GuestPanic</span> =&gt; <span class="prelude-val">None</span>,
             };
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">final_event</span>.<span class="ident">write</span>(<span class="number">1</span>) {
-                <span class="macro">error!</span>(
-                    <span class="string">&quot;failed to send final event {:?} on vcpu {}: {}&quot;</span>,
-                    <span class="ident">final_event</span>, <span class="ident">cpu_id</span>, <span class="ident">e</span>
-                )
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">final_event</span>) <span class="op">=</span> <span class="ident">final_event</span> {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">final_event</span>.<span class="ident">write</span>(<span class="number">1</span>) {
+                    <span class="macro">error!</span>(
+                        <span class="string">&quot;failed to send final event {:?} on vcpu {}: {}&quot;</span>,
+                        <span class="ident">final_event</span>, <span class="ident">cpu_id</span>, <span class="ident">e</span>
+                    )
+                }
             }
         })
         .<span class="ident">context</span>(<span class="string">&quot;failed to spawn VCPU thread&quot;</span>)
