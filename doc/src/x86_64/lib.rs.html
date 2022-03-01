@@ -1499,13 +1499,6 @@
 <span id="1498">1498</span>
 <span id="1499">1499</span>
 <span id="1500">1500</span>
-<span id="1501">1501</span>
-<span id="1502">1502</span>
-<span id="1503">1503</span>
-<span id="1504">1504</span>
-<span id="1505">1505</span>
-<span id="1506">1506</span>
-<span id="1507">1507</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1904,22 +1897,15 @@
         <span class="kw">let</span> <span class="ident">guest_mem</span> <span class="op">=</span> <span class="ident">vm</span>.<span class="ident">get_memory</span>();
         <span class="kw">let</span> <span class="ident">high_mmio_start</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::get_high_mmio_base</span>(<span class="ident">guest_mem</span>);
         <span class="kw">let</span> <span class="ident">high_mmio_size</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::get_high_mmio_size</span>(<span class="ident">vm</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">low_mmio</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="ident">MemRegion</span> {
-            <span class="ident">base</span>: <span class="ident">END_ADDR_BEFORE_32BITS</span>,
-            <span class="ident">size</span>: <span class="ident">PCI_MMIO_SIZE</span>,
-        }];
-        <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>) {
-            <span class="ident">low_mmio</span>.<span class="ident">push</span>(<span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0</span>,
-                <span class="ident">size</span>: <span class="ident">START_OF_RAM_32BITS</span>,
-            });
-        }
         <span class="ident">SystemAllocator::new</span>(<span class="ident">SystemAllocatorConfig</span> {
             <span class="ident">io</span>: <span class="prelude-val">Some</span>(<span class="ident">MemRegion</span> {
                 <span class="ident">base</span>: <span class="number">0xc000</span>,
                 <span class="ident">size</span>: <span class="number">0x4000</span>,
             }),
-            <span class="ident">low_mmio</span>,
+            <span class="ident">low_mmio</span>: <span class="ident">MemRegion</span> {
+                <span class="ident">base</span>: <span class="ident">END_ADDR_BEFORE_32BITS</span>,
+                <span class="ident">size</span>: <span class="ident">PCI_MMIO_SIZE</span>,
+            },
             <span class="ident">high_mmio</span>: <span class="ident">MemRegion</span> {
                 <span class="ident">base</span>: <span class="ident">high_mmio_start</span>,
                 <span class="ident">size</span>: <span class="ident">high_mmio_size</span>,

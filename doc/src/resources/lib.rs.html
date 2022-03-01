@@ -69,8 +69,6 @@
 <span id="68">68</span>
 <span id="69">69</span>
 <span id="70">70</span>
-<span id="71">71</span>
-<span id="72">72</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -124,8 +122,6 @@
     <span class="ident">InvalidAlloc</span>(<span class="ident">Alloc</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;IO port out of range: base:{0} size:{1}&quot;</span>)]</span>
     <span class="ident">IOPortOutOfRange</span>(<span class="ident">u64</span>, <span class="ident">u64</span>),
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Low MMIO address range not specified&quot;</span>)]</span>
-    <span class="ident">MissingLowMMIOAddresses</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Platform MMIO address range not specified&quot;</span>)]</span>
     <span class="ident">MissingPlatformMMIOAddresses</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;No IO address range specified&quot;</span>)]</span>
