@@ -562,6 +562,8 @@
 <span id="561">561</span>
 <span id="562">562</span>
 <span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -998,6 +1000,7 @@
     <span class="kw">pub</span> <span class="ident">dmi_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">no_legacy</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">host_cpu_topology</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">privileged_vm</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">stub_pci_devices</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">StubPciParameters</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">vvu_proxy</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">VvuOption</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">coiommu_param</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">devices::CoIommuParameters</span><span class="op">&gt;</span>,
@@ -1113,6 +1116,7 @@
             <span class="ident">dmi_path</span>: <span class="prelude-val">None</span>,
             <span class="ident">no_legacy</span>: <span class="bool-val">false</span>,
             <span class="ident">host_cpu_topology</span>: <span class="bool-val">false</span>,
+            <span class="ident">privileged_vm</span>: <span class="bool-val">false</span>,
             <span class="ident">stub_pci_devices</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">coiommu_param</span>: <span class="prelude-val">None</span>,
             <span class="ident">file_backed_mappings</span>: <span class="ident">Vec::new</span>(),

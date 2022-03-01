@@ -4227,6 +4227,10 @@
 <span id="4226">4226</span>
 <span id="4227">4227</span>
 <span id="4228">4228</span>
+<span id="4229">4229</span>
+<span id="4230">4230</span>
+<span id="4231">4231</span>
+<span id="4232">4232</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -6489,6 +6493,9 @@
         <span class="string">&quot;host-cpu-topology&quot;</span> =&gt; {
             <span class="ident">cfg</span>.<span class="ident">host_cpu_topology</span> <span class="op">=</span> <span class="bool-val">true</span>;
         }
+        <span class="string">&quot;privileged-vm&quot;</span> =&gt; {
+            <span class="ident">cfg</span>.<span class="ident">privileged_vm</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        }
         <span class="string">&quot;stub-pci-device&quot;</span> =&gt; {
             <span class="ident">cfg</span>.<span class="ident">stub_pci_devices</span>.<span class="ident">push</span>(<span class="ident">parse_stub_pci_parameters</span>(<span class="ident">value</span>)<span class="question-mark">?</span>);
         }
@@ -6970,6 +6977,7 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
           <span class="ident">Argument::flag</span>(<span class="string">&quot;no-legacy&quot;</span>, <span class="string">&quot;Don&#39;t use legacy KBD/RTC devices emulation&quot;</span>),
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
           <span class="ident">Argument::flag</span>(<span class="string">&quot;host-cpu-topology&quot;</span>, <span class="string">&quot;Use mirror cpu topology of Host for Guest VM&quot;</span>),
+          <span class="ident">Argument::flag</span>(<span class="string">&quot;privileged-vm&quot;</span>, <span class="string">&quot;Grant this Guest VM certian privileges to manage Host resources, such as power management.&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;stub-pci-device&quot;</span>, <span class="string">&quot;DOMAIN:BUS:DEVICE.FUNCTION[,vendor=NUM][,device=NUM][,class=NUM][,subsystem_vendor=NUM][,subsystem_device=NUM][,revision=NUM]&quot;</span>, <span class="string">&quot;Comma-separated key=value pairs for setting up a stub PCI device that just enumerates. The first option in the list must specify a PCI address to claim.
                               Optional further parameters
                               vendor=NUM - PCI vendor ID
