@@ -413,9 +413,9 @@
 }
 
 <span class="kw">impl</span> <span class="ident">SystemAllocator</span> {
-    <span class="doccomment">/// Creates a new `SystemAllocator` for managing addresses and irq numvers.</span>
-    <span class="doccomment">/// Can return `None` if `base` + `size` overflows a u64 or if alignment isn&#39;t a power</span>
-    <span class="doccomment">/// of two.</span>
+    <span class="doccomment">/// Creates a new `SystemAllocator` for managing addresses and irq numbers.</span>
+    <span class="doccomment">/// Will return an error if `base` + `size` overflows u64 (or allowed</span>
+    <span class="doccomment">/// maximum for the specific type), or if alignment isn&#39;t a power of two.</span>
     <span class="doccomment">///</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">config</span>: <span class="ident">SystemAllocatorConfig</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">page_size</span> <span class="op">=</span> <span class="ident">pagesize</span>() <span class="kw">as</span> <span class="ident">u64</span>;
