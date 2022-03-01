@@ -2325,7 +2325,7 @@
             <span class="ident">iommu_endpoints</span>.<span class="ident">insert</span>(
                 <span class="ident">endpoint_addr</span>.<span class="ident">to_u32</span>(),
                 <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">Box::new</span>(<span class="ident">VfioWrapper::new</span>(
-                    <span class="ident">vfio_container</span>.<span class="ident">clone</span>(),
+                    <span class="ident">vfio_container</span>,
                     <span class="ident">vm</span>.<span class="ident">get_memory</span>().<span class="ident">clone</span>(),
                 )))),
             );
@@ -2404,7 +2404,7 @@
                     <span class="ident">response_tx</span>,
                 } <span class="op">=</span> <span class="ident">create_ipc_mapper</span>(<span class="ident">endpoint_id</span>, <span class="ident">request_tx</span>.<span class="ident">try_clone</span>()<span class="question-mark">?</span>);
                 <span class="ident">translate_response_senders</span>
-                    .<span class="ident">get_or_insert_with</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">BTreeMap::new</span>())
+                    .<span class="ident">get_or_insert_with</span>(<span class="ident">BTreeMap::new</span>)
                     .<span class="ident">insert</span>(<span class="ident">endpoint_id</span>, <span class="ident">response_tx</span>);
                 <span class="ident">iommu_attached_endpoints</span>.<span class="ident">insert</span>(<span class="ident">endpoint_id</span>, <span class="ident">mapper</span>);
                 <span class="ident">pci_dev</span>.<span class="ident">set_iommu</span>(<span class="ident">ipc_mapper</span>)<span class="question-mark">?</span>;

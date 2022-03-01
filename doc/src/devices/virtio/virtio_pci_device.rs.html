@@ -1321,7 +1321,7 @@
 
 <span class="kw">impl</span> <span class="ident">PciDevice</span> <span class="kw">for</span> <span class="ident">VirtioPciDevice</span> {
     <span class="kw">fn</span> <span class="ident">supports_iommu</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">device</span>.<span class="ident">supports_iommu</span>()
+        (<span class="self">self</span>.<span class="ident">device</span>.<span class="ident">features</span>() <span class="op">&amp;</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">VIRTIO_F_ACCESS_PLATFORM</span>)) <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
     }
 
     <span class="kw">fn</span> <span class="ident">debug_label</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">String</span> {
@@ -1643,7 +1643,7 @@
         <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">device_activated</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">is_driver_ready</span>() {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">iommu</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span> {
                 <span class="kw">for</span> <span class="ident">q</span> <span class="kw">in</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">queues</span> {
-                    <span class="ident">q</span>.<span class="ident">set_iommu</span>(<span class="ident">Arc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">iommu</span>));
+                    <span class="ident">q</span>.<span class="ident">set_iommu</span>(<span class="ident">Arc::clone</span>(<span class="ident">iommu</span>));
                 }
             }
 
@@ -1674,7 +1674,7 @@
     }
 
     <span class="kw">fn</span> <span class="ident">set_iommu</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">iommu</span>: <span class="ident">IpcMemoryMapper</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">device</span>.<span class="ident">supports_iommu</span>());
+        <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">supports_iommu</span>());
         <span class="self">self</span>.<span class="ident">iommu</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">iommu</span>)));
         <span class="prelude-val">Ok</span>(())
     }

@@ -136,13 +136,6 @@
 <span id="135">135</span>
 <span id="136">136</span>
 <span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
-<span id="140">140</span>
-<span id="141">141</span>
-<span id="142">142</span>
-<span id="143">143</span>
-<span id="144">144</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2022 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -187,14 +180,7 @@
     <span class="kw">match</span> <span class="ident">iommu</span>.<span class="ident">translate</span>(<span class="ident">iova</span>, <span class="ident">size</span>) {
         <span class="prelude-val">Ok</span>(<span class="ident">regions</span>) =&gt; {
             <span class="kw">for</span> <span class="ident">r</span> <span class="kw">in</span> <span class="ident">regions</span> {
-                <span class="kw">if</span> <span class="op">!</span><span class="ident">mem</span>.<span class="ident">address_in_range</span>(<span class="ident">r</span>.<span class="ident">gpa</span>)
-                    <span class="op">|</span><span class="op">|</span> <span class="ident">mem</span>
-                        .<span class="ident">checked_offset</span>(
-                            <span class="ident">r</span>.<span class="ident">gpa</span>,
-                            <span class="ident">r</span>.<span class="ident">len</span>.<span class="ident">try_into</span>().<span class="ident">context</span>(<span class="string">&quot;u64 doesn&#39;t fit in usize&quot;</span>)<span class="question-mark">?</span>,
-                        )
-                        .<span class="ident">is_none</span>()
-                {
+                <span class="kw">if</span> <span class="op">!</span><span class="ident">mem</span>.<span class="ident">address_in_range</span>(<span class="ident">r</span>.<span class="ident">gpa</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">mem</span>.<span class="ident">checked_offset</span>(<span class="ident">r</span>.<span class="ident">gpa</span>, <span class="ident">r</span>.<span class="ident">len</span>).<span class="ident">is_none</span>() {
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>);
                 }
             }

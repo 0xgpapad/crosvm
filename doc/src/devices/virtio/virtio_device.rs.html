@@ -122,12 +122,6 @@
 <span id="121">121</span>
 <span id="122">122</span>
 <span id="123">123</span>
-<span id="124">124</span>
-<span id="125">125</span>
-<span id="126">126</span>
-<span id="127">127</span>
-<span id="128">128</span>
-<span id="129">129</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -249,12 +243,6 @@
     <span class="doccomment">/// Returns `None` if any address is good for the device.</span>
     <span class="kw">fn</span> <span class="ident">pci_address</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PciAddress</span><span class="op">&gt;</span> {
         <span class="prelude-val">None</span>
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">VirtioDevice</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">supports_iommu</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        (<span class="self">self</span>.<span class="ident">features</span>() <span class="op">&amp;</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">VIRTIO_F_ACCESS_PLATFORM</span>)) <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
     }
 }
 </code></pre></div>
