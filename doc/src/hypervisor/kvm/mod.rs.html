@@ -2503,7 +2503,7 @@
                 <span class="kw">let</span> <span class="ident">event_flags</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">run</span>.<span class="ident">__bindgen_anon_1</span>.<span class="ident">system_event</span>.<span class="ident">flags</span> };
                 <span class="kw">match</span> <span class="ident">event_type</span> {
                     <span class="ident">KVM_SYSTEM_EVENT_SHUTDOWN</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventShutdown</span>),
-                    <span class="ident">KVM_SYSTEM_EVENT_RESET</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventReset</span>),
+                    <span class="ident">KVM_SYSTEM_EVENT_RESET</span> =&gt; <span class="self">self</span>.<span class="ident">system_event_reset</span>(<span class="ident">event_flags</span>),
                     <span class="ident">KVM_SYSTEM_EVENT_CRASH</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventCrash</span>),
                     <span class="kw">_</span> =&gt; {
                         <span class="macro">error!</span>(

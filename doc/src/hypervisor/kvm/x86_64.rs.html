@@ -1628,6 +1628,12 @@
 <span id="1627">1627</span>
 <span id="1628">1628</span>
 <span id="1629">1629</span>
+<span id="1630">1630</span>
+<span id="1631">1631</span>
+<span id="1632">1632</span>
+<span id="1633">1633</span>
+<span id="1634">1634</span>
+<span id="1635">1635</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1650,8 +1656,8 @@
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">ClockState</span>, <span class="ident">CpuId</span>, <span class="ident">CpuIdEntry</span>, <span class="ident">DebugRegs</span>, <span class="ident">DescriptorTable</span>, <span class="ident">DeviceKind</span>, <span class="ident">Fpu</span>, <span class="ident">HypervisorX86_64</span>,
     <span class="ident">IoapicRedirectionTableEntry</span>, <span class="ident">IoapicState</span>, <span class="ident">IrqSourceChip</span>, <span class="ident">LapicState</span>, <span class="ident">PicSelect</span>, <span class="ident">PicState</span>,
-    <span class="ident">PitChannelState</span>, <span class="ident">PitState</span>, <span class="ident">ProtectionType</span>, <span class="ident">Register</span>, <span class="ident">Regs</span>, <span class="ident">Segment</span>, <span class="ident">Sregs</span>, <span class="ident">VcpuX86_64</span>, <span class="ident">VmCap</span>,
-    <span class="ident">VmX86_64</span>, <span class="ident">MAX_IOAPIC_PINS</span>, <span class="ident">NUM_IOAPIC_PINS</span>,
+    <span class="ident">PitChannelState</span>, <span class="ident">PitState</span>, <span class="ident">ProtectionType</span>, <span class="ident">Register</span>, <span class="ident">Regs</span>, <span class="ident">Segment</span>, <span class="ident">Sregs</span>, <span class="ident">VcpuExit</span>,
+    <span class="ident">VcpuX86_64</span>, <span class="ident">VmCap</span>, <span class="ident">VmX86_64</span>, <span class="ident">MAX_IOAPIC_PINS</span>, <span class="ident">NUM_IOAPIC_PINS</span>,
 };
 
 <span class="kw">type</span> <span class="ident">KvmCpuId</span> <span class="op">=</span> <span class="ident">kvm::CpuId</span>;
@@ -2014,6 +2020,12 @@
         } <span class="kw">else</span> {
             <span class="ident">errno_result</span>()
         }
+    }
+
+    <span class="doccomment">/// Handles a `KVM_EXIT_SYSTEM_EVENT` with event type `KVM_SYSTEM_EVENT_RESET` with the given</span>
+    <span class="doccomment">/// event flags and returns the appropriate `VcpuExit` value for the run loop to handle.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">system_event_reset</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_event_flags</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">VcpuExit</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventReset</span>)
     }
 }
 
