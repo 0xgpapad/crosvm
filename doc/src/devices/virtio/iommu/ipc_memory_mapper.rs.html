@@ -135,18 +135,28 @@
 <span id="134">134</span>
 <span id="135">135</span>
 <span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2022 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="doccomment">//! Provide utility to communicate with an iommu in another process</span>
 
+<span class="kw">use</span> <span class="ident">std::ops::Deref</span>;
 <span class="kw">use</span> <span class="ident">std::result</span>;
 
 <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">AsRawDescriptors</span>, <span class="ident">RawDescriptor</span>, <span class="ident">Tube</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::memory_mapper</span>::{<span class="ident">Error</span>, <span class="ident">MemRegion</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::memory_mapper</span>::{<span class="ident">Error</span>, <span class="ident">MemRegion</span>, <span class="ident">Translate</span>};
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 
@@ -180,8 +190,10 @@
             <span class="ident">endpoint_id</span>,
         }
     }
+}
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iova</span>: <span class="ident">u64</span>, <span class="ident">size</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MemRegion</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">Translate</span> <span class="kw">for</span> <span class="ident">IpcMemoryMapper</span> {
+    <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iova</span>: <span class="ident">u64</span>, <span class="ident">size</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MemRegion</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">req</span> <span class="op">=</span> <span class="ident">TranslateRequest</span> {
             <span class="ident">endpoint_id</span>: <span class="self">self</span>.<span class="ident">endpoint_id</span>,
             <span class="ident">iova</span>,
@@ -199,6 +211,12 @@
             <span class="self">self</span>.<span class="ident">request_tx</span>.<span class="ident">as_raw_descriptor</span>(),
             <span class="self">self</span>.<span class="ident">response_rx</span>.<span class="ident">as_raw_descriptor</span>(),
         ]
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Translate</span> <span class="kw">for</span> <span class="ident">std::sync::MutexGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">IpcMemoryMapper</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">iova</span>: <span class="ident">u64</span>, <span class="ident">size</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MemRegion</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">deref</span>().<span class="ident">translate</span>(<span class="ident">iova</span>, <span class="ident">size</span>)
     }
 }
 

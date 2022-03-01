@@ -581,12 +581,28 @@
 <span id="580">580</span>
 <span id="581">581</span>
 <span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">acpi_tables::sdt::SDT</span>;
+<span class="kw">use</span> <span class="ident">anyhow::bail</span>;
 <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>};
 <span class="kw">use</span> <span class="ident">hypervisor::Datamatch</span>;
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
@@ -599,6 +615,7 @@
     <span class="ident">COMMAND_REG_MEMORY_SPACE_MASK</span>, <span class="ident">NUM_BAR_REGS</span>, <span class="ident">ROM_BAR_REG</span>,
 };
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci</span>::{<span class="ident">PciAddress</span>, <span class="ident">PciInterruptPin</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::ipc_memory_mapper::IpcMemoryMapper</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::snd::vios_backend::Error</span> <span class="kw">as</span> <span class="ident">VioSError</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">BusAccessInfo</span>, <span class="ident">BusDevice</span>};
@@ -623,6 +640,9 @@
     <span class="doccomment">/// Allocating space for an IO BAR failed.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to allocate space for an IO BAR, size={0}: {1}&quot;</span>)]</span>
     <span class="ident">IoAllocationFailed</span>(<span class="ident">u64</span>, <span class="ident">SystemAllocatorFaliure</span>),
+    <span class="doccomment">/// supports_iommu is false.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Iommu is not supported&quot;</span>)]</span>
+    <span class="ident">IommuNotSupported</span>,
     <span class="doccomment">/// Registering an IO BAR failed.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to register an IO BAR, addr={0} err={1}&quot;</span>)]</span>
     <span class="ident">IoRegistrationFailed</span>(<span class="ident">u64</span>, <span class="ident">pci_configuration::Error</span>),
@@ -745,6 +765,16 @@
         <span class="ident">_bar_ranges</span>: <span class="kw-2">&amp;</span>[<span class="ident">BarRange</span>],
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Indicates whether the device supports IOMMU</span>
+    <span class="kw">fn</span> <span class="ident">supports_iommu</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="bool-val">false</span>
+    }
+
+    <span class="doccomment">/// Sets the IOMMU for the device if `supports_iommu()`</span>
+    <span class="kw">fn</span> <span class="ident">set_iommu</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_iommu</span>: <span class="ident">IpcMemoryMapper</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="macro">bail!</span>(<span class="string">&quot;Iommu not supported.&quot;</span>);
     }
 }
 

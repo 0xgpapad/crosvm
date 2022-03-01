@@ -814,6 +814,31 @@
 <span id="813">813</span>
 <span id="814">814</span>
 <span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -825,7 +850,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">acpi_tables::sdt::SDT</span>;
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">bail</span>, <span class="ident">Context</span>};
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>, <span class="ident">Tube</span>};
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">AsRawDescriptors</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>, <span class="ident">Tube</span>};
 <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">DataInit</span>, <span class="ident">Le32</span>};
 <span class="kw">use</span> <span class="ident">hypervisor::Datamatch</span>;
 <span class="kw">use</span> <span class="ident">libc::ERANGE</span>;
@@ -838,6 +863,7 @@
     <span class="ident">PciBarRegionType</span>, <span class="ident">PciCapability</span>, <span class="ident">PciCapabilityID</span>, <span class="ident">PciClassCode</span>, <span class="ident">PciConfiguration</span>, <span class="ident">PciDevice</span>,
     <span class="ident">PciDeviceError</span>, <span class="ident">PciDisplaySubclass</span>, <span class="ident">PciHeaderType</span>, <span class="ident">PciInterruptPin</span>, <span class="ident">PciSubclass</span>,
 };
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::ipc_memory_mapper::IpcMemoryMapper</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::virtio_pci_common_config::VirtioPciCommonConfig</span>;
 
@@ -1056,6 +1082,8 @@
     <span class="ident">msix_config</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">MsixConfig</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">msix_cap_reg_idx</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
     <span class="ident">common_config</span>: <span class="ident">VirtioPciCommonConfig</span>,
+
+    <span class="ident">iommu</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">IpcMemoryMapper</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">VirtioPciDevice</span> {
@@ -1069,7 +1097,7 @@
         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="ident">device</span>.<span class="ident">queue_max_sizes</span>() {
             <span class="ident">queue_evts</span>.<span class="ident">push</span>(<span class="ident">Event::new</span>()<span class="question-mark">?</span>)
         }
-        <span class="kw">let</span> <span class="ident">queues</span> <span class="op">=</span> <span class="ident">device</span>
+        <span class="kw">let</span> <span class="ident">queues</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Queue</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">device</span>
             .<span class="ident">queue_max_sizes</span>()
             .<span class="ident">iter</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">s</span><span class="op">|</span> <span class="ident">Queue::new</span>(<span class="ident">s</span>))
@@ -1128,6 +1156,7 @@
                 <span class="ident">queue_select</span>: <span class="number">0</span>,
                 <span class="ident">msix_config</span>: <span class="ident">VIRTIO_MSI_NO_VECTOR</span>,
             },
+            <span class="ident">iommu</span>: <span class="prelude-val">None</span>,
         })
     }
 
@@ -1291,6 +1320,10 @@
 }
 
 <span class="kw">impl</span> <span class="ident">PciDevice</span> <span class="kw">for</span> <span class="ident">VirtioPciDevice</span> {
+    <span class="kw">fn</span> <span class="ident">supports_iommu</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">device</span>.<span class="ident">supports_iommu</span>()
+    }
+
     <span class="kw">fn</span> <span class="ident">debug_label</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">String</span> {
         <span class="macro">format!</span>(<span class="string">&quot;pci{}&quot;</span>, <span class="self">self</span>.<span class="ident">device</span>.<span class="ident">debug_label</span>())
     }
@@ -1323,6 +1356,9 @@
         }
         <span class="kw">let</span> <span class="ident">descriptor</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">msix_config</span>.<span class="ident">lock</span>().<span class="ident">get_msi_socket</span>();
         <span class="ident">rds</span>.<span class="ident">push</span>(<span class="ident">descriptor</span>);
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">iommu</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span> {
+            <span class="ident">rds</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="ident">iommu</span>.<span class="ident">lock</span>().<span class="ident">as_raw_descriptors</span>());
+        }
         <span class="ident">rds</span>
     }
 
@@ -1604,9 +1640,17 @@
             }
         }
 
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">device_activated</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">is_driver_ready</span>() <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">are_queues_valid</span>() {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">activate</span>() {
-                <span class="macro">error!</span>(<span class="string">&quot;failed to activate device: {:#}&quot;</span>, <span class="ident">e</span>);
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">device_activated</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">is_driver_ready</span>() {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">iommu</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span> {
+                <span class="kw">for</span> <span class="ident">q</span> <span class="kw">in</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">queues</span> {
+                    <span class="ident">q</span>.<span class="ident">set_iommu</span>(<span class="ident">Arc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">iommu</span>));
+                }
+            }
+
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">are_queues_valid</span>() {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">activate</span>() {
+                    <span class="macro">error!</span>(<span class="string">&quot;failed to activate device: {:#}&quot;</span>, <span class="ident">e</span>);
+                }
             }
         }
 
@@ -1627,6 +1671,12 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
     <span class="kw">fn</span> <span class="ident">generate_acpi</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">sdts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SDT</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SDT</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">device</span>.<span class="ident">generate_acpi</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pci_address</span>, <span class="ident">sdts</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">set_iommu</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">iommu</span>: <span class="ident">IpcMemoryMapper</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">device</span>.<span class="ident">supports_iommu</span>());
+        <span class="self">self</span>.<span class="ident">iommu</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">iommu</span>)));
+        <span class="prelude-val">Ok</span>(())
     }
 }
 </code></pre></div>

@@ -853,21 +853,77 @@
 <span id="852">852</span>
 <span id="853">853</span>
 <span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
+<span id="870">870</span>
+<span id="871">871</span>
+<span id="872">872</span>
+<span id="873">873</span>
+<span id="874">874</span>
+<span id="875">875</span>
+<span id="876">876</span>
+<span id="877">877</span>
+<span id="878">878</span>
+<span id="879">879</span>
+<span id="880">880</span>
+<span id="881">881</span>
+<span id="882">882</span>
+<span id="883">883</span>
+<span id="884">884</span>
+<span id="885">885</span>
+<span id="886">886</span>
+<span id="887">887</span>
+<span id="888">888</span>
+<span id="889">889</span>
+<span id="890">890</span>
+<span id="891">891</span>
+<span id="892">892</span>
+<span id="893">893</span>
+<span id="894">894</span>
+<span id="895">895</span>
+<span id="896">896</span>
+<span id="897">897</span>
+<span id="898">898</span>
+<span id="899">899</span>
+<span id="900">900</span>
+<span id="901">901</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="kw">use</span> <span class="ident">std::cmp::min</span>;
+<span class="kw">use</span> <span class="ident">std::convert::TryInto</span>;
 <span class="kw">use</span> <span class="ident">std::num::Wrapping</span>;
 <span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">fence</span>, <span class="ident">Ordering</span>};
+<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
+<span class="kw">use</span> <span class="ident">sync::Mutex</span>;
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">bail</span>, <span class="ident">Context</span>};
 <span class="kw">use</span> <span class="ident">base::error</span>;
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">AsyncError</span>, <span class="ident">EventAsync</span>};
+<span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">DataInit</span>, <span class="ident">Le16</span>, <span class="ident">Le32</span>, <span class="ident">Le64</span>};
 <span class="kw">use</span> <span class="ident">virtio_sys::virtio_ring::VIRTIO_RING_F_EVENT_IDX</span>;
 <span class="kw">use</span> <span class="ident">vm_memory</span>::{<span class="ident">GuestAddress</span>, <span class="ident">GuestMemory</span>};
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">SignalableInterrupt</span>, <span class="ident">VIRTIO_MSI_NO_VECTOR</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::ipc_memory_mapper::IpcMemoryMapper</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::memory_mapper</span>::{<span class="ident">MemRegion</span>, <span class="ident">Permission</span>, <span class="ident">Translate</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::memory_util</span>::{
+    <span class="ident">is_valid_wrapper</span>, <span class="ident">read_obj_from_addr_wrapper</span>, <span class="ident">write_obj_at_addr_wrapper</span>,
+};
 
 <span class="kw">const</span> <span class="ident">VIRTQ_DESC_F_NEXT</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x1</span>;
 <span class="kw">const</span> <span class="ident">VIRTQ_DESC_F_WRITE</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x2</span>;
@@ -920,7 +976,8 @@
     <span class="doccomment">/// Index into the descriptor table</span>
     <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u16</span>,
 
-    <span class="doccomment">/// Guest physical address of device specific data</span>
+    <span class="doccomment">/// Guest physical address of device specific data, or IO virtual address</span>
+    <span class="doccomment">/// if iommu is used</span>
     <span class="kw">pub</span> <span class="ident">addr</span>: <span class="ident">GuestAddress</span>,
 
     <span class="doccomment">/// Length of device specific data</span>
@@ -932,7 +989,21 @@
     <span class="doccomment">/// Index into the descriptor table of the next descriptor if flags has</span>
     <span class="doccomment">/// the next bit set</span>
     <span class="kw">pub</span> <span class="ident">next</span>: <span class="ident">u16</span>,
+
+    <span class="doccomment">/// Translates `addr` to guest physical address</span>
+    <span class="ident">iommu</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">IpcMemoryMapper</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Desc</span> {
+    <span class="kw">pub</span> <span class="ident">addr</span>: <span class="ident">Le64</span>,
+    <span class="kw">pub</span> <span class="ident">len</span>: <span class="ident">Le32</span>,
+    <span class="kw">pub</span> <span class="ident">flags</span>: <span class="ident">Le16</span>,
+    <span class="kw">pub</span> <span class="ident">next</span>: <span class="ident">Le16</span>,
+}
+<span class="comment">// Safe because it only has data and has no implicit padding.</span>
+<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">DataInit</span> <span class="kw">for</span> <span class="ident">Desc</span> {}
 
 <span class="kw">impl</span> <span class="ident">DescriptorChain</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">checked_new</span>(
@@ -941,31 +1012,28 @@
         <span class="ident">queue_size</span>: <span class="ident">u16</span>,
         <span class="ident">index</span>: <span class="ident">u16</span>,
         <span class="ident">required_flags</span>: <span class="ident">u16</span>,
+        <span class="ident">iommu</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">IpcMemoryMapper</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     ) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">DescriptorChain</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">index</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">queue_size</span> {
             <span class="macro">bail!</span>(<span class="string">&quot;index ({}) &gt;= queue_size ({})&quot;</span>, <span class="ident">index</span>, <span class="ident">queue_size</span>);
         }
 
-        <span class="kw">let</span> <span class="ident">desc_head</span> <span class="op">=</span> <span class="ident">mem</span>
-            .<span class="ident">checked_offset</span>(<span class="ident">desc_table</span>, (<span class="ident">index</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">*</span> <span class="number">16</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;desc_table checked_offset failed&quot;</span>)<span class="question-mark">?</span>;
-        <span class="comment">// These reads can&#39;t fail unless Guest memory is hopelessly broken.</span>
-        <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">GuestAddress</span>(<span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>(<span class="ident">desc_head</span>).<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">u64</span>);
-        <span class="ident">mem</span>.<span class="ident">checked_offset</span>(<span class="ident">desc_head</span>, <span class="number">16</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;desc_head checked_offset failed&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">len</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">desc_head</span>.<span class="ident">unchecked_add</span>(<span class="number">8</span>)).<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">flags</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">desc_head</span>.<span class="ident">unchecked_add</span>(<span class="number">12</span>)).<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">next</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">desc_head</span>.<span class="ident">unchecked_add</span>(<span class="number">14</span>)).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">desc_head</span> <span class="op">=</span> <span class="ident">desc_table</span>
+            .<span class="ident">checked_add</span>((<span class="ident">index</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">*</span> <span class="number">16</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;integer overflow&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">desc</span>: <span class="ident">Desc</span> <span class="op">=</span> <span class="ident">read_obj_from_addr_wrapper</span>::<span class="op">&lt;</span><span class="ident">Desc</span><span class="op">&gt;</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="ident">iommu</span>, <span class="ident">desc_head</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;failed to read desc&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">chain</span> <span class="op">=</span> <span class="ident">DescriptorChain</span> {
             <span class="ident">mem</span>: <span class="ident">mem</span>.<span class="ident">clone</span>(),
             <span class="ident">desc_table</span>,
             <span class="ident">queue_size</span>,
             <span class="ident">ttl</span>: <span class="ident">queue_size</span>,
             <span class="ident">index</span>,
-            <span class="ident">addr</span>,
-            <span class="ident">len</span>,
-            <span class="ident">flags</span>,
-            <span class="ident">next</span>,
+            <span class="ident">addr</span>: <span class="ident">GuestAddress</span>(<span class="ident">desc</span>.<span class="ident">addr</span>.<span class="ident">into</span>()),
+            <span class="ident">len</span>: <span class="ident">desc</span>.<span class="ident">len</span>.<span class="ident">into</span>(),
+            <span class="ident">flags</span>: <span class="ident">desc</span>.<span class="ident">flags</span>.<span class="ident">into</span>(),
+            <span class="ident">next</span>: <span class="ident">desc</span>.<span class="ident">next</span>.<span class="ident">into</span>(),
+            <span class="ident">iommu</span>,
         };
 
         <span class="kw">if</span> <span class="ident">chain</span>.<span class="ident">is_valid</span>() <span class="op">&amp;&amp;</span> <span class="ident">chain</span>.<span class="ident">flags</span> <span class="op">&amp;</span> <span class="ident">required_flags</span> <span class="op">==</span> <span class="ident">required_flags</span> {
@@ -975,20 +1043,43 @@
         }
     }
 
-    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::if_same_then_else</span>, <span class="ident">clippy::needless_bool</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">is_valid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">len</span> <span class="op">&gt;</span> <span class="number">0</span>
-            <span class="op">&amp;&amp;</span> <span class="self">self</span>
-                .<span class="ident">mem</span>
-                .<span class="ident">checked_offset</span>(<span class="self">self</span>.<span class="ident">addr</span>, <span class="self">self</span>.<span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">-</span> <span class="number">1u64</span>)
-                .<span class="ident">is_none</span>()
-        {
-            <span class="bool-val">false</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">has_next</span>() <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">next</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">queue_size</span> {
-            <span class="bool-val">false</span>
+    <span class="doccomment">/// Get the mem region(s), regardless if the `DescriptorChain`s contain gpa (guest physical</span>
+    <span class="doccomment">/// address), or iova (io virtual address) and iommu.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mem_regions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MemRegion</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">iommu</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span> {
+            <span class="ident">iommu</span>
+                .<span class="ident">lock</span>()
+                .<span class="ident">translate</span>(<span class="self">self</span>.<span class="ident">addr</span>.<span class="ident">offset</span>(), <span class="self">self</span>.<span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>)
+                .<span class="ident">context</span>(<span class="string">&quot;failed to get mem regions&quot;</span>)
         } <span class="kw">else</span> {
-            <span class="bool-val">true</span>
+            <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[<span class="ident">MemRegion</span> {
+                <span class="ident">gpa</span>: <span class="self">self</span>.<span class="ident">addr</span>,
+                <span class="ident">len</span>: <span class="self">self</span>.<span class="ident">len</span>.<span class="ident">try_into</span>().<span class="ident">expect</span>(<span class="string">&quot;u32 doesn&#39;t fit in usize&quot;</span>),
+                <span class="ident">perm</span>: <span class="ident">Permission::RW</span>,
+            }])
         }
+    }
+
+    <span class="kw">fn</span> <span class="ident">is_valid</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">len</span> <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="kw">match</span> <span class="self">self</span>.<span class="ident">get_mem_regions</span>() {
+                <span class="prelude-val">Ok</span>(<span class="ident">regions</span>) =&gt; {
+                    <span class="kw">if</span> <span class="ident">regions</span>.<span class="ident">iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">r</span><span class="op">|</span> {
+                        <span class="self">self</span>.<span class="ident">mem</span>
+                            .<span class="ident">checked_offset</span>(<span class="ident">r</span>.<span class="ident">gpa</span>, <span class="ident">r</span>.<span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">-</span> <span class="number">1u64</span>)
+                            .<span class="ident">is_none</span>()
+                    }) {
+                        <span class="kw">return</span> <span class="bool-val">false</span>;
+                    }
+                }
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
+                    <span class="macro">error!</span>(<span class="string">&quot;{:#}&quot;</span>, <span class="ident">e</span>);
+                    <span class="kw">return</span> <span class="bool-val">false</span>;
+                }
+            }
+        }
+
+        <span class="op">!</span><span class="self">self</span>.<span class="ident">has_next</span>() <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">next</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">queue_size</span>
     }
 
     <span class="doccomment">/// Gets if this descriptor chain has another descriptor chain linked after it.</span>
@@ -1020,12 +1111,18 @@
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">has_next</span>() {
             <span class="comment">// Once we see a write-only descriptor, all subsequent descriptors must be write-only.</span>
             <span class="kw">let</span> <span class="ident">required_flags</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">flags</span> <span class="op">&amp;</span> <span class="ident">VIRTQ_DESC_F_WRITE</span>;
+            <span class="kw">let</span> <span class="ident">iommu</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">iommu</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span> {
+                <span class="prelude-val">Some</span>(<span class="ident">Arc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">iommu</span>))
+            } <span class="kw">else</span> {
+                <span class="prelude-val">None</span>
+            };
             <span class="kw">match</span> <span class="ident">DescriptorChain::checked_new</span>(
                 <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mem</span>,
                 <span class="self">self</span>.<span class="ident">desc_table</span>,
                 <span class="self">self</span>.<span class="ident">queue_size</span>,
                 <span class="self">self</span>.<span class="ident">next</span>,
                 <span class="ident">required_flags</span>,
+                <span class="ident">iommu</span>,
             ) {
                 <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">c</span>) =&gt; {
                     <span class="ident">c</span>.<span class="ident">ttl</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ttl</span> <span class="op">-</span> <span class="number">1</span>;
@@ -1096,6 +1193,8 @@
     <span class="comment">// processing requests. This is the count of how many are in flight(could be several contexts</span>
     <span class="comment">// handling requests in parallel). When this count is zero, notifications are re-enabled.</span>
     <span class="ident">notification_disable_count</span>: <span class="ident">usize</span>,
+
+    <span class="ident">iommu</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">IpcMemoryMapper</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Queue</span> {
@@ -1114,6 +1213,7 @@
             <span class="ident">features</span>: <span class="number">0</span>,
             <span class="ident">last_used</span>: <span class="ident">Wrapping</span>(<span class="number">0</span>),
             <span class="ident">notification_disable_count</span>: <span class="number">0</span>,
+            <span class="ident">iommu</span>: <span class="prelude-val">None</span>,
         }
     }
 
@@ -1147,44 +1247,38 @@
         <span class="kw">let</span> <span class="ident">used_ring_size</span> <span class="op">=</span> <span class="number">6</span> <span class="op">+</span> <span class="number">8</span> <span class="op">*</span> <span class="ident">queue_size</span>;
         <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">ready</span> {
             <span class="macro">error!</span>(<span class="string">&quot;attempt to use virtio queue that is not marked ready&quot;</span>);
-            <span class="bool-val">false</span>
+            <span class="kw">return</span> <span class="bool-val">false</span>;
         } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">size</span> <span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">max_size</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">size</span> <span class="op">==</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> (<span class="self">self</span>.<span class="ident">size</span> <span class="op">&amp;</span> (<span class="self">self</span>.<span class="ident">size</span> <span class="op">-</span> <span class="number">1</span>)) <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
         {
             <span class="macro">error!</span>(<span class="string">&quot;virtio queue with invalid size: {}&quot;</span>, <span class="self">self</span>.<span class="ident">size</span>);
-            <span class="bool-val">false</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">desc_table</span>
-            .<span class="ident">checked_add</span>(<span class="ident">desc_table_size</span> <span class="kw">as</span> <span class="ident">u64</span>)
-            .<span class="ident">map_or</span>(<span class="bool-val">true</span>, <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="op">!</span><span class="ident">mem</span>.<span class="ident">address_in_range</span>(<span class="ident">v</span>))
-        {
-            <span class="macro">error!</span>(
-                <span class="string">&quot;virtio queue descriptor table goes out of bounds: start:0x{:08x} size:0x{:08x}&quot;</span>,
-                <span class="ident">desc_table</span>.<span class="ident">offset</span>(),
-                <span class="ident">desc_table_size</span>
-            );
-            <span class="bool-val">false</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">avail_ring</span>
-            .<span class="ident">checked_add</span>(<span class="ident">avail_ring_size</span> <span class="kw">as</span> <span class="ident">u64</span>)
-            .<span class="ident">map_or</span>(<span class="bool-val">true</span>, <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="op">!</span><span class="ident">mem</span>.<span class="ident">address_in_range</span>(<span class="ident">v</span>))
-        {
-            <span class="macro">error!</span>(
-                <span class="string">&quot;virtio queue available ring goes out of bounds: start:0x{:08x} size:0x{:08x}&quot;</span>,
-                <span class="ident">avail_ring</span>.<span class="ident">offset</span>(),
-                <span class="ident">avail_ring_size</span>
-            );
-            <span class="bool-val">false</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">used_ring</span>
-            .<span class="ident">checked_add</span>(<span class="ident">used_ring_size</span> <span class="kw">as</span> <span class="ident">u64</span>)
-            .<span class="ident">map_or</span>(<span class="bool-val">true</span>, <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="op">!</span><span class="ident">mem</span>.<span class="ident">address_in_range</span>(<span class="ident">v</span>))
-        {
-            <span class="macro">error!</span>(
-                <span class="string">&quot;virtio queue used ring goes out of bounds: start:0x{:08x} size:0x{:08x}&quot;</span>,
-                <span class="ident">used_ring</span>.<span class="ident">offset</span>(),
-                <span class="ident">used_ring_size</span>
-            );
-            <span class="bool-val">false</span>
-        } <span class="kw">else</span> {
-            <span class="bool-val">true</span>
+            <span class="kw">return</span> <span class="bool-val">false</span>;
         }
+
+        <span class="kw">let</span> <span class="ident">iommu</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">iommu</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> <span class="ident">i</span>.<span class="ident">lock</span>());
+        <span class="kw">for</span> (<span class="ident">addr</span>, <span class="ident">size</span>, <span class="ident">name</span>) <span class="kw">in</span> [
+            (<span class="ident">desc_table</span>, <span class="ident">desc_table_size</span>, <span class="string">&quot;descriptor table&quot;</span>),
+            (<span class="ident">avail_ring</span>, <span class="ident">avail_ring_size</span>, <span class="string">&quot;available ring&quot;</span>),
+            (<span class="ident">used_ring</span>, <span class="ident">used_ring_size</span>, <span class="string">&quot;used ring&quot;</span>),
+        ] {
+            <span class="kw">match</span> <span class="ident">is_valid_wrapper</span>(<span class="kw-2">&amp;</span><span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="ident">iommu</span>, <span class="ident">addr</span>, <span class="ident">size</span> <span class="kw">as</span> <span class="ident">u64</span>) {
+                <span class="prelude-val">Ok</span>(<span class="ident">valid</span>) =&gt; {
+                    <span class="kw">if</span> <span class="op">!</span><span class="ident">valid</span> {
+                        <span class="macro">error!</span>(
+                            <span class="string">&quot;virtio queue {} goes out of bounds: start:0x{:08x} size:0x{:08x}&quot;</span>,
+                            <span class="ident">name</span>,
+                            <span class="ident">addr</span>.<span class="ident">offset</span>(),
+                            <span class="ident">size</span>,
+                        );
+                        <span class="kw">return</span> <span class="bool-val">false</span>;
+                    }
+                }
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
+                    <span class="macro">error!</span>(<span class="string">&quot;is_valid failed: {:#}&quot;</span>, <span class="ident">e</span>);
+                    <span class="kw">return</span> <span class="bool-val">false</span>;
+                }
+            }
+        }
+        <span class="bool-val">true</span>
     }
 
     <span class="comment">// Get the index of the first available descriptor chain in the available ring</span>
@@ -1196,7 +1290,8 @@
         <span class="ident">fence</span>(<span class="ident">Ordering::SeqCst</span>);
 
         <span class="kw">let</span> <span class="ident">avail_index_addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">avail_ring</span>.<span class="ident">unchecked_add</span>(<span class="number">2</span>);
-        <span class="kw">let</span> <span class="ident">avail_index</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">avail_index_addr</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">avail_index</span>: <span class="ident">u16</span> <span class="op">=</span>
+            <span class="ident">read_obj_from_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="ident">avail_index_addr</span>).<span class="ident">unwrap</span>();
 
         <span class="ident">Wrapping</span>(<span class="ident">avail_index</span>)
     }
@@ -1213,8 +1308,7 @@
         <span class="kw">let</span> <span class="ident">avail_event_addr</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">used_ring</span>
             .<span class="ident">unchecked_add</span>(<span class="number">4</span> <span class="op">+</span> <span class="number">8</span> <span class="op">*</span> <span class="ident">u64::from</span>(<span class="self">self</span>.<span class="ident">actual_size</span>()));
-        <span class="ident">mem</span>.<span class="ident">write_obj_at_addr</span>(<span class="ident">avail_index</span>.<span class="number">0</span>, <span class="ident">avail_event_addr</span>)
-            .<span class="ident">unwrap</span>();
+        <span class="ident">write_obj_at_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="ident">avail_index</span>.<span class="number">0</span>, <span class="ident">avail_event_addr</span>).<span class="ident">unwrap</span>();
     }
 
     <span class="comment">// Query the value of a single-bit flag in the available ring.</span>
@@ -1223,7 +1317,8 @@
     <span class="kw">fn</span> <span class="ident">get_avail_flag</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">mem</span>: <span class="kw-2">&amp;</span><span class="ident">GuestMemory</span>, <span class="ident">flag</span>: <span class="ident">u16</span>) -&gt; <span class="ident">bool</span> {
         <span class="ident">fence</span>(<span class="ident">Ordering::SeqCst</span>);
 
-        <span class="kw">let</span> <span class="ident">avail_flags</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="self">self</span>.<span class="ident">avail_ring</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">avail_flags</span>: <span class="ident">u16</span> <span class="op">=</span>
+            <span class="ident">read_obj_from_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="self">self</span>.<span class="ident">avail_ring</span>).<span class="ident">unwrap</span>();
 
         <span class="ident">avail_flags</span> <span class="op">&amp;</span> <span class="ident">flag</span> <span class="op">==</span> <span class="ident">flag</span>
     }
@@ -1241,7 +1336,8 @@
         <span class="kw">let</span> <span class="ident">used_event_addr</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">avail_ring</span>
             .<span class="ident">unchecked_add</span>(<span class="number">4</span> <span class="op">+</span> <span class="number">2</span> <span class="op">*</span> <span class="ident">u64::from</span>(<span class="self">self</span>.<span class="ident">actual_size</span>()));
-        <span class="kw">let</span> <span class="ident">used_event</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">used_event_addr</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">used_event</span>: <span class="ident">u16</span> <span class="op">=</span>
+            <span class="ident">read_obj_from_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="ident">used_event_addr</span>).<span class="ident">unwrap</span>();
 
         <span class="ident">Wrapping</span>(<span class="ident">used_event</span>)
     }
@@ -1254,8 +1350,7 @@
         <span class="ident">fence</span>(<span class="ident">Ordering::SeqCst</span>);
 
         <span class="kw">let</span> <span class="ident">used_index_addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">used_ring</span>.<span class="ident">unchecked_add</span>(<span class="number">2</span>);
-        <span class="ident">mem</span>.<span class="ident">write_obj_at_addr</span>(<span class="ident">used_index</span>.<span class="number">0</span>, <span class="ident">used_index_addr</span>)
-            .<span class="ident">unwrap</span>();
+        <span class="ident">write_obj_at_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="ident">used_index</span>.<span class="number">0</span>, <span class="ident">used_index_addr</span>).<span class="ident">unwrap</span>();
     }
 
     <span class="comment">// Set a single-bit flag in the used ring.</span>
@@ -1264,13 +1359,14 @@
     <span class="kw">fn</span> <span class="ident">set_used_flag</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">mem</span>: <span class="kw-2">&amp;</span><span class="ident">GuestMemory</span>, <span class="ident">flag</span>: <span class="ident">u16</span>, <span class="ident">value</span>: <span class="ident">bool</span>) {
         <span class="ident">fence</span>(<span class="ident">Ordering::SeqCst</span>);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">used_flags</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="self">self</span>.<span class="ident">used_ring</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">used_flags</span>: <span class="ident">u16</span> <span class="op">=</span>
+            <span class="ident">read_obj_from_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="self">self</span>.<span class="ident">used_ring</span>).<span class="ident">unwrap</span>();
         <span class="kw">if</span> <span class="ident">value</span> {
             <span class="ident">used_flags</span> <span class="op">|</span><span class="op">=</span> <span class="ident">flag</span>;
         } <span class="kw">else</span> {
             <span class="ident">used_flags</span> <span class="op">&amp;=</span> <span class="op">!</span><span class="ident">flag</span>;
         }
-        <span class="ident">mem</span>.<span class="ident">write_obj_at_addr</span>(<span class="ident">used_flags</span>, <span class="self">self</span>.<span class="ident">used_ring</span>).<span class="ident">unwrap</span>();
+        <span class="ident">write_obj_at_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="ident">used_flags</span>, <span class="self">self</span>.<span class="ident">used_ring</span>).<span class="ident">unwrap</span>();
     }
 
     <span class="doccomment">/// Get the first available descriptor chain without removing it from the queue.</span>
@@ -1289,12 +1385,18 @@
         }
 
         <span class="kw">let</span> <span class="ident">desc_idx_addr_offset</span> <span class="op">=</span> <span class="number">4</span> <span class="op">+</span> (<span class="ident">u64::from</span>(<span class="self">self</span>.<span class="ident">next_avail</span>.<span class="number">0</span> <span class="op">%</span> <span class="ident">queue_size</span>) <span class="op">*</span> <span class="number">2</span>);
-        <span class="kw">let</span> <span class="ident">desc_idx_addr</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">checked_offset</span>(<span class="self">self</span>.<span class="ident">avail_ring</span>, <span class="ident">desc_idx_addr_offset</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">desc_idx_addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">avail_ring</span>.<span class="ident">checked_add</span>(<span class="ident">desc_idx_addr_offset</span>)<span class="question-mark">?</span>;
 
         <span class="comment">// This index is checked below in checked_new.</span>
-        <span class="kw">let</span> <span class="ident">descriptor_index</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">mem</span>.<span class="ident">read_obj_from_addr</span>(<span class="ident">desc_idx_addr</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">descriptor_index</span>: <span class="ident">u16</span> <span class="op">=</span>
+            <span class="ident">read_obj_from_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="ident">desc_idx_addr</span>).<span class="ident">unwrap</span>();
 
-        <span class="ident">DescriptorChain::checked_new</span>(<span class="ident">mem</span>, <span class="self">self</span>.<span class="ident">desc_table</span>, <span class="ident">queue_size</span>, <span class="ident">descriptor_index</span>, <span class="number">0</span>)
+        <span class="kw">let</span> <span class="ident">iommu</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">iommu</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">Arc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">iommu</span>))
+        } <span class="kw">else</span> {
+            <span class="prelude-val">None</span>
+        };
+        <span class="ident">DescriptorChain::checked_new</span>(<span class="ident">mem</span>, <span class="self">self</span>.<span class="ident">desc_table</span>, <span class="ident">queue_size</span>, <span class="ident">descriptor_index</span>, <span class="number">0</span>, <span class="ident">iommu</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
                 <span class="macro">error!</span>(<span class="string">&quot;{:#}&quot;</span>, <span class="ident">e</span>);
                 <span class="ident">e</span>
@@ -1356,8 +1458,8 @@
         <span class="kw">let</span> <span class="ident">used_elem</span> <span class="op">=</span> <span class="ident">used_ring</span>.<span class="ident">unchecked_add</span>((<span class="number">4</span> <span class="op">+</span> <span class="ident">next_used</span> <span class="op">*</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u64</span>);
 
         <span class="comment">// These writes can&#39;t fail as we are guaranteed to be within the descriptor ring.</span>
-        <span class="ident">mem</span>.<span class="ident">write_obj_at_addr</span>(<span class="ident">desc_index</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="ident">used_elem</span>).<span class="ident">unwrap</span>();
-        <span class="ident">mem</span>.<span class="ident">write_obj_at_addr</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="ident">used_elem</span>.<span class="ident">unchecked_add</span>(<span class="number">4</span>))
+        <span class="ident">write_obj_at_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="ident">desc_index</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="ident">used_elem</span>).<span class="ident">unwrap</span>();
+        <span class="ident">write_obj_at_addr_wrapper</span>(<span class="ident">mem</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">iommu</span>, <span class="ident">len</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="ident">used_elem</span>.<span class="ident">unchecked_add</span>(<span class="number">4</span>))
             .<span class="ident">unwrap</span>();
 
         <span class="self">self</span>.<span class="ident">next_used</span> <span class="op">+</span><span class="op">=</span> <span class="ident">Wrapping</span>(<span class="number">1</span>);
@@ -1419,6 +1521,10 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ack_features</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">features</span>: <span class="ident">u64</span>) {
         <span class="self">self</span>.<span class="ident">features</span> <span class="op">|</span><span class="op">=</span> <span class="ident">features</span>;
     }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_iommu</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">iommu</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">IpcMemoryMapper</span><span class="op">&gt;</span><span class="op">&gt;</span>) {
+        <span class="self">self</span>.<span class="ident">iommu</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">iommu</span>);
+    }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -1426,7 +1532,6 @@
     <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::Interrupt</span>;
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="ident">base::Event</span>;
-    <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">DataInit</span>, <span class="ident">Le16</span>, <span class="ident">Le32</span>, <span class="ident">Le64</span>};
     <span class="kw">use</span> <span class="ident">std::convert::TryInto</span>;
     <span class="kw">use</span> <span class="ident">std::sync::atomic::AtomicUsize</span>;
     <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
@@ -1438,17 +1543,6 @@
     <span class="kw">const</span> <span class="ident">QUEUE_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0x10</span>;
     <span class="kw">const</span> <span class="ident">BUFFER_OFFSET</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0x8000</span>;
     <span class="kw">const</span> <span class="ident">BUFFER_LEN</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x400</span>;
-
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-    <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
-    <span class="kw">struct</span> <span class="ident">Desc</span> {
-        <span class="ident">addr</span>: <span class="ident">Le64</span>,
-        <span class="ident">len</span>: <span class="ident">Le32</span>,
-        <span class="ident">flags</span>: <span class="ident">Le16</span>,
-        <span class="ident">next</span>: <span class="ident">Le16</span>,
-    }
-    <span class="comment">// Safe as this only runs in test</span>
-    <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">DataInit</span> <span class="kw">for</span> <span class="ident">Desc</span> {}
 
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
     <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
