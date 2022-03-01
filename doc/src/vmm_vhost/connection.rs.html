@@ -449,6 +449,7 @@
 <span id="448">448</span>
 <span id="449">449</span>
 <span id="450">450</span>
+<span id="451">451</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2019 Alibaba Cloud Computing. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
 
@@ -507,7 +508,8 @@
     <span class="doccomment">/// * `allow_fd` - Indicates whether we can receive FDs.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Return:</span>
-    <span class="doccomment">/// * - (number of bytes received, [received files]) on success</span>
+    <span class="doccomment">/// * - (number of bytes received, [received files]) on success.</span>
+    <span class="doccomment">/// * - `Error::Disconnect` if the client closed.</span>
     <span class="kw">fn</span> <span class="ident">recv_into_bufs</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">bufs</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">IoSliceMut</span>],
@@ -705,8 +707,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Return:</span>
     <span class="doccomment">/// * - (number of bytes received, [received fds]) on success</span>
-    <span class="doccomment">/// * - SocketBroken: the underline socket is broken.</span>
-    <span class="doccomment">/// * - SocketError: other socket related errors.</span>
+    <span class="doccomment">/// * - `Disconnect` - client is closed</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # TODO</span>
     <span class="doccomment">/// This function takes a slice of `&amp;mut [u8]` instead of `IoSliceMut` because the internal</span>
@@ -763,6 +764,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Return:</span>
     <span class="doccomment">/// * - (message header, [received files]) on success.</span>
+    <span class="doccomment">/// * - Disconnect: the client closed the connection.</span>
     <span class="doccomment">/// * - PartialMessage: received a partial message.</span>
     <span class="doccomment">/// * - InvalidMessage: received a invalid message.</span>
     <span class="doccomment">/// * - backend specific errors</span>

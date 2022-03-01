@@ -651,6 +651,14 @@
 <span id="650">650</span>
 <span id="651">651</span>
 <span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -670,7 +678,7 @@
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">bail</span>, <span class="ident">Context</span>};
 <span class="kw">use</span> <span class="ident">argh::FromArgs</span>;
 <span class="kw">use</span> <span class="ident">base</span>::{
-    <span class="ident">clear_fd_flags</span>, <span class="ident">error</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>,
+    <span class="ident">clear_fd_flags</span>, <span class="ident">error</span>, <span class="ident">info</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>,
     <span class="ident">SafeDescriptor</span>, <span class="ident">UnlinkUnixListener</span>,
 };
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">AsyncWrapper</span>, <span class="ident">EventAsync</span>, <span class="ident">Executor</span>};
@@ -1187,9 +1195,17 @@
             .<span class="ident">wait_readable</span>()
             .<span class="kw">await</span>
             .<span class="ident">context</span>(<span class="string">&quot;failed to wait for vhost socket to become readable&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">req_handler</span>
-            .<span class="ident">handle_request</span>()
-            .<span class="ident">context</span>(<span class="string">&quot;failed to handle vhost request&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">match</span> <span class="ident">req_handler</span>.<span class="ident">handle_request</span>() {
+            <span class="prelude-val">Ok</span>(()) =&gt; (),
+            <span class="prelude-val">Err</span>(<span class="ident">Error::Disconnect</span>) =&gt; {
+                <span class="macro">info!</span>(<span class="string">&quot;vhost-user connection closed&quot;</span>);
+                <span class="comment">// Exit as the client closed the connection.</span>
+                <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
+            }
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
+                <span class="macro">bail!</span>(<span class="string">&quot;failed to handle a vhost-user request: {}&quot;</span>, <span class="ident">e</span>);
+            }
+        };
     }
 }
 

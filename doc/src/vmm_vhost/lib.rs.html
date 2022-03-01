@@ -475,6 +475,13 @@
 <span id="474">474</span>
 <span id="475">475</span>
 <span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2019 Alibaba Cloud. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0 or BSD-3-Clause</span>
 
@@ -554,6 +561,13 @@
 <span class="attribute">#[<span class="ident">sorted</span>]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">ThisError</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
+    <span class="doccomment">/// client exited properly.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;client exited properly&quot;</span>)]</span>
+    <span class="ident">ClientExit</span>,
+    <span class="doccomment">/// client disconnected.</span>
+    <span class="doccomment">/// If connection is closed properly, use `ClientExit` instead.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;client closed the connection&quot;</span>)]</span>
+    <span class="ident">Disconnect</span>,
     <span class="doccomment">/// Virtio/protocol features mismatch.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;virtio features mismatch&quot;</span>)]</span>
     <span class="ident">FeatureMismatch</span>,

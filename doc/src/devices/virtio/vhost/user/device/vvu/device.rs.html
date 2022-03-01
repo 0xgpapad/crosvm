@@ -238,6 +238,15 @@
 <span id="237">237</span>
 <span id="238">238</span>
 <span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -251,12 +260,12 @@
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 <span class="kw">use</span> <span class="ident">std::thread</span>;
 
-<span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">bail</span>, <span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">anyhow</span>, <span class="ident">bail</span>, <span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">Event</span>};
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">EventAsync</span>, <span class="ident">Executor</span>};
 <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">pin_mut</span>, <span class="ident">select</span>, <span class="ident">FutureExt</span>};
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
-<span class="kw">use</span> <span class="ident">vmm_vhost::connection::vfio::Device</span> <span class="kw">as</span> <span class="ident">VfioDeviceTrait</span>;
+<span class="kw">use</span> <span class="ident">vmm_vhost::connection::vfio</span>::{<span class="ident">Device</span> <span class="kw">as</span> <span class="ident">VfioDeviceTrait</span>, <span class="ident">RecvIntoBufsError</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::vfio::VfioDevice</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::vhost::user::device::vvu</span>::{
@@ -443,10 +452,12 @@
         <span class="prelude-val">Ok</span>(<span class="ident">size</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">recv_into_bufs</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">bufs</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">IoSliceMut</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">recv_into_bufs</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">bufs</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">IoSliceMut</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">RecvIntoBufsError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">rxq_receiver</span>, <span class="ident">rxq_notifier</span>, <span class="ident">rxq_buf</span>, <span class="ident">vfio</span>) <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">state</span> {
             <span class="ident">DeviceState::Initialized</span> { .. } =&gt; {
-                <span class="macro">bail!</span>(<span class="string">&quot;VvuDevice hasn&#39;t started yet&quot;</span>);
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">RecvIntoBufsError::Fatal</span>(<span class="macro">anyhow!</span>(
+                    <span class="string">&quot;VvuDevice hasn&#39;t started yet&quot;</span>
+                )));
             }
             <span class="ident">DeviceState::Running</span> {
                 <span class="ident">rxq_receiver</span>,
@@ -462,7 +473,10 @@
             <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">buf</span>.<span class="ident">len</span>();
 
             <span class="kw">while</span> <span class="ident">rxq_buf</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="ident">len</span> {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">rxq_receiver</span>.<span class="ident">recv</span>().<span class="ident">context</span>(<span class="string">&quot;failed to receive data&quot;</span>)<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">rxq_receiver</span>
+                    .<span class="ident">recv</span>()
+                    .<span class="ident">context</span>(<span class="string">&quot;failed to receive data&quot;</span>)
+                    .<span class="ident">map_err</span>(<span class="ident">RecvIntoBufsError::Fatal</span>)<span class="question-mark">?</span>;
                 <span class="ident">rxq_buf</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="ident">data</span>);
             }
 
@@ -474,6 +488,10 @@
             <span class="ident">rxq_notifier</span>.<span class="ident">lock</span>().<span class="ident">notify</span>(<span class="ident">vfio</span>, <span class="ident">QueueType::Rx</span> <span class="kw">as</span> <span class="ident">u16</span>);
         }
 
+        <span class="kw">if</span> <span class="ident">size</span> <span class="op">==</span> <span class="number">0</span> {
+            <span class="comment">// TODO(b/216407443): We should change `self.state` and exit gracefully.</span>
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">RecvIntoBufsError::Disconnect</span>);
+        }
         <span class="prelude-val">Ok</span>(<span class="ident">size</span>)
     }
 }
