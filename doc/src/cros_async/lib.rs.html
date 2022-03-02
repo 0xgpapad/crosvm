@@ -509,6 +509,33 @@
 <span id="508">508</span>
 <span id="509">509</span>
 <span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -914,6 +941,33 @@
     <span class="ident">select::Select6::new</span>(<span class="ident">f1</span>, <span class="ident">f2</span>, <span class="ident">f3</span>, <span class="ident">f4</span>, <span class="ident">f5</span>, <span class="ident">f6</span>).<span class="kw">await</span>
 }
 
+<span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">select7</span><span class="op">&lt;</span>
+    <span class="ident">F1</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Unpin</span>,
+    <span class="ident">F2</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Unpin</span>,
+    <span class="ident">F3</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Unpin</span>,
+    <span class="ident">F4</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Unpin</span>,
+    <span class="ident">F5</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Unpin</span>,
+    <span class="ident">F6</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Unpin</span>,
+    <span class="ident">F7</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Unpin</span>,
+<span class="op">&gt;</span>(
+    <span class="ident">f1</span>: <span class="ident">F1</span>,
+    <span class="ident">f2</span>: <span class="ident">F2</span>,
+    <span class="ident">f3</span>: <span class="ident">F3</span>,
+    <span class="ident">f4</span>: <span class="ident">F4</span>,
+    <span class="ident">f5</span>: <span class="ident">F5</span>,
+    <span class="ident">f6</span>: <span class="ident">F6</span>,
+    <span class="ident">f7</span>: <span class="ident">F7</span>,
+) -&gt; (
+    <span class="ident">SelectResult</span><span class="op">&lt;</span><span class="ident">F1</span><span class="op">&gt;</span>,
+    <span class="ident">SelectResult</span><span class="op">&lt;</span><span class="ident">F2</span><span class="op">&gt;</span>,
+    <span class="ident">SelectResult</span><span class="op">&lt;</span><span class="ident">F3</span><span class="op">&gt;</span>,
+    <span class="ident">SelectResult</span><span class="op">&lt;</span><span class="ident">F4</span><span class="op">&gt;</span>,
+    <span class="ident">SelectResult</span><span class="op">&lt;</span><span class="ident">F5</span><span class="op">&gt;</span>,
+    <span class="ident">SelectResult</span><span class="op">&lt;</span><span class="ident">F6</span><span class="op">&gt;</span>,
+    <span class="ident">SelectResult</span><span class="op">&lt;</span><span class="ident">F7</span><span class="op">&gt;</span>,
+) {
+    <span class="ident">select::Select7::new</span>(<span class="ident">f1</span>, <span class="ident">f2</span>, <span class="ident">f3</span>, <span class="ident">f4</span>, <span class="ident">f5</span>, <span class="ident">f6</span>, <span class="ident">f7</span>).<span class="kw">await</span>
+}
 <span class="comment">// Combination helpers to run until all futures are complete.</span>
 
 <span class="doccomment">/// Creates a combinator that runs the two given futures to completion, returning a tuple of the</span>

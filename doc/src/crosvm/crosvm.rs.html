@@ -564,6 +564,8 @@
 <span id="563">563</span>
 <span id="564">564</span>
 <span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1011,6 +1013,7 @@
     <span class="kw">pub</span> <span class="ident">rng</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">pivot_root</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">force_s2idle</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">strict_balloon</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Config</span> {
@@ -1126,6 +1129,7 @@
             <span class="ident">rng</span>: <span class="bool-val">true</span>,
             <span class="ident">pivot_root</span>: <span class="prelude-val">None</span>,
             <span class="ident">force_s2idle</span>: <span class="bool-val">false</span>,
+            <span class="ident">strict_balloon</span>: <span class="bool-val">false</span>,
         }
     }
 }

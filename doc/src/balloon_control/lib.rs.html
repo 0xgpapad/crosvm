@@ -41,6 +41,22 @@
 <span id="40">40</span>
 <span id="41">41</span>
 <span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2022 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -51,10 +67,23 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BalloonTubeCommand</span> {
     <span class="comment">// Set the size of the VM&#39;s balloon.</span>
-    <span class="ident">Adjust</span> { <span class="ident">num_bytes</span>: <span class="ident">u64</span> },
+    <span class="ident">Adjust</span> {
+        <span class="ident">num_bytes</span>: <span class="ident">u64</span>,
+        <span class="comment">// When this flag is set, adjust attempts can fail. After adjustment, the final</span>
+        <span class="comment">// size of the balloon is returned via a BalloonTubeResult::Adjust message.</span>
+        <span class="comment">//</span>
+        <span class="comment">// The flag changes the semantics of inflating the balloon. By default, the driver</span>
+        <span class="comment">// will indefinitely retry if it fails to allocate pages when inflating the</span>
+        <span class="comment">// balloon.  However, when this flag is set, the balloon device responds to page</span>
+        <span class="comment">// allocation failures in the guest by stopping inflation at the balloon&#39;s current</span>
+        <span class="comment">// size.</span>
+        <span class="ident">allow_failure</span>: <span class="ident">bool</span>,
+    },
     <span class="comment">// Fetch balloon stats. The ID can be used to discard stale states</span>
     <span class="comment">// if any previous stats requests failed or timed out.</span>
-    <span class="ident">Stats</span> { <span class="ident">id</span>: <span class="ident">u64</span> },
+    <span class="ident">Stats</span> {
+        <span class="ident">id</span>: <span class="ident">u64</span>,
+    },
 }
 
 <span class="comment">// BalloonStats holds stats returned from the stats_queue.</span>
@@ -81,6 +110,9 @@
         <span class="ident">stats</span>: <span class="ident">BalloonStats</span>,
         <span class="ident">balloon_actual</span>: <span class="ident">u64</span>,
         <span class="ident">id</span>: <span class="ident">u64</span>,
+    },
+    <span class="ident">Adjusted</span> {
+        <span class="ident">num_bytes</span>: <span class="ident">u64</span>,
     },
 }
 </code></pre></div>

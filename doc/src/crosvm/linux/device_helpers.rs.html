@@ -1208,6 +1208,11 @@
 <span id="1207">1207</span>
 <span id="1208">1208</span>
 <span id="1209">1209</span>
+<span id="1210">1210</span>
+<span id="1211">1211</span>
+<span id="1212">1212</span>
+<span id="1213">1213</span>
+<span id="1214">1214</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1241,7 +1246,7 @@
 };
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-decoder&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-encoder&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">devices::virtio::VideoBackendType</span>;
-<span class="kw">use</span> <span class="ident">devices::virtio</span>::{<span class="self">self</span>, <span class="ident">Console</span>, <span class="ident">VirtioDevice</span>};
+<span class="kw">use</span> <span class="ident">devices::virtio</span>::{<span class="self">self</span>, <span class="ident">BalloonMode</span>, <span class="ident">Console</span>, <span class="ident">VirtioDevice</span>};
 <span class="kw">use</span> <span class="ident">devices::IommuDevType</span>;
 <span class="kw">use</span> <span class="ident">devices</span>::{<span class="self">self</span>, <span class="ident">BusDeviceObj</span>, <span class="ident">PciDevice</span>, <span class="ident">VfioDevice</span>, <span class="ident">VfioPciDevice</span>, <span class="ident">VfioPlatformDevice</span>};
 <span class="kw">use</span> <span class="ident">hypervisor::Vm</span>;
@@ -1709,6 +1714,11 @@
         <span class="ident">tube</span>,
         <span class="ident">inflate_tube</span>,
         <span class="ident">init_balloon_size</span>,
+        <span class="kw">if</span> <span class="ident">cfg</span>.<span class="ident">strict_balloon</span> {
+            <span class="ident">BalloonMode::Strict</span>
+        } <span class="kw">else</span> {
+            <span class="ident">BalloonMode::Relaxed</span>
+        },
     )
     .<span class="ident">context</span>(<span class="string">&quot;failed to create balloon&quot;</span>)<span class="question-mark">?</span>;
 

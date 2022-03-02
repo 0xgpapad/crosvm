@@ -4231,6 +4231,10 @@
 <span id="4230">4230</span>
 <span id="4231">4231</span>
 <span id="4232">4232</span>
+<span id="4233">4233</span>
+<span id="4234">4234</span>
+<span id="4235">4235</span>
+<span id="4236">4236</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -6624,6 +6628,9 @@
         <span class="string">&quot;s2idle&quot;</span> =&gt; {
             <span class="ident">cfg</span>.<span class="ident">force_s2idle</span> <span class="op">=</span> <span class="bool-val">true</span>;
         }
+        <span class="string">&quot;strict-balloon&quot;</span> =&gt; {
+            <span class="ident">cfg</span>.<span class="ident">strict_balloon</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        }
         <span class="string">&quot;help&quot;</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::PrintHelp</span>),
         <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
     }
@@ -7009,6 +7016,7 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
           <span class="ident">Argument::value</span>(<span class="string">&quot;pivot-root&quot;</span>, <span class="string">&quot;PATH&quot;</span>, <span class="string">&quot;Path to empty directory to use for sandbox pivot root.&quot;</span>),
           <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
           <span class="ident">Argument::flag</span>(<span class="string">&quot;s2idle&quot;</span>, <span class="string">&quot;Set Low Power S0 Idle Capable Flag for guest Fixed ACPI Description Table&quot;</span>),
+          <span class="ident">Argument::flag</span>(<span class="string">&quot;strict-balloon&quot;</span>, <span class="string">&quot;Don&#39;t allow guest to use pages from the balloon&quot;</span>),
           <span class="ident">Argument::short_flag</span>(<span class="string">&#39;h&#39;</span>, <span class="string">&quot;help&quot;</span>, <span class="string">&quot;Print help message.&quot;</span>)];
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cfg</span> <span class="op">=</span> <span class="ident">Config::default</span>();
