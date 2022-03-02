@@ -807,7 +807,6 @@
 <span id="806">806</span>
 <span id="807">807</span>
 <span id="808">808</span>
-<span id="809">809</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1448,8 +1447,7 @@
 
 <span class="kw">impl</span> <span class="ident">VirtioDevice</span> <span class="kw">for</span> <span class="ident">Balloon</span> {
     <span class="kw">fn</span> <span class="ident">keep_rds</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RawDescriptor</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rds</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-        <span class="ident">rds</span>.<span class="ident">push</span>(<span class="self">self</span>.<span class="ident">command_tube</span>.<span class="ident">as_raw_descriptor</span>());
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rds</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="self">self</span>.<span class="ident">command_tube</span>.<span class="ident">as_raw_descriptor</span>()];
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">inflate_tube</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inflate_tube</span> {
             <span class="ident">rds</span>.<span class="ident">push</span>(<span class="ident">inflate_tube</span>.<span class="ident">as_raw_descriptor</span>());
         }
