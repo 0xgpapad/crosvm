@@ -1946,6 +1946,7 @@
 <span id="1945">1945</span>
 <span id="1946">1946</span>
 <span id="1947">1947</span>
+<span id="1948">1948</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3505,6 +3506,7 @@
             <span class="ident">to_gdb_channel</span>.<span class="ident">clone</span>(),
             <span class="ident">cfg</span>.<span class="ident">per_vm_core_scheduling</span>,
             <span class="ident">cfg</span>.<span class="ident">host_cpu_topology</span>,
+            <span class="ident">cfg</span>.<span class="ident">privileged_vm</span>,
             <span class="kw">match</span> <span class="ident">vcpu_cgroup_tasks_file</span> {
                 <span class="prelude-val">None</span> =&gt; <span class="prelude-val">None</span>,
                 <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">f</span>) =&gt; <span class="prelude-val">Some</span>(

@@ -1479,6 +1479,7 @@
 <span id="1478">1478</span>
 <span id="1479">1479</span>
 <span id="1480">1480</span>
+<span id="1481">1481</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2505,6 +2506,7 @@
                     <span class="ident">KVM_SYSTEM_EVENT_SHUTDOWN</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventShutdown</span>),
                     <span class="ident">KVM_SYSTEM_EVENT_RESET</span> =&gt; <span class="self">self</span>.<span class="ident">system_event_reset</span>(<span class="ident">event_flags</span>),
                     <span class="ident">KVM_SYSTEM_EVENT_CRASH</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventCrash</span>),
+                    <span class="ident">KVM_SYSTEM_EVENT_S2IDLE</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">VcpuExit::SystemEventS2Idle</span>),
                     <span class="kw">_</span> =&gt; {
                         <span class="macro">error!</span>(
                             <span class="string">&quot;Unknown KVM system event {} with flags {}&quot;</span>,
