@@ -517,6 +517,9 @@
 <span id="516">516</span>
 <span id="517">517</span>
 <span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -962,7 +965,7 @@
         }
         <span class="comment">// align window_size to 1MB</span>
         <span class="kw">if</span> <span class="ident">window_size</span> <span class="op">&amp;</span> (<span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="ident">window_size</span> <span class="op">=</span> (<span class="ident">window_size</span> <span class="op">+</span> <span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">&amp;</span> <span class="ident">BR_WINDOW_ALIGNMENT</span>;
+            <span class="ident">window_size</span> <span class="op">=</span> (<span class="ident">window_size</span> <span class="op">+</span> <span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">&amp;</span> (<span class="op">!</span>(<span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>));
         }
         <span class="comment">// if window_base isn&#39;t set, allocate a new one</span>
         <span class="kw">if</span> <span class="ident">window_base</span> <span class="op">==</span> <span class="ident">u64::MAX</span> {
@@ -986,7 +989,8 @@
         } <span class="kw">else</span> {
             <span class="comment">// align window_base to 1MB</span>
             <span class="kw">if</span> <span class="ident">window_base</span> <span class="op">&amp;</span> (<span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-                <span class="ident">window_base</span> <span class="op">=</span> (<span class="ident">window_base</span> <span class="op">+</span> <span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">&amp;</span> <span class="ident">BR_WINDOW_ALIGNMENT</span>;
+                <span class="ident">window_base</span> <span class="op">=</span>
+                    (<span class="ident">window_base</span> <span class="op">+</span> <span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">&amp;</span> (<span class="op">!</span>(<span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>));
             }
         }
 
@@ -996,7 +1000,8 @@
         }
         <span class="comment">// align pref_window_size to 1MB</span>
         <span class="kw">if</span> <span class="ident">pref_window_size</span> <span class="op">&amp;</span> (<span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="ident">pref_window_size</span> <span class="op">=</span> (<span class="ident">pref_window_size</span> <span class="op">+</span> <span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">&amp;</span> <span class="ident">BR_WINDOW_ALIGNMENT</span>;
+            <span class="ident">pref_window_size</span> <span class="op">=</span>
+                (<span class="ident">pref_window_size</span> <span class="op">+</span> <span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">&amp;</span> (<span class="op">!</span>(<span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>));
         }
         <span class="comment">// if pref_window_base isn&#39;t set, allocate a new one</span>
         <span class="kw">if</span> <span class="ident">pref_window_base</span> <span class="op">==</span> <span class="ident">u64::MAX</span> {
@@ -1022,7 +1027,8 @@
         } <span class="kw">else</span> {
             <span class="comment">// align pref_window_base to 1MB</span>
             <span class="kw">if</span> <span class="ident">pref_window_base</span> <span class="op">&amp;</span> (<span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-                <span class="ident">pref_window_base</span> <span class="op">=</span> (<span class="ident">window_base</span> <span class="op">+</span> <span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">&amp;</span> <span class="ident">BR_WINDOW_ALIGNMENT</span>;
+                <span class="ident">pref_window_base</span> <span class="op">=</span>
+                    (<span class="ident">window_base</span> <span class="op">+</span> <span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">&amp;</span> (<span class="op">!</span>(<span class="ident">BR_WINDOW_ALIGNMENT</span> <span class="op">-</span> <span class="number">1</span>));
             }
         }
 
