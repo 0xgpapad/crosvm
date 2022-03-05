@@ -566,6 +566,8 @@
 <span id="565">565</span>
 <span id="566">566</span>
 <span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -968,6 +970,7 @@
     <span class="kw">pub</span> <span class="ident">virtio_keyboard</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">virtio_switches</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">virtio_input_evdevs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">virtio_iommu</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">split_irqchip</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">vfio</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">VfioCommand</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-decoder&quot;</span>)]</span>
@@ -1084,6 +1087,7 @@
             <span class="ident">virtio_keyboard</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">virtio_switches</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">virtio_input_evdevs</span>: <span class="ident">Vec::new</span>(),
+            <span class="ident">virtio_iommu</span>: <span class="bool-val">false</span>,
             <span class="ident">split_irqchip</span>: <span class="bool-val">false</span>,
             <span class="ident">vfio</span>: <span class="ident">Vec::new</span>(),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-decoder&quot;</span>)]</span>

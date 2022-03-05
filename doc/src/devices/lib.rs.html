@@ -182,7 +182,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;usb&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::usb::xhci::xhci_controller::XhciController</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::vfio</span>::{<span class="ident">VfioContainer</span>, <span class="ident">VfioDevice</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::virtio::VirtioPciDevice</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::virtio</span>::{<span class="ident">vfio_wrapper</span>, <span class="ident">VirtioPciDevice</span>};
 
 <span class="doccomment">/// Request CoIOMMU to unpin a specific range.</span>
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};

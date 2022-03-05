@@ -1947,6 +1947,100 @@
 <span id="1946">1946</span>
 <span id="1947">1947</span>
 <span id="1948">1948</span>
+<span id="1949">1949</span>
+<span id="1950">1950</span>
+<span id="1951">1951</span>
+<span id="1952">1952</span>
+<span id="1953">1953</span>
+<span id="1954">1954</span>
+<span id="1955">1955</span>
+<span id="1956">1956</span>
+<span id="1957">1957</span>
+<span id="1958">1958</span>
+<span id="1959">1959</span>
+<span id="1960">1960</span>
+<span id="1961">1961</span>
+<span id="1962">1962</span>
+<span id="1963">1963</span>
+<span id="1964">1964</span>
+<span id="1965">1965</span>
+<span id="1966">1966</span>
+<span id="1967">1967</span>
+<span id="1968">1968</span>
+<span id="1969">1969</span>
+<span id="1970">1970</span>
+<span id="1971">1971</span>
+<span id="1972">1972</span>
+<span id="1973">1973</span>
+<span id="1974">1974</span>
+<span id="1975">1975</span>
+<span id="1976">1976</span>
+<span id="1977">1977</span>
+<span id="1978">1978</span>
+<span id="1979">1979</span>
+<span id="1980">1980</span>
+<span id="1981">1981</span>
+<span id="1982">1982</span>
+<span id="1983">1983</span>
+<span id="1984">1984</span>
+<span id="1985">1985</span>
+<span id="1986">1986</span>
+<span id="1987">1987</span>
+<span id="1988">1988</span>
+<span id="1989">1989</span>
+<span id="1990">1990</span>
+<span id="1991">1991</span>
+<span id="1992">1992</span>
+<span id="1993">1993</span>
+<span id="1994">1994</span>
+<span id="1995">1995</span>
+<span id="1996">1996</span>
+<span id="1997">1997</span>
+<span id="1998">1998</span>
+<span id="1999">1999</span>
+<span id="2000">2000</span>
+<span id="2001">2001</span>
+<span id="2002">2002</span>
+<span id="2003">2003</span>
+<span id="2004">2004</span>
+<span id="2005">2005</span>
+<span id="2006">2006</span>
+<span id="2007">2007</span>
+<span id="2008">2008</span>
+<span id="2009">2009</span>
+<span id="2010">2010</span>
+<span id="2011">2011</span>
+<span id="2012">2012</span>
+<span id="2013">2013</span>
+<span id="2014">2014</span>
+<span id="2015">2015</span>
+<span id="2016">2016</span>
+<span id="2017">2017</span>
+<span id="2018">2018</span>
+<span id="2019">2019</span>
+<span id="2020">2020</span>
+<span id="2021">2021</span>
+<span id="2022">2022</span>
+<span id="2023">2023</span>
+<span id="2024">2024</span>
+<span id="2025">2025</span>
+<span id="2026">2026</span>
+<span id="2027">2027</span>
+<span id="2028">2028</span>
+<span id="2029">2029</span>
+<span id="2030">2030</span>
+<span id="2031">2031</span>
+<span id="2032">2032</span>
+<span id="2033">2033</span>
+<span id="2034">2034</span>
+<span id="2035">2035</span>
+<span id="2036">2036</span>
+<span id="2037">2037</span>
+<span id="2038">2038</span>
+<span id="2039">2039</span>
+<span id="2040">2040</span>
+<span id="2041">2041</span>
+<span id="2042">2042</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1959,6 +2053,7 @@
 <span class="kw">use</span> <span class="ident">std::io::stdin</span>;
 <span class="kw">use</span> <span class="ident">std::iter</span>;
 <span class="kw">use</span> <span class="ident">std::mem</span>;
+<span class="kw">use</span> <span class="ident">std::ops::RangeInclusive</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">std::os::unix::net::UnixStream</span>;
 <span class="kw">use</span> <span class="ident">std::os::unix::prelude::OpenOptionsExt</span>;
@@ -2397,7 +2492,7 @@
     <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
     <span class="ident">exit_evt</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>,
     <span class="ident">panic_wrtube</span>: <span class="ident">Tube</span>,
-    <span class="ident">phys_max_addr</span>: <span class="ident">u64</span>,
+    <span class="ident">iommu_attached_endpoints</span>: <span class="kw-2">&amp;mut</span> <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">MemoryMapperTrait</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">control_tubes</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TaggedControlTube</span><span class="op">&gt;</span>,
     <span class="ident">wayland_device_tube</span>: <span class="ident">Tube</span>,
     <span class="ident">gpu_device_tube</span>: <span class="ident">Tube</span>,
@@ -2414,8 +2509,6 @@
 ) -&gt; <span class="ident">DeviceResult</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BusDeviceObj</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">devices</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BusDeviceObj</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span>)<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">balloon_inflate_tube</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iommu_attached_endpoints</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">MemoryMapperTrait</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span>
-        <span class="ident">BTreeMap::new</span>();
     <span class="kw">if</span> <span class="op">!</span><span class="ident">cfg</span>.<span class="ident">vfio</span>.<span class="ident">is_empty</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">coiommu_attached_endpoints</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
@@ -2432,7 +2525,7 @@
                 <span class="ident">control_tubes</span>,
                 <span class="ident">vfio_path</span>.<span class="ident">as_path</span>(),
                 <span class="prelude-val">None</span>,
-                <span class="kw-2">&amp;mut</span> <span class="ident">iommu_attached_endpoints</span>,
+                <span class="ident">iommu_attached_endpoints</span>,
                 <span class="prelude-val">Some</span>(<span class="kw-2">&amp;mut</span> <span class="ident">coiommu_attached_endpoints</span>),
                 <span class="ident">vfio_dev</span>.<span class="ident">iommu_dev_type</span>(),
             )<span class="question-mark">?</span>;
@@ -2452,7 +2545,7 @@
                 <span class="ident">resources</span>,
                 <span class="ident">control_tubes</span>,
                 <span class="ident">vfio_path</span>.<span class="ident">as_path</span>(),
-                <span class="kw-2">&amp;mut</span> <span class="ident">iommu_attached_endpoints</span>,
+                <span class="ident">iommu_attached_endpoints</span>,
                 <span class="ident">IommuDevType::NoIommu</span>, <span class="comment">// Virtio IOMMU is not supported yet</span>
             )<span class="question-mark">?</span>;
 
@@ -2559,30 +2652,6 @@
     }
 
     <span class="ident">devices</span>.<span class="ident">push</span>((<span class="ident">Box::new</span>(<span class="ident">PvPanicPciDevice::new</span>(<span class="ident">panic_wrtube</span>)), <span class="prelude-val">None</span>));
-
-    <span class="kw">let</span> (<span class="ident">translate_response_senders</span>, <span class="ident">request_rx</span>) <span class="op">=</span>
-        <span class="ident">setup_virtio_access_platform</span>(<span class="ident">resources</span>, <span class="kw-2">&amp;mut</span> <span class="ident">iommu_attached_endpoints</span>, <span class="kw-2">&amp;mut</span> <span class="ident">devices</span>)<span class="question-mark">?</span>;
-
-    <span class="kw">if</span> <span class="op">!</span><span class="ident">iommu_attached_endpoints</span>.<span class="ident">is_empty</span>() {
-        <span class="kw">let</span> <span class="ident">iommu_dev</span> <span class="op">=</span> <span class="ident">create_iommu_device</span>(
-            <span class="ident">cfg</span>,
-            <span class="ident">phys_max_addr</span>,
-            <span class="ident">iommu_attached_endpoints</span>,
-            <span class="ident">translate_response_senders</span>,
-            <span class="ident">request_rx</span>,
-        )<span class="question-mark">?</span>;
-
-        <span class="kw">let</span> (<span class="ident">msi_host_tube</span>, <span class="ident">msi_device_tube</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">control_tubes</span>.<span class="ident">push</span>(<span class="ident">TaggedControlTube::VmIrq</span>(<span class="ident">msi_host_tube</span>));
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">VirtioPciDevice::new</span>(<span class="ident">vm</span>.<span class="ident">get_memory</span>().<span class="ident">clone</span>(), <span class="ident">iommu_dev</span>.<span class="ident">dev</span>, <span class="ident">msi_device_tube</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;failed to create virtio pci dev&quot;</span>)<span class="question-mark">?</span>;
-        <span class="comment">// early reservation for viommu.</span>
-        <span class="ident">dev</span>.<span class="ident">allocate_address</span>(<span class="ident">resources</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;failed to allocate resources early for virtio pci dev&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">dev</span>);
-        <span class="ident">devices</span>.<span class="ident">push</span>((<span class="ident">dev</span>, <span class="ident">iommu_dev</span>.<span class="ident">jail</span>));
-    }
-
     <span class="prelude-val">Ok</span>(<span class="ident">devices</span>)
 }
 
@@ -2642,6 +2711,7 @@
     <span class="ident">control_tubes</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TaggedControlTube</span><span class="op">&gt;</span>,
     <span class="ident">devices</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BusDeviceObj</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
     <span class="ident">hp_vec</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">HotPlugBus</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">hp_endpoints_ranges</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">host_pcie_rp</span>.<span class="ident">is_empty</span>() {
         <span class="comment">// user doesn&#39;t specify host pcie root port which link to this virtual pcie rp,</span>
@@ -2672,6 +2742,21 @@
         <span class="kw">let</span> (<span class="ident">msi_host_tube</span>, <span class="ident">msi_device_tube</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
         <span class="ident">control_tubes</span>.<span class="ident">push</span>(<span class="ident">TaggedControlTube::VmIrq</span>(<span class="ident">msi_host_tube</span>));
         <span class="kw">let</span> <span class="ident">pci_bridge</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">PciBridge::new</span>(<span class="ident">pcie_root_port</span>.<span class="ident">clone</span>(), <span class="ident">msi_device_tube</span>));
+
+        <span class="ident">hp_endpoints_ranges</span>.<span class="ident">push</span>(<span class="ident">RangeInclusive::new</span>(
+            <span class="ident">PciAddress</span> {
+                <span class="ident">bus</span>: <span class="ident">pci_bridge</span>.<span class="ident">get_secondary_num</span>(),
+                <span class="ident">dev</span>: <span class="number">0</span>,
+                <span class="ident">func</span>: <span class="number">0</span>,
+            }
+            .<span class="ident">to_u32</span>(),
+            <span class="ident">PciAddress</span> {
+                <span class="ident">bus</span>: <span class="ident">pci_bridge</span>.<span class="ident">get_subordinate_num</span>(),
+                <span class="ident">dev</span>: <span class="number">32</span>,
+                <span class="ident">func</span>: <span class="number">8</span>,
+            }
+            .<span class="ident">to_u32</span>(),
+        ));
 
         <span class="ident">devices</span>.<span class="ident">push</span>((<span class="ident">pci_bridge</span>, <span class="prelude-val">None</span>));
         <span class="ident">hp_vec</span>.<span class="ident">push</span>(<span class="ident">pcie_root_port</span> <span class="kw">as</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">HotPlugBus</span><span class="op">&gt;</span><span class="op">&gt;</span>);
@@ -2707,6 +2792,21 @@
                     <span class="ident">pci_bridge</span>.<span class="ident">debug_label</span>()
                 );
             }
+
+            <span class="ident">hp_endpoints_ranges</span>.<span class="ident">push</span>(<span class="ident">RangeInclusive::new</span>(
+                <span class="ident">PciAddress</span> {
+                    <span class="ident">bus</span>: <span class="ident">pci_bridge</span>.<span class="ident">get_secondary_num</span>(),
+                    <span class="ident">dev</span>: <span class="number">0</span>,
+                    <span class="ident">func</span>: <span class="number">0</span>,
+                }
+                .<span class="ident">to_u32</span>(),
+                <span class="ident">PciAddress</span> {
+                    <span class="ident">bus</span>: <span class="ident">pci_bridge</span>.<span class="ident">get_subordinate_num</span>(),
+                    <span class="ident">dev</span>: <span class="number">32</span>,
+                    <span class="ident">func</span>: <span class="number">8</span>,
+                }
+                .<span class="ident">to_u32</span>(),
+            ));
 
             <span class="ident">devices</span>.<span class="ident">push</span>((<span class="ident">pci_bridge</span>, <span class="prelude-val">None</span>));
             <span class="ident">hp_vec</span>.<span class="ident">push</span>(<span class="ident">pcie_root_port</span> <span class="kw">as</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">HotPlugBus</span><span class="op">&gt;</span><span class="op">&gt;</span>);
@@ -3059,8 +3159,6 @@
 
     <span class="ident">create_file_backed_mappings</span>(<span class="kw-2">&amp;</span><span class="ident">cfg</span>, <span class="kw-2">&amp;mut</span> <span class="ident">vm</span>, <span class="kw-2">&amp;mut</span> <span class="ident">sys_allocator</span>)<span class="question-mark">?</span>;
 
-    <span class="kw">let</span> <span class="ident">phys_max_addr</span> <span class="op">=</span> (<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">vm</span>.<span class="ident">get_guest_phys_addr_bits</span>()) <span class="op">-</span> <span class="number">1</span>;
-
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
     <span class="comment">// Hold on to the render server jail so it keeps running until we exit run_vm()</span>
     <span class="kw">let</span> (<span class="ident">_render_server_jail</span>, <span class="ident">render_server_fd</span>) <span class="op">=</span>
@@ -3078,13 +3176,15 @@
         }))
         .<span class="ident">context</span>(<span class="string">&quot;failed to calculate init balloon size&quot;</span>)<span class="question-mark">?</span>;
 
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iommu_attached_endpoints</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">MemoryMapperTrait</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span>
+        <span class="ident">BTreeMap::new</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">devices</span> <span class="op">=</span> <span class="ident">create_devices</span>(
         <span class="kw-2">&amp;</span><span class="ident">cfg</span>,
         <span class="kw-2">&amp;mut</span> <span class="ident">vm</span>,
         <span class="kw-2">&amp;mut</span> <span class="ident">sys_allocator</span>,
         <span class="kw-2">&amp;</span><span class="ident">exit_evt</span>,
         <span class="ident">panic_wrtube</span>,
-        <span class="ident">phys_max_addr</span>,
+        <span class="kw-2">&amp;mut</span> <span class="ident">iommu_attached_endpoints</span>,
         <span class="kw-2">&amp;mut</span> <span class="ident">control_tubes</span>,
         <span class="ident">wayland_device_tube</span>,
         <span class="ident">gpu_device_tube</span>,
@@ -3102,6 +3202,8 @@
         <span class="kw-2">&amp;mut</span> <span class="ident">vvu_proxy_device_tubes</span>,
     )<span class="question-mark">?</span>;
 
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hp_endpoints_ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hotplug_buses</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">HotPlugBus</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
     {
@@ -3117,8 +3219,41 @@
             <span class="kw-2">&amp;mut</span> <span class="ident">control_tubes</span>,
             <span class="kw-2">&amp;mut</span> <span class="ident">devices</span>,
             <span class="kw-2">&amp;mut</span> <span class="ident">hotplug_buses</span>,
+            <span class="kw-2">&amp;mut</span> <span class="ident">hp_endpoints_ranges</span>,
         )<span class="question-mark">?</span>;
     }
+
+    <span class="kw">let</span> (<span class="ident">translate_response_senders</span>, <span class="ident">request_rx</span>) <span class="op">=</span> <span class="ident">setup_virtio_access_platform</span>(
+        <span class="kw-2">&amp;mut</span> <span class="ident">sys_allocator</span>,
+        <span class="kw-2">&amp;mut</span> <span class="ident">iommu_attached_endpoints</span>,
+        <span class="kw-2">&amp;mut</span> <span class="ident">devices</span>,
+    )<span class="question-mark">?</span>;
+
+    <span class="kw">let</span> <span class="ident">iommu_host_tube</span> <span class="op">=</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">iommu_attached_endpoints</span>.<span class="ident">is_empty</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">cfg</span>.<span class="ident">virtio_iommu</span> {
+        <span class="kw">let</span> (<span class="ident">iommu_host_tube</span>, <span class="ident">iommu_device_tube</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">iommu_dev</span> <span class="op">=</span> <span class="ident">create_iommu_device</span>(
+            <span class="kw-2">&amp;</span><span class="ident">cfg</span>,
+            (<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">vm</span>.<span class="ident">get_guest_phys_addr_bits</span>()) <span class="op">-</span> <span class="number">1</span>,
+            <span class="ident">iommu_attached_endpoints</span>,
+            <span class="ident">hp_endpoints_ranges</span>,
+            <span class="ident">translate_response_senders</span>,
+            <span class="ident">request_rx</span>,
+            <span class="ident">iommu_device_tube</span>,
+        )<span class="question-mark">?</span>;
+
+        <span class="kw">let</span> (<span class="ident">msi_host_tube</span>, <span class="ident">msi_device_tube</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">control_tubes</span>.<span class="ident">push</span>(<span class="ident">TaggedControlTube::VmIrq</span>(<span class="ident">msi_host_tube</span>));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">VirtioPciDevice::new</span>(<span class="ident">vm</span>.<span class="ident">get_memory</span>().<span class="ident">clone</span>(), <span class="ident">iommu_dev</span>.<span class="ident">dev</span>, <span class="ident">msi_device_tube</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;failed to create virtio pci dev&quot;</span>)<span class="question-mark">?</span>;
+        <span class="comment">// early reservation for viommu.</span>
+        <span class="ident">dev</span>.<span class="ident">allocate_address</span>(<span class="kw-2">&amp;mut</span> <span class="ident">sys_allocator</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;failed to allocate resources early for virtio pci dev&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">dev</span>);
+        <span class="ident">devices</span>.<span class="ident">push</span>((<span class="ident">dev</span>, <span class="ident">iommu_dev</span>.<span class="ident">jail</span>));
+        <span class="prelude-val">Some</span>(<span class="ident">iommu_host_tube</span>)
+    } <span class="kw">else</span> {
+        <span class="prelude-val">None</span>
+    };
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
     <span class="kw">for</span> <span class="ident">device</span> <span class="kw">in</span> <span class="ident">devices</span>
@@ -3249,6 +3384,7 @@
         <span class="ident">Arc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">map_request</span>),
         <span class="ident">gralloc</span>,
         <span class="ident">kvm_vcpu_ids</span>,
+        <span class="ident">iommu_host_tube</span>,
     )
 }
 
@@ -3269,6 +3405,7 @@
     <span class="ident">sys_allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
     <span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>,
     <span class="ident">control_tubes</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TaggedControlTube</span><span class="op">&gt;</span>,
+    <span class="ident">iommu_host_tube</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
     <span class="ident">vfio_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">host_os_str</span> <span class="op">=</span> <span class="ident">vfio_path</span>
@@ -3291,11 +3428,38 @@
         <span class="prelude-val">Some</span>(<span class="ident">bus_num</span>),
         <span class="kw-2">&amp;mut</span> <span class="ident">endpoints</span>,
         <span class="prelude-val">None</span>,
-        <span class="ident">IommuDevType::NoIommu</span>,
+        <span class="kw">if</span> <span class="ident">iommu_host_tube</span>.<span class="ident">is_some</span>() {
+            <span class="ident">IommuDevType::VirtioIommu</span>
+        } <span class="kw">else</span> {
+            <span class="ident">IommuDevType::NoIommu</span>
+        },
     )<span class="question-mark">?</span>;
 
     <span class="kw">let</span> <span class="ident">pci_address</span> <span class="op">=</span> <span class="ident">Arch::register_pci_device</span>(<span class="ident">linux</span>, <span class="ident">vfio_pci_device</span>, <span class="ident">jail</span>, <span class="ident">sys_allocator</span>)
         .<span class="ident">context</span>(<span class="string">&quot;Failed to configure pci hotplug device&quot;</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">iommu_host_tube</span>) <span class="op">=</span> <span class="ident">iommu_host_tube</span> {
+        <span class="kw">let</span> <span class="kw-2">&amp;</span><span class="ident">endpoint_addr</span> <span class="op">=</span> <span class="ident">endpoints</span>.<span class="ident">iter</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="number">0</span>;
+        <span class="kw">let</span> <span class="ident">mapper</span> <span class="op">=</span> <span class="ident">endpoints</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">endpoint_addr</span>).<span class="ident">unwrap</span>();
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">vfio_wrapper</span>) <span class="op">=</span> <span class="ident">mapper</span>.<span class="ident">lock</span>().<span class="ident">as_vfio_wrapper</span>() {
+            <span class="kw">let</span> <span class="ident">vfio_container</span> <span class="op">=</span> <span class="ident">vfio_wrapper</span>.<span class="ident">as_vfio_container</span>();
+            <span class="kw">let</span> <span class="ident">descriptor</span> <span class="op">=</span> <span class="ident">vfio_container</span>.<span class="ident">lock</span>().<span class="ident">into_raw_descriptor</span>()<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">request</span> <span class="op">=</span> <span class="ident">VirtioIOMMURequest::VfioCommand</span>(<span class="ident">VirtioIOMMUVfioCommand::VfioDeviceAdd</span> {
+                <span class="ident">endpoint_addr</span>,
+                <span class="ident">container</span>: {
+                    <span class="comment">// Safe because the descriptor is uniquely owned by `descriptor`.</span>
+                    <span class="kw">unsafe</span> { <span class="ident">File::from_raw_descriptor</span>(<span class="ident">descriptor</span>) }
+                },
+            });
+
+            <span class="kw">match</span> <span class="ident">virtio_iommu_request</span>(<span class="ident">iommu_host_tube</span>, <span class="kw-2">&amp;</span><span class="ident">request</span>)
+                .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">VirtioIOMMUVfioError::SocketFailed</span>)<span class="question-mark">?</span>
+            {
+                <span class="ident">VirtioIOMMUResponse::VfioResponse</span>(<span class="ident">VirtioIOMMUVfioResult::Ok</span>) =&gt; (),
+                <span class="ident">resp</span> =&gt; <span class="macro">bail!</span>(<span class="string">&quot;Unexpected message response: {:?}&quot;</span>, <span class="ident">resp</span>),
+            }
+        };
+    }
 
     <span class="kw">let</span> <span class="ident">host_os_str</span> <span class="op">=</span> <span class="ident">vfio_path</span>
         .<span class="ident">file_name</span>()
@@ -3314,6 +3478,7 @@
 <span class="kw">fn</span> <span class="ident">remove_vfio_device</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">VmArch</span>, <span class="ident">Vcpu</span>: <span class="ident">VcpuArch</span><span class="op">&gt;</span>(
     <span class="ident">linux</span>: <span class="kw-2">&amp;</span><span class="ident">RunnableLinuxVm</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">Vcpu</span><span class="op">&gt;</span>,
     <span class="ident">sys_allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
+    <span class="ident">iommu_host_tube</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
     <span class="ident">vfio_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">host_os_str</span> <span class="op">=</span> <span class="ident">vfio_path</span>
@@ -3327,6 +3492,19 @@
     <span class="kw">for</span> <span class="ident">hp_bus</span> <span class="kw">in</span> <span class="ident">linux</span>.<span class="ident">hotplug_bus</span>.<span class="ident">iter</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hp_bus_lock</span> <span class="op">=</span> <span class="ident">hp_bus</span>.<span class="ident">lock</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pci_addr</span>) <span class="op">=</span> <span class="ident">hp_bus_lock</span>.<span class="ident">get_hotplug_device</span>(<span class="ident">host_key</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">iommu_host_tube</span>) <span class="op">=</span> <span class="ident">iommu_host_tube</span> {
+                <span class="kw">let</span> <span class="ident">request</span> <span class="op">=</span>
+                    <span class="ident">VirtioIOMMURequest::VfioCommand</span>(<span class="ident">VirtioIOMMUVfioCommand::VfioDeviceDel</span> {
+                        <span class="ident">endpoint_addr</span>: <span class="ident">pci_addr</span>.<span class="ident">to_u32</span>(),
+                    });
+                <span class="kw">match</span> <span class="ident">virtio_iommu_request</span>(<span class="ident">iommu_host_tube</span>, <span class="kw-2">&amp;</span><span class="ident">request</span>)
+                    .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">VirtioIOMMUVfioError::SocketFailed</span>)<span class="question-mark">?</span>
+                {
+                    <span class="ident">VirtioIOMMUResponse::VfioResponse</span>(<span class="ident">VirtioIOMMUVfioResult::Ok</span>) =&gt; (),
+                    <span class="ident">resp</span> =&gt; <span class="macro">bail!</span>(<span class="string">&quot;Unexpected message response: {:?}&quot;</span>, <span class="ident">resp</span>),
+                }
+            }
+
             <span class="ident">hp_bus_lock</span>.<span class="ident">hot_unplug</span>(<span class="ident">pci_addr</span>);
             <span class="ident">sys_allocator</span>.<span class="ident">release_pci</span>(<span class="ident">pci_addr</span>.<span class="ident">bus</span>, <span class="ident">pci_addr</span>.<span class="ident">dev</span>, <span class="ident">pci_addr</span>.<span class="ident">func</span>);
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
@@ -3341,13 +3519,21 @@
     <span class="ident">sys_allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
     <span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>,
     <span class="ident">add_tubes</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TaggedControlTube</span><span class="op">&gt;</span>,
+    <span class="ident">iommu_host_tube</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
     <span class="ident">vfio_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
     <span class="ident">add</span>: <span class="ident">bool</span>,
 ) -&gt; <span class="ident">VmResponse</span> {
     <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">add</span> {
-        <span class="ident">add_vfio_device</span>(<span class="ident">linux</span>, <span class="ident">sys_allocator</span>, <span class="ident">cfg</span>, <span class="ident">add_tubes</span>, <span class="ident">vfio_path</span>)
+        <span class="ident">add_vfio_device</span>(
+            <span class="ident">linux</span>,
+            <span class="ident">sys_allocator</span>,
+            <span class="ident">cfg</span>,
+            <span class="ident">add_tubes</span>,
+            <span class="ident">iommu_host_tube</span>,
+            <span class="ident">vfio_path</span>,
+        )
     } <span class="kw">else</span> {
-        <span class="ident">remove_vfio_device</span>(<span class="ident">linux</span>, <span class="ident">sys_allocator</span>, <span class="ident">vfio_path</span>)
+        <span class="ident">remove_vfio_device</span>(<span class="ident">linux</span>, <span class="ident">sys_allocator</span>, <span class="ident">iommu_host_tube</span>, <span class="ident">vfio_path</span>)
     };
 
     <span class="kw">match</span> <span class="ident">ret</span> {
@@ -3377,6 +3563,7 @@
     <span class="ident">map_request</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExternalMapping</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="kw-2">mut</span> <span class="ident">gralloc</span>: <span class="ident">RutabagaGralloc</span>,
     <span class="ident">kvm_vcpu_ids</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="ident">iommu_host_tube</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ExitState</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PollToken</span>)]</span>
     <span class="kw">enum</span> <span class="ident">Token</span> {
@@ -3656,6 +3843,7 @@
                                                 <span class="kw-2">&amp;mut</span> <span class="ident">sys_allocator</span>,
                                                 <span class="kw-2">&amp;</span><span class="ident">cfg</span>,
                                                 <span class="kw-2">&amp;mut</span> <span class="ident">add_tubes</span>,
+                                                <span class="kw-2">&amp;</span><span class="ident">iommu_host_tube</span>,
                                                 <span class="kw-2">&amp;</span><span class="ident">vfio_path</span>,
                                                 <span class="ident">add</span>,
                                             )
