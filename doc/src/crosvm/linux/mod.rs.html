@@ -2036,11 +2036,6 @@
 <span id="2035">2035</span>
 <span id="2036">2036</span>
 <span id="2037">2037</span>
-<span id="2038">2038</span>
-<span id="2039">2039</span>
-<span id="2040">2040</span>
-<span id="2041">2041</span>
-<span id="2042">2042</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3414,7 +3409,8 @@
     <span class="kw">let</span> <span class="ident">host_str</span> <span class="op">=</span> <span class="ident">host_os_str</span>
         .<span class="ident">to_str</span>()
         .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">anyhow!</span>(<span class="string">&quot;failed to parse or find vfio path&quot;</span>))<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">host_addr</span> <span class="op">=</span> <span class="ident">PciAddress::from_string</span>(<span class="ident">host_str</span>);
+    <span class="kw">let</span> <span class="ident">host_addr</span> <span class="op">=</span>
+        <span class="ident">PciAddress::from_string</span>(<span class="ident">host_str</span>).<span class="ident">context</span>(<span class="string">&quot;failed to parse vfio pci address&quot;</span>)<span class="question-mark">?</span>;
 
     <span class="kw">let</span> (<span class="ident">hp_bus</span>, <span class="ident">bus_num</span>) <span class="op">=</span> <span class="ident">get_hp_bus</span>(<span class="ident">linux</span>, <span class="ident">host_addr</span>)<span class="question-mark">?</span>;
 
@@ -3461,13 +3457,6 @@
         };
     }
 
-    <span class="kw">let</span> <span class="ident">host_os_str</span> <span class="op">=</span> <span class="ident">vfio_path</span>
-        .<span class="ident">file_name</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">anyhow!</span>(<span class="string">&quot;failed to parse or find vfio path&quot;</span>))<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">host_str</span> <span class="op">=</span> <span class="ident">host_os_str</span>
-        .<span class="ident">to_str</span>()
-        .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">anyhow!</span>(<span class="string">&quot;failed to parse or find vfio path&quot;</span>))<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">host_addr</span> <span class="op">=</span> <span class="ident">PciAddress::from_string</span>(<span class="ident">host_str</span>);
     <span class="kw">let</span> <span class="ident">host_key</span> <span class="op">=</span> <span class="ident">HostHotPlugKey::Vfio</span> { <span class="ident">host_addr</span> };
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hp_bus</span> <span class="op">=</span> <span class="ident">hp_bus</span>.<span class="ident">lock</span>();
     <span class="ident">hp_bus</span>.<span class="ident">add_hotplug_device</span>(<span class="ident">host_key</span>, <span class="ident">pci_address</span>);
@@ -3487,7 +3476,8 @@
     <span class="kw">let</span> <span class="ident">host_str</span> <span class="op">=</span> <span class="ident">host_os_str</span>
         .<span class="ident">to_str</span>()
         .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">anyhow!</span>(<span class="string">&quot;failed to parse or find vfio path&quot;</span>))<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">host_addr</span> <span class="op">=</span> <span class="ident">PciAddress::from_string</span>(<span class="ident">host_str</span>);
+    <span class="kw">let</span> <span class="ident">host_addr</span> <span class="op">=</span>
+        <span class="ident">PciAddress::from_string</span>(<span class="ident">host_str</span>).<span class="ident">context</span>(<span class="string">&quot;failed to parse vfio pci address&quot;</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">host_key</span> <span class="op">=</span> <span class="ident">HostHotPlugKey::Vfio</span> { <span class="ident">host_addr</span> };
     <span class="kw">for</span> <span class="ident">hp_bus</span> <span class="kw">in</span> <span class="ident">linux</span>.<span class="ident">hotplug_bus</span>.<span class="ident">iter</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hp_bus_lock</span> <span class="op">=</span> <span class="ident">hp_bus</span>.<span class="ident">lock</span>();

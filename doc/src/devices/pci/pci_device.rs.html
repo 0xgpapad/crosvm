@@ -621,6 +621,9 @@
 <span id="620">620</span>
 <span id="621">621</span>
 <span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -639,7 +642,7 @@
     <span class="self">self</span>, <span class="ident">PciBarConfiguration</span>, <span class="ident">BAR0_REG</span>, <span class="ident">COMMAND_REG</span>, <span class="ident">COMMAND_REG_IO_SPACE_MASK</span>,
     <span class="ident">COMMAND_REG_MEMORY_SPACE_MASK</span>, <span class="ident">NUM_BAR_REGS</span>, <span class="ident">ROM_BAR_REG</span>,
 };
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci</span>::{<span class="ident">PciAddress</span>, <span class="ident">PciInterruptPin</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pci</span>::{<span class="ident">PciAddress</span>, <span class="ident">PciAddressError</span>, <span class="ident">PciInterruptPin</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::ipc_memory_mapper::IpcMemoryMapper</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::snd::vios_backend::Error</span> <span class="kw">as</span> <span class="ident">VioSError</span>;
@@ -680,6 +683,9 @@
     <span class="doccomment">/// PCI Address is not allocated.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;PCI address is not allocated&quot;</span>)]</span>
     <span class="ident">PciAddressMissing</span>,
+    <span class="doccomment">/// PCI Address parsing failure.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;PCI address &#39;{0}&#39; could not be parsed: {1}&quot;</span>)]</span>
+    <span class="ident">PciAddressParseFailure</span>(<span class="ident">String</span>, <span class="ident">PciAddressError</span>),
     <span class="doccomment">/// PCI Address allocation failure.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to allocate PCI address&quot;</span>)]</span>
     <span class="ident">PciAllocationFailed</span>,

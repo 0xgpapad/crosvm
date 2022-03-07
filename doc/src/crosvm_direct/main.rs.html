@@ -4239,6 +4239,15 @@
 <span id="4238">4238</span>
 <span id="4239">4239</span>
 <span id="4240">4240</span>
+<span id="4241">4241</span>
+<span id="4242">4242</span>
+<span id="4243">4243</span>
+<span id="4244">4244</span>
+<span id="4245">4245</span>
+<span id="4246">4246</span>
+<span id="4247">4247</span>
+<span id="4248">4248</span>
+<span id="4249">4249</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -5228,7 +5237,10 @@
         )))<span class="question-mark">?</span>
         .<span class="ident">key</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">StubPciParameters</span> {
-        <span class="ident">address</span>: <span class="ident">PciAddress::from_string</span>(<span class="ident">addr</span>),
+        <span class="ident">address</span>: <span class="ident">PciAddress::from_string</span>(<span class="ident">addr</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">argument::Error::InvalidValue</span> {
+            <span class="ident">value</span>: <span class="ident">addr</span>.<span class="ident">to_owned</span>(),
+            <span class="ident">expected</span>: <span class="macro">format!</span>(<span class="string">&quot;stub-pci-device: expected PCI address: {}&quot;</span>, <span class="ident">e</span>),
+        })<span class="question-mark">?</span>,
         <span class="ident">vendor_id</span>: <span class="number">0</span>,
         <span class="ident">device_id</span>: <span class="number">0</span>,
         <span class="ident">class</span>: <span class="ident">PciClassCode::Other</span>,
@@ -6525,7 +6537,13 @@
                             ),
                         });
                     }
-                    <span class="prelude-val">Some</span>(<span class="ident">PciAddress::from_string</span>(<span class="ident">kvs</span>[<span class="number">0</span>].<span class="ident">value</span>()<span class="question-mark">?</span>))
+                    <span class="kw">let</span> <span class="ident">pci_address</span> <span class="op">=</span> <span class="ident">kvs</span>[<span class="number">0</span>].<span class="ident">value</span>()<span class="question-mark">?</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">PciAddress::from_string</span>(<span class="ident">pci_address</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+                        <span class="ident">argument::Error::InvalidValue</span> {
+                            <span class="ident">value</span>: <span class="ident">pci_address</span>.<span class="ident">to_string</span>(),
+                            <span class="ident">expected</span>: <span class="macro">format!</span>(<span class="string">&quot;vvu-proxy PCI address: {}&quot;</span>, <span class="ident">e</span>),
+                        }
+                    })<span class="question-mark">?</span>)
                 }
                 <span class="prelude-val">None</span> =&gt; <span class="prelude-val">None</span>,
             };
