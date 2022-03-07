@@ -1560,6 +1560,9 @@
 <span id="1559">1559</span>
 <span id="1560">1560</span>
 <span id="1561">1561</span>
+<span id="1562">1562</span>
+<span id="1563">1563</span>
+<span id="1564">1564</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1643,22 +1646,25 @@
 <span class="comment">// Helper functions to set io_uring_sqe bindgen union members in a less verbose manner.</span>
 <span class="kw">impl</span> <span class="ident">io_uring_sqe</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_addr</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">u64</span>) {
-        <span class="self">self</span>.<span class="ident">addr</span> <span class="op">=</span> <span class="ident">val</span>;
+        <span class="self">self</span>.<span class="ident">__bindgen_anon_2</span>.<span class="ident">addr</span> <span class="op">=</span> <span class="ident">val</span>;
     }
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_off</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">u64</span>) {
         <span class="self">self</span>.<span class="ident">__bindgen_anon_1</span>.<span class="ident">off</span> <span class="op">=</span> <span class="ident">val</span>;
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_buf_index</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">u16</span>) {
-        <span class="self">self</span>.<span class="ident">__bindgen_anon_3</span>.<span class="ident">__bindgen_anon_1</span>.<span class="ident">buf_index</span> <span class="op">=</span> <span class="ident">val</span>;
+        <span class="self">self</span>.<span class="ident">__bindgen_anon_4</span>
+            .<span class="ident">__bindgen_anon_1</span>
+            .<span class="ident">__bindgen_anon_1</span>
+            .<span class="ident">buf_index</span> <span class="op">=</span> <span class="ident">val</span>;
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_rw_flags</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">libc::c_int</span>) {
-        <span class="self">self</span>.<span class="ident">__bindgen_anon_2</span>.<span class="ident">rw_flags</span> <span class="op">=</span> <span class="ident">val</span>;
+        <span class="self">self</span>.<span class="ident">__bindgen_anon_3</span>.<span class="ident">rw_flags</span> <span class="op">=</span> <span class="ident">val</span>;
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_poll_events</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">u16</span>) {
-        <span class="self">self</span>.<span class="ident">__bindgen_anon_2</span>.<span class="ident">poll_events</span> <span class="op">=</span> <span class="ident">val</span>;
+        <span class="self">self</span>.<span class="ident">__bindgen_anon_3</span>.<span class="ident">poll_events</span> <span class="op">=</span> <span class="ident">val</span>;
     }
 }
 
