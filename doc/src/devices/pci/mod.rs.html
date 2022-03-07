@@ -94,7 +94,7 @@
     <span class="ident">PciProgrammingInterface</span>, <span class="ident">PciSerialBusSubClass</span>, <span class="ident">PciSubclass</span>, <span class="ident">CAPABILITY_LIST_HEAD_OFFSET</span>,
 };
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_device</span>::{<span class="ident">BarRange</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">PciDeviceError</span>, <span class="ident">PciDevice</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_root</span>::{<span class="ident">PciConfigIo</span>, <span class="ident">PciConfigMmio</span>, <span class="ident">PciRoot</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pci_root</span>::{<span class="ident">PciConfigIo</span>, <span class="ident">PciConfigMmio</span>, <span class="ident">PciRoot</span>, <span class="ident">PciVirtualConfigMmio</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pcie</span>::{<span class="ident">PciBridge</span>, <span class="ident">PcieHostRootPort</span>, <span class="ident">PcieRootPort</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::pvpanic</span>::{<span class="ident">PvPanicCode</span>, <span class="ident">PvPanicPciDevice</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::stub</span>::{<span class="ident">StubPciDevice</span>, <span class="ident">StubPciParameters</span>};

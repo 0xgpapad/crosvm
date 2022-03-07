@@ -545,6 +545,15 @@
 <span id="544">544</span>
 <span id="545">545</span>
 <span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -637,6 +646,15 @@
     <span class="doccomment">/// Gets a register from the configuration space. Only used by PCI.</span>
     <span class="doccomment">/// * `reg_idx` - The index of the config register to read.</span>
     <span class="kw">fn</span> <span class="ident">config_register_read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">reg_idx</span>: <span class="ident">usize</span>) -&gt; <span class="ident">u32</span> {
+        <span class="number">0</span>
+    }
+    <span class="doccomment">/// Sets a register in the virtual config space. Only used by PCI.</span>
+    <span class="doccomment">/// * `reg_idx` - The index of the config register to modify.</span>
+    <span class="doccomment">/// * `value` - The value to be written.</span>
+    <span class="kw">fn</span> <span class="ident">virtual_config_register_write</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">reg_idx</span>: <span class="ident">usize</span>, <span class="ident">value</span>: <span class="ident">u32</span>) {}
+    <span class="doccomment">/// Gets a register from the virtual config space. Only used by PCI.</span>
+    <span class="doccomment">/// * `reg_idx` - The index of the config register to read.</span>
+    <span class="kw">fn</span> <span class="ident">virtual_config_register_read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">reg_idx</span>: <span class="ident">usize</span>) -&gt; <span class="ident">u32</span> {
         <span class="number">0</span>
     }
     <span class="doccomment">/// Invoked when the device is sandboxed.</span>

@@ -1727,6 +1727,31 @@
 <span id="1726">1726</span>
 <span id="1727">1727</span>
 <span id="1728">1728</span>
+<span id="1729">1729</span>
+<span id="1730">1730</span>
+<span id="1731">1731</span>
+<span id="1732">1732</span>
+<span id="1733">1733</span>
+<span id="1734">1734</span>
+<span id="1735">1735</span>
+<span id="1736">1736</span>
+<span id="1737">1737</span>
+<span id="1738">1738</span>
+<span id="1739">1739</span>
+<span id="1740">1740</span>
+<span id="1741">1741</span>
+<span id="1742">1742</span>
+<span id="1743">1743</span>
+<span id="1744">1744</span>
+<span id="1745">1745</span>
+<span id="1746">1746</span>
+<span id="1747">1747</span>
+<span id="1748">1748</span>
+<span id="1749">1749</span>
+<span id="1750">1750</span>
+<span id="1751">1751</span>
+<span id="1752">1752</span>
+<span id="1753">1753</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1739,7 +1764,9 @@
 <span class="kw">use</span> <span class="ident">std::thread</span>;
 <span class="kw">use</span> <span class="ident">std::u32</span>;
 
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">pagesize</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">PollToken</span>, <span class="ident">RawDescriptor</span>, <span class="ident">Tube</span>, <span class="ident">WaitContext</span>};
+<span class="kw">use</span> <span class="ident">base</span>::{
+    <span class="ident">error</span>, <span class="ident">pagesize</span>, <span class="ident">warn</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">PollToken</span>, <span class="ident">RawDescriptor</span>, <span class="ident">Tube</span>, <span class="ident">WaitContext</span>,
+};
 <span class="kw">use</span> <span class="ident">hypervisor</span>::{<span class="ident">Datamatch</span>, <span class="ident">MemSlot</span>};
 
 <span class="kw">use</span> <span class="ident">resources</span>::{<span class="ident">Alloc</span>, <span class="ident">MmioType</span>, <span class="ident">SystemAllocator</span>};
@@ -3317,6 +3344,29 @@
                 }
             }
         }
+    }
+
+    <span class="kw">fn</span> <span class="ident">read_virtual_config_register</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">reg_idx</span>: <span class="ident">usize</span>) -&gt; <span class="ident">u32</span> {
+        <span class="kw">match</span> <span class="ident">reg_idx</span> {
+            <span class="kw">_</span> =&gt; {
+                <span class="macro">warn!</span>(
+                    <span class="string">&quot;{} read unsupported register {}&quot;</span>,
+                    <span class="self">self</span>.<span class="ident">debug_label</span>(),
+                    <span class="ident">reg_idx</span>
+                );
+                <span class="number">0</span>
+            }
+        }
+    }
+
+    <span class="kw">fn</span> <span class="ident">write_virtual_config_register</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">reg_idx</span>: <span class="ident">usize</span>, <span class="ident">value</span>: <span class="ident">u32</span>) {
+        <span class="kw">match</span> <span class="ident">reg_idx</span> {
+            <span class="kw">_</span> =&gt; <span class="macro">warn!</span>(
+                <span class="string">&quot;{} write unsupported register {}&quot;</span>,
+                <span class="self">self</span>.<span class="ident">debug_label</span>(),
+                <span class="ident">reg_idx</span>
+            ),
+        };
     }
 
     <span class="kw">fn</span> <span class="ident">read_bar</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">addr</span>: <span class="ident">u64</span>, <span class="ident">data</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>]) {
