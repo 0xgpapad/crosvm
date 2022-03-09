@@ -485,7 +485,6 @@
 <span id="484">484</span>
 <span id="485">485</span>
 <span id="486">486</span>
-<span id="487">487</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -496,9 +495,8 @@
 <span class="kw">use</span> <span class="ident">argh::FromArgs</span>;
 <span class="kw">use</span> <span class="ident">async_task::Task</span>;
 <span class="kw">use</span> <span class="ident">base</span>::{
-    <span class="ident">clone_descriptor</span>, <span class="ident">error</span>,
-    <span class="ident">net</span>::{<span class="ident">UnixSeqpacketListener</span>, <span class="ident">UnlinkUnixSeqpacketListener</span>},
-    <span class="ident">warn</span>, <span class="ident">Event</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">SafeDescriptor</span>, <span class="ident">TimerFd</span>, <span class="ident">Tube</span>,
+    <span class="ident">clone_descriptor</span>, <span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">Event</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">SafeDescriptor</span>,
+    <span class="ident">TimerFd</span>, <span class="ident">Tube</span>, <span class="ident">UnixSeqpacketListener</span>, <span class="ident">UnlinkUnixSeqpacketListener</span>,
 };
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">AsyncWrapper</span>, <span class="ident">EventAsync</span>, <span class="ident">Executor</span>, <span class="ident">IoSourceExt</span>, <span class="ident">TimerAsync</span>};
 <span class="kw">use</span> <span class="ident">futures</span>::{
