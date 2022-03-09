@@ -91,9 +91,6 @@
 <span id="90">90</span>
 <span id="91">91</span>
 <span id="92">92</span>
-<span id="93">93</span>
-<span id="94">94</span>
-<span id="95">95</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -180,9 +177,6 @@
     <span class="kw">let</span> <span class="ident">ramoops_opts</span> <span class="op">=</span> [
         (<span class="string">&quot;mem_address&quot;</span>, <span class="ident">ramoops_region</span>.<span class="ident">address</span>),
         (<span class="string">&quot;mem_size&quot;</span>, <span class="ident">ramoops_region</span>.<span class="ident">size</span> <span class="kw">as</span> <span class="ident">u64</span>),
-        (<span class="string">&quot;console_size&quot;</span>, (<span class="ident">ramoops_region</span>.<span class="ident">size</span> <span class="op">/</span> <span class="number">4</span>) <span class="kw">as</span> <span class="ident">u64</span>),
-        (<span class="string">&quot;record_size&quot;</span>, (<span class="ident">ramoops_region</span>.<span class="ident">size</span> <span class="op">/</span> <span class="number">4</span>) <span class="kw">as</span> <span class="ident">u64</span>),
-        (<span class="string">&quot;dump_oops&quot;</span>, <span class="number">1_u64</span>),
     ];
     <span class="kw">for</span> (<span class="ident">name</span>, <span class="ident">val</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">ramoops_opts</span> {
         <span class="ident">cmdline</span>.<span class="ident">insert_str</span>(<span class="macro">format!</span>(<span class="string">&quot;ramoops.{}={:#x}&quot;</span>, <span class="ident">name</span>, <span class="ident">val</span>))<span class="question-mark">?</span>;
