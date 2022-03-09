@@ -479,11 +479,6 @@
 <span id="478">478</span>
 <span id="479">479</span>
 <span id="480">480</span>
-<span id="481">481</span>
-<span id="482">482</span>
-<span id="483">483</span>
-<span id="484">484</span>
-<span id="485">485</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -942,10 +937,7 @@
                 .<span class="ident">lock</span>()
                 .<span class="ident">virtual_config_space_read</span>(<span class="ident">address</span>, <span class="ident">register</span>)
         };
-        <span class="ident">data</span>[<span class="number">0</span>] <span class="op">=</span> <span class="ident">value</span> <span class="kw">as</span> <span class="ident">u8</span>;
-        <span class="ident">data</span>[<span class="number">1</span>] <span class="op">=</span> (<span class="ident">value</span> <span class="op">&gt;</span><span class="op">&gt;</span> (<span class="number">1</span> <span class="op">*</span> <span class="number">8</span>)) <span class="kw">as</span> <span class="ident">u8</span>;
-        <span class="ident">data</span>[<span class="number">2</span>] <span class="op">=</span> (<span class="ident">value</span> <span class="op">&gt;</span><span class="op">&gt;</span> (<span class="number">2</span> <span class="op">*</span> <span class="number">8</span>)) <span class="kw">as</span> <span class="ident">u8</span>;
-        <span class="ident">data</span>[<span class="number">3</span>] <span class="op">=</span> (<span class="ident">value</span> <span class="op">&gt;</span><span class="op">&gt;</span> (<span class="number">3</span> <span class="op">*</span> <span class="number">8</span>)) <span class="kw">as</span> <span class="ident">u8</span>;
+        <span class="ident">data</span>[<span class="number">0</span>..<span class="number">4</span>].<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">value</span>.<span class="ident">to_le_bytes</span>()[..]);
     }
 
     <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">info</span>: <span class="ident">BusAccessInfo</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) {
@@ -958,10 +950,8 @@
             );
             <span class="kw">return</span>;
         }
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> (<span class="ident">data</span>[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">u32</span>)
-            <span class="op">|</span> ((<span class="ident">data</span>[<span class="number">1</span>] <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="number">1</span> <span class="op">*</span> <span class="number">8</span>))
-            <span class="op">|</span> ((<span class="ident">data</span>[<span class="number">2</span>] <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="number">2</span> <span class="op">*</span> <span class="number">8</span>))
-            <span class="op">|</span> ((<span class="ident">data</span>[<span class="number">3</span>] <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="number">3</span> <span class="op">*</span> <span class="number">8</span>));
+        <span class="comment">// Unwrap is safe as we verified length above</span>
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">u32::from_le_bytes</span>(<span class="ident">data</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>());
         <span class="kw">let</span> (<span class="ident">address</span>, <span class="ident">register</span>) <span class="op">=</span>
             <span class="ident">PciAddress::from_config_address</span>(<span class="ident">info</span>.<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="self">self</span>.<span class="ident">register_bit_num</span>);
         <span class="self">self</span>.<span class="ident">pci_root</span>
