@@ -812,6 +812,8 @@
 <span id="811">811</span>
 <span id="812">812</span>
 <span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1539,8 +1541,10 @@
                 {
                     <span class="prelude-val">Err</span>(<span class="ident">SysError::new</span>(<span class="ident">EINVAL</span>))
                 } <span class="kw">else</span> {
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cap</span>: <span class="ident">kvm_enable_cap</span> <span class="op">=</span> <span class="ident">Default::default</span>();
-                    <span class="ident">cap</span>.<span class="ident">cap</span> <span class="op">=</span> <span class="ident">capability</span>;
+                    <span class="kw">let</span> <span class="ident">cap</span> <span class="op">=</span> <span class="ident">kvm_enable_cap</span> {
+                        <span class="ident">cap</span>: <span class="ident">capability</span>,
+                        ..<span class="ident">Default::default</span>()
+                    };
                     <span class="comment">// Safe because the allowed capabilities don&#39;t take pointer arguments.</span>
                     <span class="kw">unsafe</span> { <span class="ident">vcpu</span>.<span class="ident">kvm_enable_cap</span>(<span class="kw-2">&amp;</span><span class="ident">cap</span>) }
                 }
