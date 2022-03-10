@@ -1524,6 +1524,24 @@
 <span id="1523">1523</span>
 <span id="1524">1524</span>
 <span id="1525">1525</span>
+<span id="1526">1526</span>
+<span id="1527">1527</span>
+<span id="1528">1528</span>
+<span id="1529">1529</span>
+<span id="1530">1530</span>
+<span id="1531">1531</span>
+<span id="1532">1532</span>
+<span id="1533">1533</span>
+<span id="1534">1534</span>
+<span id="1535">1535</span>
+<span id="1536">1536</span>
+<span id="1537">1537</span>
+<span id="1538">1538</span>
+<span id="1539">1539</span>
+<span id="1540">1540</span>
+<span id="1541">1541</span>
+<span id="1542">1542</span>
+<span id="1543">1543</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1582,7 +1600,7 @@
 <span class="kw">use</span> <span class="ident">acpi_tables::sdt::SDT</span>;
 <span class="kw">use</span> <span class="ident">acpi_tables</span>::{<span class="ident">aml</span>, <span class="ident">aml::Aml</span>};
 <span class="kw">use</span> <span class="ident">arch</span>::{<span class="ident">get_serial_cmdline</span>, <span class="ident">GetSerialCmdlineError</span>, <span class="ident">RunnableLinuxVm</span>, <span class="ident">VmComponents</span>, <span class="ident">VmImage</span>};
-<span class="kw">use</span> <span class="ident">base::Event</span>;
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">warn</span>, <span class="ident">Event</span>};
 <span class="kw">use</span> <span class="ident">devices::serial_device</span>::{<span class="ident">SerialHardware</span>, <span class="ident">SerialParameters</span>};
 <span class="kw">use</span> <span class="ident">devices</span>::{
     <span class="ident">BusDeviceObj</span>, <span class="ident">BusResumeDevice</span>, <span class="ident">IrqChip</span>, <span class="ident">IrqChipX86_64</span>, <span class="ident">PciAddress</span>, <span class="ident">PciConfigIo</span>, <span class="ident">PciConfigMmio</span>,
@@ -1979,6 +1997,24 @@
         <span class="kw">let</span> <span class="ident">tss_addr</span> <span class="op">=</span> <span class="ident">GuestAddress</span>(<span class="ident">TSS_ADDR</span>);
         <span class="ident">vm</span>.<span class="ident">set_tss_addr</span>(<span class="ident">tss_addr</span>).<span class="ident">map_err</span>(<span class="ident">Error::SetTssAddr</span>)<span class="question-mark">?</span>;
 
+        <span class="comment">// Use IRQ info in ACPI if provided by the user.</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">noirq</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mptable</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sci_irq</span> <span class="op">=</span> <span class="ident">X86_64_SCI_IRQ</span>;
+
+        <span class="kw">for</span> <span class="ident">sdt</span> <span class="kw">in</span> <span class="ident">components</span>.<span class="ident">acpi_sdts</span>.<span class="ident">iter</span>() {
+            <span class="kw">if</span> <span class="ident">sdt</span>.<span class="ident">is_signature</span>(<span class="string">b&quot;DSDT&quot;</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">sdt</span>.<span class="ident">is_signature</span>(<span class="string">b&quot;APIC&quot;</span>) {
+                <span class="ident">noirq</span> <span class="op">=</span> <span class="bool-val">false</span>;
+            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">sdt</span>.<span class="ident">is_signature</span>(<span class="string">b&quot;FACP&quot;</span>) {
+                <span class="ident">mptable</span> <span class="op">=</span> <span class="bool-val">false</span>;
+                <span class="kw">let</span> <span class="ident">sci_irq_fadt</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">sdt</span>.<span class="ident">read</span>(<span class="ident">acpi::FADT_FIELD_SCI_INTERRUPT</span>);
+                <span class="ident">sci_irq</span> <span class="op">=</span> <span class="ident">sci_irq_fadt</span>.<span class="ident">into</span>();
+                <span class="kw">if</span> <span class="op">!</span><span class="ident">system_allocator</span>.<span class="ident">reserve_irq</span>(<span class="ident">sci_irq</span>) {
+                    <span class="macro">warn!</span>(<span class="string">&quot;sci irq {} already reserved.&quot;</span>, <span class="ident">sci_irq</span>);
+                }
+            }
+        }
+
         <span class="kw">let</span> <span class="ident">mmio_bus</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">devices::Bus::new</span>());
         <span class="kw">let</span> <span class="ident">io_bus</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">devices::Bus::new</span>());
 
@@ -2058,17 +2094,12 @@
             <span class="ident">exit_evt</span>.<span class="ident">try_clone</span>().<span class="ident">map_err</span>(<span class="ident">Error::CloneEvent</span>)<span class="question-mark">?</span>,
             <span class="ident">components</span>.<span class="ident">acpi_sdts</span>,
             <span class="ident">irq_chip</span>.<span class="ident">as_irq_chip_mut</span>(),
+            <span class="ident">sci_irq</span>,
             <span class="ident">battery</span>,
             <span class="kw-2">&amp;</span><span class="ident">mmio_bus</span>,
             <span class="ident">max_bus</span>,
             <span class="kw-2">&amp;mut</span> <span class="ident">resume_notify_devices</span>,
         )<span class="question-mark">?</span>;
-
-        <span class="comment">// Use IRQ info in ACPI if provided by the user.</span>
-        <span class="kw">let</span> <span class="ident">noirq</span> <span class="op">=</span> <span class="op">!</span><span class="ident">acpi_dev_resource</span>
-            .<span class="ident">sdts</span>
-            .<span class="ident">iter</span>()
-            .<span class="ident">any</span>(<span class="op">|</span><span class="ident">sdt</span><span class="op">|</span> <span class="ident">sdt</span>.<span class="ident">is_signature</span>(<span class="string">b&quot;DSDT&quot;</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">sdt</span>.<span class="ident">is_signature</span>(<span class="string">b&quot;APIC&quot;</span>));
 
         <span class="ident">irq_chip</span>
             .<span class="ident">finalize_devices</span>(<span class="ident">system_allocator</span>, <span class="kw-2">&amp;</span><span class="ident">io_bus</span>, <span class="kw-2">&amp;</span><span class="ident">mmio_bus</span>)
@@ -2082,8 +2113,11 @@
         <span class="comment">// If another guest does need a way to pass these tables down to it&#39;s BIOS, this approach</span>
         <span class="comment">// should be rethought.</span>
 
-        <span class="comment">// Note that this puts the mptable at 0x9FC00 in guest physical memory.</span>
-        <span class="ident">mptable::setup_mptable</span>(<span class="kw-2">&amp;</span><span class="ident">mem</span>, <span class="ident">vcpu_count</span> <span class="kw">as</span> <span class="ident">u8</span>, <span class="kw-2">&amp;</span><span class="ident">pci_irqs</span>).<span class="ident">map_err</span>(<span class="ident">Error::SetupMptable</span>)<span class="question-mark">?</span>;
+        <span class="kw">if</span> <span class="ident">mptable</span> {
+            <span class="comment">// Note that this puts the mptable at 0x9FC00 in guest physical memory.</span>
+            <span class="ident">mptable::setup_mptable</span>(<span class="kw-2">&amp;</span><span class="ident">mem</span>, <span class="ident">vcpu_count</span> <span class="kw">as</span> <span class="ident">u8</span>, <span class="kw-2">&amp;</span><span class="ident">pci_irqs</span>)
+                .<span class="ident">map_err</span>(<span class="ident">Error::SetupMptable</span>)<span class="question-mark">?</span>;
+        }
         <span class="ident">smbios::setup_smbios</span>(<span class="kw-2">&amp;</span><span class="ident">mem</span>, <span class="ident">components</span>.<span class="ident">dmi_path</span>).<span class="ident">map_err</span>(<span class="ident">Error::SetupSmbios</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">host_cpus</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">components</span>.<span class="ident">host_cpu_topology</span> {
@@ -2096,10 +2130,10 @@
         <span class="ident">acpi::create_acpi_tables</span>(
             <span class="kw-2">&amp;</span><span class="ident">mem</span>,
             <span class="ident">vcpu_count</span> <span class="kw">as</span> <span class="ident">u8</span>,
-            <span class="ident">X86_64_SCI_IRQ</span>,
+            <span class="ident">sci_irq</span>,
             <span class="number">0xcf9</span>,
             <span class="number">6</span>, <span class="comment">// RST_CPU|SYS_RST</span>
-            <span class="ident">acpi_dev_resource</span>,
+            <span class="kw-2">&amp;</span><span class="ident">acpi_dev_resource</span>,
             <span class="ident">host_cpus</span>,
             <span class="ident">kvm_vcpu_ids</span>,
             <span class="kw-2">&amp;</span><span class="ident">pci_irqs</span>,
@@ -2172,6 +2206,7 @@
             <span class="ident">bat_control</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gdb&quot;</span>))]</span>
             <span class="ident">gdb</span>: <span class="ident">components</span>.<span class="ident">gdb</span>,
+            <span class="ident">pm</span>: <span class="prelude-val">Some</span>(<span class="ident">acpi_dev_resource</span>.<span class="ident">pm</span>),
             <span class="ident">root_config</span>: <span class="ident">pci</span>,
             <span class="ident">hotplug_bus</span>: <span class="ident">Vec::new</span>(),
         })
@@ -2792,6 +2827,7 @@
         <span class="ident">exit_evt</span>: <span class="ident">Event</span>,
         <span class="ident">sdts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SDT</span><span class="op">&gt;</span>,
         <span class="ident">irq_chip</span>: <span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">IrqChip</span>,
+        <span class="ident">sci_irq</span>: <span class="ident">u32</span>,
         <span class="ident">battery</span>: (<span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BatteryType</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span>),
         <span class="ident">mmio_bus</span>: <span class="kw-2">&amp;</span><span class="ident">devices::Bus</span>,
         <span class="ident">max_bus</span>: <span class="ident">u8</span>,
@@ -2807,17 +2843,21 @@
                     <span class="ident">devices::acpi::ACPIPM_RESOURCE_LEN</span> <span class="kw">as</span> <span class="ident">u64</span>,
                     <span class="ident">pm_alloc</span>,
                     <span class="string">&quot;ACPIPM&quot;</span>.<span class="ident">to_string</span>(),
-                    <span class="ident">devices::acpi::ACPIPM_RESOURCE_LEN</span> <span class="kw">as</span> <span class="ident">u64</span>,
+                    <span class="number">4</span>, <span class="comment">// must be 32-bit aligned</span>
                 )
                 .<span class="ident">map_err</span>(<span class="ident">Error::AllocateIOResouce</span>)<span class="question-mark">?</span>,
             <span class="prelude-val">None</span> =&gt; <span class="number">0x600</span>,
         };
 
         <span class="kw">let</span> <span class="ident">pcie_vcfg</span> <span class="op">=</span> <span class="ident">aml::Name::new</span>(<span class="string">&quot;VCFG&quot;</span>.<span class="ident">into</span>(), <span class="kw-2">&amp;</span><span class="ident"><span class="self">Self</span>::get_pcie_vcfg_mmio_base</span>(<span class="ident">mem</span>));
-        <span class="ident">Aml::to_aml_bytes</span>(<span class="kw-2">&amp;</span><span class="ident">pcie_vcfg</span>, <span class="kw-2">&amp;mut</span> <span class="ident">amls</span>);
+        <span class="ident">pcie_vcfg</span>.<span class="ident">to_aml_bytes</span>(<span class="kw-2">&amp;mut</span> <span class="ident">amls</span>);
 
-        <span class="kw">let</span> <span class="ident">pmresource</span> <span class="op">=</span> <span class="ident">devices::ACPIPMResource::new</span>(<span class="ident">suspend_evt</span>, <span class="ident">exit_evt</span>);
-        <span class="ident">Aml::to_aml_bytes</span>(<span class="kw-2">&amp;</span><span class="ident">pmresource</span>, <span class="kw-2">&amp;mut</span> <span class="ident">amls</span>);
+        <span class="kw">let</span> <span class="ident">pm_sci_evt</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateEvent</span>)<span class="question-mark">?</span>;
+        <span class="ident">irq_chip</span>
+            .<span class="ident">register_irq_event</span>(<span class="ident">sci_irq</span>, <span class="kw-2">&amp;</span><span class="ident">pm_sci_evt</span>, <span class="prelude-val">None</span>)
+            .<span class="ident">map_err</span>(<span class="ident">Error::RegisterIrqfd</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">pmresource</span> <span class="op">=</span> <span class="ident">devices::ACPIPMResource::new</span>(<span class="ident">pm_sci_evt</span>, <span class="ident">suspend_evt</span>, <span class="ident">exit_evt</span>);
+        <span class="ident">pmresource</span>.<span class="ident">to_aml_bytes</span>(<span class="kw-2">&amp;mut</span> <span class="ident">amls</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pci_dsdt_inner_data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">aml::Aml</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">let</span> <span class="ident">hid</span> <span class="op">=</span> <span class="ident">aml::Name::new</span>(<span class="string">&quot;_HID&quot;</span>.<span class="ident">into</span>(), <span class="kw-2">&amp;</span><span class="ident">aml::EISAName::new</span>(<span class="string">&quot;PNP0A08&quot;</span>));
@@ -2866,18 +2906,13 @@
                 <span class="ident">devices::acpi::ACPIPM_RESOURCE_LEN</span> <span class="kw">as</span> <span class="ident">u64</span>,
             )
             .<span class="ident">unwrap</span>();
-        <span class="ident">resume_notify_devices</span>.<span class="ident">push</span>(<span class="ident">pm</span>);
+        <span class="ident">resume_notify_devices</span>.<span class="ident">push</span>(<span class="ident">pm</span>.<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">bat_control</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">battery_type</span>) <span class="op">=</span> <span class="ident">battery</span>.<span class="number">0</span> {
             <span class="kw">match</span> <span class="ident">battery_type</span> {
                 <span class="ident">BatteryType::Goldfish</span> =&gt; {
                     <span class="kw">let</span> <span class="ident">control_tube</span> <span class="op">=</span> <span class="ident">arch::add_goldfish_battery</span>(
-                        <span class="kw-2">&amp;mut</span> <span class="ident">amls</span>,
-                        <span class="ident">battery</span>.<span class="number">1</span>,
-                        <span class="ident">mmio_bus</span>,
-                        <span class="ident">irq_chip</span>,
-                        <span class="ident">X86_64_SCI_IRQ</span>,
-                        <span class="ident">resources</span>,
+                        <span class="kw-2">&amp;mut</span> <span class="ident">amls</span>, <span class="ident">battery</span>.<span class="number">1</span>, <span class="ident">mmio_bus</span>, <span class="ident">irq_chip</span>, <span class="ident">sci_irq</span>, <span class="ident">resources</span>,
                     )
                     .<span class="ident">map_err</span>(<span class="ident">Error::CreateBatDevices</span>)<span class="question-mark">?</span>;
                     <span class="prelude-val">Some</span>(<span class="ident">BatControl</span> {
@@ -2894,6 +2929,7 @@
             <span class="ident">acpi::AcpiDevResource</span> {
                 <span class="ident">amls</span>,
                 <span class="ident">pm_iobase</span>,
+                <span class="ident">pm</span>,
                 <span class="ident">sdts</span>,
             },
             <span class="ident">bat_control</span>,

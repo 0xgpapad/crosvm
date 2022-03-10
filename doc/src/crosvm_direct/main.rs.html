@@ -4248,6 +4248,40 @@
 <span id="4247">4247</span>
 <span id="4248">4248</span>
 <span id="4249">4249</span>
+<span id="4250">4250</span>
+<span id="4251">4251</span>
+<span id="4252">4252</span>
+<span id="4253">4253</span>
+<span id="4254">4254</span>
+<span id="4255">4255</span>
+<span id="4256">4256</span>
+<span id="4257">4257</span>
+<span id="4258">4258</span>
+<span id="4259">4259</span>
+<span id="4260">4260</span>
+<span id="4261">4261</span>
+<span id="4262">4262</span>
+<span id="4263">4263</span>
+<span id="4264">4264</span>
+<span id="4265">4265</span>
+<span id="4266">4266</span>
+<span id="4267">4267</span>
+<span id="4268">4268</span>
+<span id="4269">4269</span>
+<span id="4270">4270</span>
+<span id="4271">4271</span>
+<span id="4272">4272</span>
+<span id="4273">4273</span>
+<span id="4274">4274</span>
+<span id="4275">4275</span>
+<span id="4276">4276</span>
+<span id="4277">4277</span>
+<span id="4278">4278</span>
+<span id="4279">4279</span>
+<span id="4280">4280</span>
+<span id="4281">4281</span>
+<span id="4282">4282</span>
+<span id="4283">4283</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -7131,6 +7165,36 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
     <span class="ident">vms_request</span>(<span class="kw-2">&amp;</span><span class="ident">VmRequest::Resume</span>, <span class="ident">socket_path</span>)
 }
 
+<span class="kw">fn</span> <span class="ident">powerbtn_vms</span>(<span class="kw-2">mut</span> <span class="ident">args</span>: <span class="ident">std::env::Args</span>) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="ident">args</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> {
+        <span class="ident">print_help</span>(<span class="string">&quot;crosvm powerbtn&quot;</span>, <span class="string">&quot;VM_SOCKET...&quot;</span>, <span class="kw-2">&amp;</span>[]);
+        <span class="macro">println!</span>(<span class="string">&quot;Triggers a power button event in the crosvm instance listening on each `VM_SOCKET` given.&quot;</span>);
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(());
+    }
+    <span class="kw">let</span> <span class="ident">socket_path</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">args</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
+    <span class="kw">let</span> <span class="ident">socket_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="kw-2">&amp;</span><span class="ident">socket_path</span>);
+    <span class="ident">vms_request</span>(<span class="kw-2">&amp;</span><span class="ident">VmRequest::Powerbtn</span>, <span class="ident">socket_path</span>)
+}
+
+<span class="kw">fn</span> <span class="ident">inject_gpe</span>(<span class="kw-2">mut</span> <span class="ident">args</span>: <span class="ident">std::env::Args</span>) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="ident">args</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="number">2</span> {
+        <span class="ident">print_help</span>(<span class="string">&quot;crosvm gpe&quot;</span>, <span class="string">&quot;GPE# VM_SOCKET...&quot;</span>, <span class="kw-2">&amp;</span>[]);
+        <span class="macro">println!</span>(<span class="string">&quot;Injects a general-purpose event (GPE#) into the crosvm instance listening on each `VM_SOCKET` given.&quot;</span>);
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(());
+    }
+    <span class="kw">let</span> <span class="ident">gpe</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">args</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>() {
+        <span class="prelude-val">Ok</span>(<span class="ident">n</span>) =&gt; <span class="ident">n</span>,
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
+            <span class="macro">error!</span>(<span class="string">&quot;Failed to parse GPE#&quot;</span>);
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(());
+        }
+    };
+
+    <span class="kw">let</span> <span class="ident">socket_path</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">args</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
+    <span class="kw">let</span> <span class="ident">socket_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="kw-2">&amp;</span><span class="ident">socket_path</span>);
+    <span class="ident">vms_request</span>(<span class="kw-2">&amp;</span><span class="ident">VmRequest::Gpe</span>(<span class="ident">gpe</span>), <span class="ident">socket_path</span>)
+}
+
 <span class="kw">fn</span> <span class="ident">balloon_vms</span>(<span class="kw-2">mut</span> <span class="ident">args</span>: <span class="ident">std::env::Args</span>) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">args</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="number">2</span> {
         <span class="ident">print_help</span>(<span class="string">&quot;crosvm balloon&quot;</span>, <span class="string">&quot;SIZE VM_SOCKET...&quot;</span>, <span class="kw-2">&amp;</span>[]);
@@ -7643,6 +7707,8 @@ with a &#39;--backing_file&#39;.&quot;</span>
     <span class="macro">println!</span>(<span class="string">&quot;    run - Start a new crosvm instance.&quot;</span>);
     <span class="macro">println!</span>(<span class="string">&quot;    stop - Stops crosvm instances via their control sockets.&quot;</span>);
     <span class="macro">println!</span>(<span class="string">&quot;    suspend - Suspends the crosvm instance.&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;    powerbtn - Triggers a power button event in the crosvm instance.&quot;</span>);
+    <span class="macro">println!</span>(<span class="string">&quot;    gpe - Injects a general-purpose event into the crosvm instance.&quot;</span>);
     <span class="macro">println!</span>(<span class="string">&quot;    usb - Manage attached virtual USB devices.&quot;</span>);
     <span class="macro">println!</span>(<span class="string">&quot;    version - Show package version.&quot;</span>);
     <span class="macro">println!</span>(<span class="string">&quot;    vfio - add/remove host vfio pci device into guest.&quot;</span>);
@@ -7698,6 +7764,8 @@ with a &#39;--backing_file&#39;.&quot;</span>
             <span class="string">&quot;resume&quot;</span> =&gt; <span class="ident">resume_vms</span>(<span class="ident">args</span>),
             <span class="string">&quot;stop&quot;</span> =&gt; <span class="ident">stop_vms</span>(<span class="ident">args</span>),
             <span class="string">&quot;suspend&quot;</span> =&gt; <span class="ident">suspend_vms</span>(<span class="ident">args</span>),
+            <span class="string">&quot;powerbtn&quot;</span> =&gt; <span class="ident">powerbtn_vms</span>(<span class="ident">args</span>),
+            <span class="string">&quot;gpe&quot;</span> =&gt; <span class="ident">inject_gpe</span>(<span class="ident">args</span>),
             <span class="string">&quot;usb&quot;</span> =&gt; <span class="ident">modify_usb</span>(<span class="ident">args</span>),
             <span class="string">&quot;version&quot;</span> =&gt; <span class="ident">pkg_version</span>(),
             <span class="string">&quot;vfio&quot;</span> =&gt; <span class="ident">modify_vfio</span>(<span class="ident">args</span>),

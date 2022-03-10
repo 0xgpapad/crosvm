@@ -153,6 +153,16 @@
 <span id="152">152</span>
 <span id="153">153</span>
 <span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -251,13 +261,23 @@
         <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">LENGTH_OFFSET</span>, <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>);
     }
 
+    <span class="doccomment">/// Read a value at the given offset</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">DataInit</span> <span class="op">+</span> <span class="ident">Default</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) -&gt; <span class="ident">T</span> {
+        <span class="kw">let</span> <span class="ident">value_len</span> <span class="op">=</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
+        <span class="kw-2">*</span><span class="ident">T::from_slice</span>(
+            <span class="self">self</span>.<span class="ident">as_slice</span>()
+                .<span class="ident">get</span>(<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">value_len</span>)
+                .<span class="ident">unwrap_or</span>(<span class="ident">T::default</span>().<span class="ident">as_slice</span>()),
+        )
+        .<span class="ident">unwrap</span>()
+    }
+
     <span class="doccomment">/// Write a value at the given offset</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">DataInit</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>, <span class="ident">value</span>: <span class="ident">T</span>) {
         <span class="kw">let</span> <span class="ident">value_len</span> <span class="op">=</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
         <span class="kw">if</span> (<span class="ident">offset</span> <span class="op">+</span> <span class="ident">value_len</span>) <span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">len</span>() {
             <span class="kw">return</span>;
         }
-
         <span class="self">self</span>.<span class="ident">data</span>[<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">value_len</span>].<span class="ident">copy_from_slice</span>(<span class="ident">value</span>.<span class="ident">as_slice</span>());
         <span class="self">self</span>.<span class="ident">update_checksum</span>();
     }

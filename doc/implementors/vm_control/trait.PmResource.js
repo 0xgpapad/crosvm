@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["devices"] = [{"text":"impl <a class=\"trait\" href=\"vm_control/trait.PmResource.html\" title=\"trait vm_control::PmResource\">PmResource</a> for <a class=\"struct\" href=\"devices/acpi/struct.ACPIPMResource.html\" title=\"struct devices::acpi::ACPIPMResource\">ACPIPMResource</a>","synthetic":false,"types":["devices::acpi::ACPIPMResource"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
