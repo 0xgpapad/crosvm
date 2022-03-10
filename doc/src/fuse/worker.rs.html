@@ -174,6 +174,8 @@
 <span id="173">173</span>
 <span id="174">174</span>
 <span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -320,6 +322,8 @@
 }
 
 <span class="doccomment">/// Start the FUSE message handling loop. Returns when an error happens.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// [deprecated(note=&quot;Please migrate to the `FuseConfig` builder API&quot;]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start_message_loop</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FileSystem</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span>(
     <span class="ident">dev_fuse</span>: <span class="ident">File</span>,
     <span class="ident">max_write</span>: <span class="ident">u32</span>,
