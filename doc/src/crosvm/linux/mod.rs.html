@@ -2242,10 +2242,6 @@
 <span id="2241">2241</span>
 <span id="2242">2242</span>
 <span id="2243">2243</span>
-<span id="2244">2244</span>
-<span id="2245">2245</span>
-<span id="2246">2246</span>
-<span id="2247">2247</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3432,6 +3428,42 @@
         }))
         .<span class="ident">context</span>(<span class="string">&quot;failed to calculate init balloon size&quot;</span>)<span class="question-mark">?</span>;
 
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">irqs</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+    <span class="kw">for</span> <span class="ident">irq</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">cfg</span>.<span class="ident">direct_level_irq</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">sys_allocator</span>.<span class="ident">reserve_irq</span>(<span class="kw-2">*</span><span class="ident">irq</span>) {
+            <span class="macro">warn!</span>(<span class="string">&quot;irq {} already reserved.&quot;</span>, <span class="ident">irq</span>);
+        }
+        <span class="kw">let</span> <span class="ident">trigger</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create event&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">resample</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create event&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">irq_chip</span>
+            .<span class="ident">register_irq_event</span>(<span class="kw-2">*</span><span class="ident">irq</span>, <span class="kw-2">&amp;</span><span class="ident">trigger</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">resample</span>))
+            .<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">direct_irq</span> <span class="op">=</span> <span class="ident">devices::DirectIrq::new</span>(<span class="ident">trigger</span>, <span class="prelude-val">Some</span>(<span class="ident">resample</span>))
+            .<span class="ident">context</span>(<span class="string">&quot;failed to enable interrupt forwarding&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">direct_irq</span>
+            .<span class="ident">irq_enable</span>(<span class="kw-2">*</span><span class="ident">irq</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;failed to enable interrupt forwarding&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">irqs</span>.<span class="ident">push</span>(<span class="ident">direct_irq</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+    <span class="kw">for</span> <span class="ident">irq</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">cfg</span>.<span class="ident">direct_edge_irq</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">sys_allocator</span>.<span class="ident">reserve_irq</span>(<span class="kw-2">*</span><span class="ident">irq</span>) {
+            <span class="macro">warn!</span>(<span class="string">&quot;irq {} already reserved.&quot;</span>, <span class="ident">irq</span>);
+        }
+        <span class="kw">let</span> <span class="ident">trigger</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create event&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">irq_chip</span>.<span class="ident">register_irq_event</span>(<span class="kw-2">*</span><span class="ident">irq</span>, <span class="kw-2">&amp;</span><span class="ident">trigger</span>, <span class="prelude-val">None</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">direct_irq</span> <span class="op">=</span> <span class="ident">devices::DirectIrq::new</span>(<span class="ident">trigger</span>, <span class="prelude-val">None</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;failed to enable interrupt forwarding&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">direct_irq</span>
+            .<span class="ident">irq_enable</span>(<span class="kw-2">*</span><span class="ident">irq</span>)
+            .<span class="ident">context</span>(<span class="string">&quot;failed to enable interrupt forwarding&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">irqs</span>.<span class="ident">push</span>(<span class="ident">direct_irq</span>);
+    }
+
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iommu_attached_endpoints</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">MemoryMapperTrait</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span>
         <span class="ident">BTreeMap::new</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">devices</span> <span class="op">=</span> <span class="ident">create_devices</span>(
@@ -3580,46 +3612,6 @@
                 .<span class="ident">unwrap</span>();
         }
     };
-
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">irqs</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-    <span class="kw">for</span> <span class="ident">irq</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">cfg</span>.<span class="ident">direct_level_irq</span> {
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">sys_allocator</span>.<span class="ident">reserve_irq</span>(<span class="kw-2">*</span><span class="ident">irq</span>) {
-            <span class="macro">warn!</span>(<span class="string">&quot;irq {} already reserved.&quot;</span>, <span class="ident">irq</span>);
-        }
-        <span class="kw">let</span> <span class="ident">trigger</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create event&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">resample</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create event&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">linux</span>
-            .<span class="ident">irq_chip</span>
-            .<span class="ident">register_irq_event</span>(<span class="kw-2">*</span><span class="ident">irq</span>, <span class="kw-2">&amp;</span><span class="ident">trigger</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">resample</span>))
-            .<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">direct_irq</span> <span class="op">=</span> <span class="ident">devices::DirectIrq::new</span>(<span class="ident">trigger</span>, <span class="prelude-val">Some</span>(<span class="ident">resample</span>))
-            .<span class="ident">context</span>(<span class="string">&quot;failed to enable interrupt forwarding&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">direct_irq</span>
-            .<span class="ident">irq_enable</span>(<span class="kw-2">*</span><span class="ident">irq</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;failed to enable interrupt forwarding&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">irqs</span>.<span class="ident">push</span>(<span class="ident">direct_irq</span>);
-    }
-
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-    <span class="kw">for</span> <span class="ident">irq</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">cfg</span>.<span class="ident">direct_edge_irq</span> {
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">sys_allocator</span>.<span class="ident">reserve_irq</span>(<span class="kw-2">*</span><span class="ident">irq</span>) {
-            <span class="macro">warn!</span>(<span class="string">&quot;irq {} already reserved.&quot;</span>, <span class="ident">irq</span>);
-        }
-        <span class="kw">let</span> <span class="ident">trigger</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create event&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">linux</span>
-            .<span class="ident">irq_chip</span>
-            .<span class="ident">register_irq_event</span>(<span class="kw-2">*</span><span class="ident">irq</span>, <span class="kw-2">&amp;</span><span class="ident">trigger</span>, <span class="prelude-val">None</span>)
-            .<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">direct_irq</span> <span class="op">=</span> <span class="ident">devices::DirectIrq::new</span>(<span class="ident">trigger</span>, <span class="prelude-val">None</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;failed to enable interrupt forwarding&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">direct_irq</span>
-            .<span class="ident">irq_enable</span>(<span class="kw-2">*</span><span class="ident">irq</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;failed to enable interrupt forwarding&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">irqs</span>.<span class="ident">push</span>(<span class="ident">direct_irq</span>);
-    }
 
     <span class="kw">let</span> <span class="ident">gralloc</span> <span class="op">=</span> <span class="ident">RutabagaGralloc::new</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create gralloc&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">run_control</span>(
