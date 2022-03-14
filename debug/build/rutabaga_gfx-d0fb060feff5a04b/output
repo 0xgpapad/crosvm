@@ -172,7 +172,7 @@ CC		virtgpu_cross_domain.c ->  virtgpu_cross_domain.pie.o
 AR		gbm_helpers.pie.o virtgpu.pie.o mediatek.pie.o drv_helpers.pie.o gbm.pie.o dri.pie.o i915.pie.o virtgpu_virgl.pie.o drv_array_helpers.pie.o drv.pie.o msm.pie.o vc4.pie.o minigbm_helpers.pie.o dumb_driver.pie.o rockchip.pie.o amdgpu.pie.o virtgpu_cross_domain.pie.o -> libminigbm.pie.a
 make[1]: Leaving directory '/home/runner/work/crosvm/crosvm/docs/target/html/debug/build/rutabaga_gfx-d0fb060feff5a04b/out/minigbm'
 The Meson build system
-Version: 0.61.2
+Version: 0.61.3
 Source dir: /home/runner/work/crosvm/crosvm/third_party/virglrenderer
 Build dir: /home/runner/work/crosvm/crosvm/docs/target/html/debug/build/rutabaga_gfx-d0fb060feff5a04b/out/virglrenderer
 Build type: native build
@@ -274,18 +274,18 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [8/44] Compiling C object src/mesa/libmesa.a.p/util_u_math.c.o
 [9/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_cso_cache_cso_cache.c.o
 [10/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_debug_describe.c.o
-[11/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_texture.c.o
-[12/44] Generating src/gallium/u_format_table.c with a custom command (wrapped by meson to capture output)
+[11/44] Generating src/gallium/u_format_table.c with a custom command (wrapped by meson to capture output)
+[12/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_texture.c.o
 [13/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_format.c.o
-[14/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_hash_table.c.o
-[15/44] Compiling C object src/gallium/libgallium.a.p/meson-generated_.._u_format_table.c.o
+[14/44] Compiling C object src/gallium/libgallium.a.p/meson-generated_.._u_format_table.c.o
+[15/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_hash_table.c.o
 [16/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_cso_cache_cso_hash.c.o
-[17/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_info.c.o
+[17/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_dump.c.o
 [18/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_scan.c.o
-[19/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_dump.c.o
+[19/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_info.c.o
 [20/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_strings.c.o
-[21/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_build.c.o
-[22/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_sanity.c.o
+[21/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_sanity.c.o
+[22/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_build.c.o
 [23/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_parse.c.o
 [24/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_iterate.c.o
 [25/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_util.c.o
@@ -296,8 +296,8 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [30/44] Compiling C object src/libvirgl.a.p/vrend_debug.c.o
 [31/44] Compiling C object src/libvirgl.a.p/vrend_blitter.c.o
 [32/44] Compiling C object src/libvirgl.a.p/vrend_formats.c.o
-[33/44] Compiling C object src/libvirgl.a.p/vrend_object.c.o
-[34/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
+[33/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
+[34/44] Compiling C object src/libvirgl.a.p/vrend_object.c.o
 [35/44] Compiling C object src/libvirgl.a.p/vrend_decode.c.o
 [36/44] Compiling C object src/libvirgl.a.p/vrend_tweaks.c.o
 [37/44] Compiling C object src/libvirgl.a.p/vrend_winsys.c.o
