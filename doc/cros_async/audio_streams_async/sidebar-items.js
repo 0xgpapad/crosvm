@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["IoSourceWrapper","A wrapper around IoSourceExt that is compatible with the audio_streams traits."]]});

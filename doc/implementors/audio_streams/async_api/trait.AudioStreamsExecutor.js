@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["cros_async"] = [{"text":"impl <a class=\"trait\" href=\"audio_streams/async_api/trait.AudioStreamsExecutor.html\" title=\"trait audio_streams::async_api::AudioStreamsExecutor\">AudioStreamsExecutor</a> for <a class=\"enum\" href=\"cros_async/enum.Executor.html\" title=\"enum cros_async::Executor\">Executor</a>","synthetic":false,"types":["cros_async::executor::Executor"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

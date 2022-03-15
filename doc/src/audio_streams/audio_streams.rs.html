@@ -913,6 +913,9 @@
 <span id="912">912</span>
 <span id="913">913</span>
 <span id="914">914</span>
+<span id="915">915</span>
+<span id="916">916</span>
+<span id="917">917</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -954,6 +957,7 @@
 <span class="doccomment">//! # Ok (())</span>
 <span class="doccomment">//! # }</span>
 <span class="doccomment">//! ```</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">async_api</span>;
 
 <span class="kw">use</span> <span class="ident">async_trait::async_trait</span>;
 <span class="kw">use</span> <span class="ident">std::cmp::min</span>;
@@ -965,7 +969,7 @@
 <span class="kw">use</span> <span class="ident">std::str::FromStr</span>;
 <span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
 
-<span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">Executor</span>, <span class="ident">TimerAsync</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">async_api</span>::{<span class="ident">AsyncStream</span>, <span class="ident">AudioStreamsExecutor</span>};
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 
@@ -1074,7 +1078,7 @@
         <span class="ident">_format</span>: <span class="ident">SampleFormat</span>,
         <span class="ident">_frame_rate</span>: <span class="ident">u32</span>,
         <span class="ident">_buffer_size</span>: <span class="ident">usize</span>,
-        <span class="ident">_ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>,
+        <span class="ident">_ex</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AudioStreamsExecutor</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">StreamControl</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">AsyncPlaybackBufferStream</span><span class="op">&gt;</span>), <span class="ident">BoxError</span><span class="op">&gt;</span> {
         <span class="prelude-val">Err</span>(<span class="ident">Box::new</span>(<span class="ident">Error::Unimplemented</span>))
     }
@@ -1119,7 +1123,7 @@
         <span class="ident">frame_rate</span>: <span class="ident">u32</span>,
         <span class="ident">buffer_size</span>: <span class="ident">usize</span>,
         <span class="ident">_effects</span>: <span class="kw-2">&amp;</span>[<span class="ident">StreamEffect</span>],
-        <span class="ident">_ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>,
+        <span class="ident">_ex</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AudioStreamsExecutor</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>
         (
             <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">StreamControl</span><span class="op">&gt;</span>,
@@ -1174,7 +1178,7 @@
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AsyncPlaybackBufferStream</span>: <span class="ident">Send</span> {
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">next_playback_buffer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="ident">_ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>,
+        <span class="ident">_ex</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AudioStreamsExecutor</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AsyncPlaybackBuffer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>, <span class="ident">BoxError</span><span class="op">&gt;</span>;
 }
 
@@ -1182,7 +1186,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsyncPlaybackBufferStream</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">AsyncPlaybackBufferStream</span> <span class="kw">for</span> <span class="kw-2">&amp;mut</span> <span class="ident">S</span> {
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">next_playback_buffer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>,
+        <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AudioStreamsExecutor</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AsyncPlaybackBuffer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>, <span class="ident">BoxError</span><span class="op">&gt;</span> {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">next_playback_buffer</span>(<span class="ident">ex</span>).<span class="kw">await</span>
     }
@@ -1195,7 +1199,7 @@
 <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">async_write_playback_buffer</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(
     <span class="ident">stream</span>: <span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">AsyncPlaybackBufferStream</span>,
     <span class="ident">f</span>: <span class="ident">F</span>,
-    <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>,
+    <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AudioStreamsExecutor</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">BoxError</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">F</span>: <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">FnOnce</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">AsyncPlaybackBuffer</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">BoxError</span><span class="op">&gt;</span>,
@@ -1513,12 +1517,12 @@
 <span class="kw">impl</span> <span class="ident">AsyncPlaybackBufferStream</span> <span class="kw">for</span> <span class="ident">NoopStream</span> {
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">next_playback_buffer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>,
+        <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AudioStreamsExecutor</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AsyncPlaybackBuffer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>, <span class="ident">BoxError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">start_time</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">start_time</span> {
             <span class="kw">let</span> <span class="ident">elapsed</span> <span class="op">=</span> <span class="ident">start_time</span>.<span class="ident">elapsed</span>();
             <span class="kw">if</span> <span class="ident">elapsed</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">next_frame</span> {
-                <span class="ident">TimerAsync::sleep</span>(<span class="ident">ex</span>, <span class="self">self</span>.<span class="ident">next_frame</span> <span class="op">-</span> <span class="ident">elapsed</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="ident">ex</span>.<span class="ident">delay</span>(<span class="self">self</span>.<span class="ident">next_frame</span> <span class="op">-</span> <span class="ident">elapsed</span>).<span class="kw">await</span><span class="question-mark">?</span>;
             }
             <span class="self">self</span>.<span class="ident">next_frame</span> <span class="op">+</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">interval</span>;
         } <span class="kw">else</span> {
@@ -1582,7 +1586,7 @@
         <span class="ident">format</span>: <span class="ident">SampleFormat</span>,
         <span class="ident">frame_rate</span>: <span class="ident">u32</span>,
         <span class="ident">buffer_size</span>: <span class="ident">usize</span>,
-        <span class="ident">_ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>,
+        <span class="ident">_ex</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AudioStreamsExecutor</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">StreamControl</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">AsyncPlaybackBufferStream</span><span class="op">&gt;</span>), <span class="ident">BoxError</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>((
             <span class="ident">Box::new</span>(<span class="ident">NoopStreamControl::new</span>()),
@@ -1598,7 +1602,9 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::async_api::test::TestExecutor</span>;
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">futures::FutureExt</span>;
     <span class="kw">use</span> <span class="ident">io</span>::{<span class="self">self</span>, <span class="ident">Write</span>};
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -1786,13 +1792,12 @@
             <span class="macro">assert_eq!</span>(<span class="ident">test_commit</span>.<span class="ident">frame_count</span>, <span class="number">480</span>);
         }
 
-        <span class="kw">let</span> <span class="ident">ex</span> <span class="op">=</span> <span class="ident">Executor::new</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to create executor&quot;</span>);
-        <span class="ident">ex</span>.<span class="ident">run_until</span>(<span class="ident">this_test</span>()).<span class="ident">unwrap</span>();
+        <span class="ident">this_test</span>().<span class="ident">now_or_never</span>();
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">consumption_rate_async</span>() {
-        <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">this_test</span>(<span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>) {
+        <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">this_test</span>(<span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">TestExecutor</span>) {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">server</span> <span class="op">=</span> <span class="ident">NoopStreamSource::new</span>();
             <span class="kw">let</span> (<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">stream</span>) <span class="op">=</span> <span class="ident">server</span>
                 .<span class="ident">new_async_playback_stream</span>(<span class="number">2</span>, <span class="ident">SampleFormat::S16LE</span>, <span class="number">48000</span>, <span class="number">480</span>, <span class="ident">ex</span>)
@@ -1818,13 +1823,14 @@
                 );
                 <span class="prelude-val">Ok</span>(())
             };
+
             <span class="ident">async_write_playback_buffer</span>(<span class="kw-2">&amp;mut</span> <span class="kw-2">*</span><span class="ident">stream</span>, <span class="ident">assert_func</span>, <span class="ident">ex</span>)
                 .<span class="kw">await</span>
                 .<span class="ident">unwrap</span>();
         }
 
-        <span class="kw">let</span> <span class="ident">ex</span> <span class="op">=</span> <span class="ident">Executor::new</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to create executor&quot;</span>);
-        <span class="ident">ex</span>.<span class="ident">run_until</span>(<span class="ident">this_test</span>(<span class="kw-2">&amp;</span><span class="ident">ex</span>)).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">ex</span> <span class="op">=</span> <span class="ident">TestExecutor</span> {};
+        <span class="ident">this_test</span>(<span class="kw-2">&amp;</span><span class="ident">ex</span>).<span class="ident">now_or_never</span>();
     }
 }
 </code></pre></div>
