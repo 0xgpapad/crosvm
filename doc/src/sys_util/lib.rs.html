@@ -759,7 +759,7 @@
     <span class="ident">SerializeDescriptors</span>,
 };
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">poll_token_derive</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util_core</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>, <span class="kw-2">*</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util_core</span>::{<span class="ident">generate_scoped_event</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>, <span class="kw-2">*</span>};
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::file_traits</span>::{
     <span class="ident">AsRawFds</span>, <span class="ident">FileAllocate</span>, <span class="ident">FileGetLen</span>, <span class="ident">FileReadWriteAtVolatile</span>, <span class="ident">FileReadWriteVolatile</span>, <span class="ident">FileSetLen</span>,
