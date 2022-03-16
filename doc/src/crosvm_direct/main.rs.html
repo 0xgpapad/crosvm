@@ -4297,9 +4297,9 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;virgl_renderer_next&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">crosvm::platform::GpuRenderServerParameters</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">crosvm::DirectIoOption</span>;
+<span class="kw">use</span> <span class="ident">crosvm</span>::{<span class="ident">argument::parse_hex_or_decimal</span>, <span class="ident">DirectIoOption</span>};
 <span class="kw">use</span> <span class="ident">crosvm</span>::{
-    <span class="ident">argument</span>::{<span class="self">self</span>, <span class="ident">parse_hex_or_decimal</span>, <span class="ident">print_help</span>, <span class="ident">set_arguments</span>, <span class="ident">Argument</span>},
+    <span class="ident">argument</span>::{<span class="self">self</span>, <span class="ident">print_help</span>, <span class="ident">set_arguments</span>, <span class="ident">Argument</span>},
     <span class="ident">platform</span>, <span class="ident">BindMount</span>, <span class="ident">Config</span>, <span class="ident">DiskOption</span>, <span class="ident">Executable</span>, <span class="ident">FileBackedMappingParameters</span>, <span class="ident">GidMap</span>,
     <span class="ident">SharedDir</span>, <span class="ident">TouchDeviceOption</span>, <span class="ident">VfioCommand</span>, <span class="ident">VhostUserFsOption</span>, <span class="ident">VhostUserOption</span>,
     <span class="ident">VhostUserWlOption</span>, <span class="ident">VhostVsockDeviceParameter</span>, <span class="ident">VvuOption</span>, <span class="ident">DISK_ID_LEN</span>,
