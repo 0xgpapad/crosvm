@@ -578,6 +578,18 @@
 <span id="577">577</span>
 <span id="578">578</span>
 <span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -602,7 +614,11 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">vulkano::instance::InstanceCreationError</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">vulkano::memory::DeviceMemoryAllocError</span>;
+<span class="kw">use</span> <span class="ident">vulkano::memory::DeviceMemoryAllocationError</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">vulkano::memory::DeviceMemoryExportError</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">vulkano::memory::MemoryMapError</span>;
 
 <span class="doccomment">/// Represents a buffer.  `base` contains the address of a buffer, while `len` contains the length</span>
 <span class="doccomment">/// of the buffer.</span>
@@ -809,7 +825,11 @@
     <span class="doccomment">/// Device memory allocation error</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;vulkano device memory allocation failure {0}&quot;</span>)]</span>
-    <span class="ident">VkDeviceMemoryAllocError</span>(<span class="ident">DeviceMemoryAllocError</span>),
+    <span class="ident">VkDeviceMemoryAllocationError</span>(<span class="ident">DeviceMemoryAllocationError</span>),
+    <span class="doccomment">/// Device memory export error</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;vulkano device memory export failure {0}&quot;</span>)]</span>
+    <span class="ident">VkDeviceMemoryExportError</span>(<span class="ident">DeviceMemoryExportError</span>),
     <span class="doccomment">/// Image creation error</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;vulkano image creation failure {0}&quot;</span>)]</span>
@@ -818,6 +838,10 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;vulkano instance creation failure {0}&quot;</span>)]</span>
     <span class="ident">VkInstanceCreationError</span>(<span class="ident">InstanceCreationError</span>),
+    <span class="doccomment">/// Memory map  error</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vulkano&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;vullano memory map failure {0}&quot;</span>)]</span>
+    <span class="ident">VkMemoryMapError</span>(<span class="ident">MemoryMapError</span>),
     <span class="doccomment">/// Volatile memory error</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;noticed a volatile memory error {0}&quot;</span>)]</span>
     <span class="ident">VolatileMemoryError</span>(<span class="ident">VolatileMemoryError</span>),
