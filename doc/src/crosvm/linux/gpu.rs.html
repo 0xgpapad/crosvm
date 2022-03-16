@@ -350,16 +350,16 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_vhost_user_gpu_device</span>(
     <span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>,
     <span class="ident">opt</span>: <span class="kw-2">&amp;</span><span class="ident">VhostUserOption</span>,
-    <span class="ident">host_tube</span>: <span class="ident">Tube</span>,
-    <span class="ident">device_tube</span>: <span class="ident">Tube</span>,
+    <span class="ident">gpu_tubes</span>: (<span class="ident">Tube</span>, <span class="ident">Tube</span>),
+    <span class="ident">device_control_tube</span>: <span class="ident">Tube</span>,
 ) -&gt; <span class="ident">DeviceResult</span> {
     <span class="comment">// The crosvm gpu device expects us to connect the tube before it will accept a vhost-user</span>
     <span class="comment">// connection.</span>
     <span class="kw">let</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">VhostUserGpu::new</span>(
         <span class="ident">virtio::base_features</span>(<span class="ident">cfg</span>.<span class="ident">protected_vm</span>),
         <span class="kw-2">&amp;</span><span class="ident">opt</span>.<span class="ident">socket</span>,
-        <span class="ident">host_tube</span>,
-        <span class="ident">device_tube</span>,
+        <span class="ident">gpu_tubes</span>,
+        <span class="ident">device_control_tube</span>,
     )
     .<span class="ident">context</span>(<span class="string">&quot;failed to set up vhost-user gpu device&quot;</span>)<span class="question-mark">?</span>;
 

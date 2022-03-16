@@ -2242,6 +2242,8 @@
 <span id="2241">2241</span>
 <span id="2242">2242</span>
 <span id="2243">2243</span>
+<span id="2244">2244</span>
+<span id="2245">2245</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2339,7 +2341,7 @@
     <span class="ident">_exit_evt</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>,
     <span class="ident">wayland_device_tube</span>: <span class="ident">Tube</span>,
     <span class="ident">gpu_device_tube</span>: <span class="ident">Tube</span>,
-    <span class="ident">vhost_user_gpu_tubes</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Tube</span>, <span class="ident">Tube</span>)<span class="op">&gt;</span>,
+    <span class="ident">vhost_user_gpu_tubes</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Tube</span>, <span class="ident">Tube</span>, <span class="ident">Tube</span>)<span class="op">&gt;</span>,
     <span class="ident">balloon_device_tube</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
     <span class="ident">balloon_inflate_tube</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
     <span class="ident">init_balloon_size</span>: <span class="ident">u64</span>,
@@ -2353,12 +2355,14 @@
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">devs</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
-    <span class="kw">for</span> (<span class="ident">opt</span>, (<span class="ident">host_tube</span>, <span class="ident">device_tube</span>)) <span class="kw">in</span> <span class="ident">cfg</span>.<span class="ident">vhost_user_gpu</span>.<span class="ident">iter</span>().<span class="ident">zip</span>(<span class="ident">vhost_user_gpu_tubes</span>) {
+    <span class="kw">for</span> (<span class="ident">opt</span>, (<span class="ident">host_gpu_tube</span>, <span class="ident">device_gpu_tube</span>, <span class="ident">device_control_tube</span>)) <span class="kw">in</span>
+        <span class="ident">cfg</span>.<span class="ident">vhost_user_gpu</span>.<span class="ident">iter</span>().<span class="ident">zip</span>(<span class="ident">vhost_user_gpu_tubes</span>)
+    {
         <span class="ident">devs</span>.<span class="ident">push</span>(<span class="ident">create_vhost_user_gpu_device</span>(
             <span class="ident">cfg</span>,
             <span class="ident">opt</span>,
-            <span class="ident">host_tube</span>,
-            <span class="ident">device_tube</span>,
+            (<span class="ident">host_gpu_tube</span>, <span class="ident">device_gpu_tube</span>),
+            <span class="ident">device_control_tube</span>,
         )<span class="question-mark">?</span>);
     }
 
@@ -2697,7 +2701,8 @@
     <span class="ident">control_tubes</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TaggedControlTube</span><span class="op">&gt;</span>,
     <span class="ident">wayland_device_tube</span>: <span class="ident">Tube</span>,
     <span class="ident">gpu_device_tube</span>: <span class="ident">Tube</span>,
-    <span class="ident">vhost_user_gpu_tubes</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Tube</span>, <span class="ident">Tube</span>)<span class="op">&gt;</span>,
+    <span class="comment">// Tuple content: (host-side GPU tube, device-side GPU tube, device-side control tube).</span>
+    <span class="ident">vhost_user_gpu_tubes</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Tube</span>, <span class="ident">Tube</span>, <span class="ident">Tube</span>)<span class="op">&gt;</span>,
     <span class="ident">balloon_device_tube</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
     <span class="ident">init_balloon_size</span>: <span class="ident">u64</span>,
     <span class="ident">disk_device_tubes</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span>,
@@ -3283,12 +3288,11 @@
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vhost_user_gpu_tubes</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="ident">cfg</span>.<span class="ident">vhost_user_gpu</span>.<span class="ident">len</span>());
     <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">cfg</span>.<span class="ident">vhost_user_gpu</span>.<span class="ident">len</span>() {
-        <span class="kw">let</span> (<span class="ident">host_tube</span>, <span class="ident">device_tube</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
-        <span class="ident">vhost_user_gpu_tubes</span>.<span class="ident">push</span>((
-            <span class="ident">host_tube</span>.<span class="ident">try_clone</span>().<span class="ident">context</span>(<span class="string">&quot;failed to clone tube&quot;</span>)<span class="question-mark">?</span>,
-            <span class="ident">device_tube</span>,
-        ));
-        <span class="ident">control_tubes</span>.<span class="ident">push</span>(<span class="ident">TaggedControlTube::VmMemory</span>(<span class="ident">host_tube</span>));
+        <span class="kw">let</span> (<span class="ident">host_control_tube</span>, <span class="ident">device_control_tube</span>) <span class="op">=</span>
+            <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">host_gpu_tube</span>, <span class="ident">device_gpu_tube</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">vhost_user_gpu_tubes</span>.<span class="ident">push</span>((<span class="ident">host_gpu_tube</span>, <span class="ident">device_gpu_tube</span>, <span class="ident">device_control_tube</span>));
+        <span class="ident">control_tubes</span>.<span class="ident">push</span>(<span class="ident">TaggedControlTube::VmMemory</span>(<span class="ident">host_control_tube</span>));
     }
 
     <span class="kw">let</span> (<span class="ident">wayland_host_tube</span>, <span class="ident">wayland_device_tube</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;

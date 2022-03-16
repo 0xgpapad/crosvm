@@ -215,6 +215,49 @@
 <span id="214">214</span>
 <span id="215">215</span>
 <span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -238,20 +281,42 @@
     <span class="ident">PciAddress</span>,
 };
 
+<span class="doccomment">/// Current state of our Gpu.</span>
+<span class="kw">enum</span> <span class="ident">GpuState</span> {
+    <span class="doccomment">/// Created, address has not yet been assigned through `get_device_bars`.</span>
+    <span class="ident">Init</span> {
+        <span class="doccomment">/// VMM-side Tube to the GPU process from which we will send the PCI address, retrieve the</span>
+        <span class="doccomment">/// BAR configuration, and send the vhost-user control tube in `get_device_bars`.</span>
+        <span class="ident">host_gpu_tube</span>: <span class="ident">Tube</span>,
+        <span class="doccomment">/// Device-side control tube to be sent during `get_device_bars`.</span>
+        <span class="ident">device_control_tube</span>: <span class="ident">Tube</span>,
+    },
+    <span class="doccomment">/// Address has been set through `get_device_bars`.</span>
+    <span class="ident">Configured</span>,
+}
+
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Gpu</span> {
     <span class="ident">kill_evt</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span>,
     <span class="ident">worker_thread</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">thread::JoinHandle</span><span class="op">&lt;</span><span class="ident">Worker</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">handler</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">VhostUserHandler</span><span class="op">&gt;</span>,
-    <span class="ident">host_tube</span>: <span class="ident">Tube</span>,
+    <span class="ident">state</span>: <span class="ident">GpuState</span>,
     <span class="ident">queue_sizes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Gpu</span> {
+    <span class="doccomment">/// Create a new GPU proxy instance for the VMM.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// `base_features` is the desired set of virtio features.</span>
+    <span class="doccomment">/// `socket_path` is the path to the socket of the GPU device.</span>
+    <span class="doccomment">/// `gpu_tubes` is a pair of (vmm side, device side) connected tubes that are used to perform</span>
+    <span class="doccomment">/// the initial configuration of the GPU device.</span>
+    <span class="doccomment">/// `device_control_tube` is the device-side tube to be passed to the GPU device so it can</span>
+    <span class="doccomment">/// perform `VmRequest`s.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(
         <span class="ident">base_features</span>: <span class="ident">u64</span>,
         <span class="ident">socket_path</span>: <span class="ident">P</span>,
-        <span class="ident">host_tube</span>: <span class="ident">Tube</span>,
-        <span class="ident">device_tube</span>: <span class="ident">Tube</span>,
+        <span class="ident">gpu_tubes</span>: (<span class="ident">Tube</span>, <span class="ident">Tube</span>),
+        <span class="ident">device_control_tube</span>: <span class="ident">Tube</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Gpu</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">default_queue_size</span> <span class="op">=</span> <span class="ident">QUEUE_SIZES</span>.<span class="ident">len</span>();
 
@@ -275,13 +340,16 @@
             <span class="ident">init_features</span>,
             <span class="ident">allow_protocol_features</span>,
         )<span class="question-mark">?</span>;
-        <span class="ident">handler</span>.<span class="ident">set_device_request_channel</span>(<span class="ident">device_tube</span>)<span class="question-mark">?</span>;
+        <span class="ident">handler</span>.<span class="ident">set_device_request_channel</span>(<span class="ident">gpu_tubes</span>.<span class="number">1</span>)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">Gpu</span> {
             <span class="ident">kill_evt</span>: <span class="prelude-val">None</span>,
             <span class="ident">worker_thread</span>: <span class="prelude-val">None</span>,
             <span class="ident">handler</span>: <span class="ident">RefCell::new</span>(<span class="ident">handler</span>),
-            <span class="ident">host_tube</span>,
+            <span class="ident">state</span>: <span class="ident">GpuState::Init</span> {
+                <span class="ident">host_gpu_tube</span>: <span class="ident">gpu_tubes</span>.<span class="number">0</span>,
+                <span class="ident">device_control_tube</span>,
+            },
             <span class="ident">queue_sizes</span>: <span class="ident">QUEUE_SIZES</span>[..].<span class="ident">to_vec</span>(),
         })
     }
@@ -381,21 +449,39 @@
     }
 
     <span class="kw">fn</span> <span class="ident">get_device_bars</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">address</span>: <span class="ident">PciAddress</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PciBarConfiguration</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">host_tube</span>.<span class="ident">send</span>(<span class="kw-2">&amp;</span><span class="ident">address</span>) {
+        <span class="kw">let</span> (<span class="ident">host_gpu_tube</span>, <span class="ident">device_control_tube</span>) <span class="op">=</span>
+            <span class="kw">match</span> <span class="ident">std::mem::replace</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">state</span>, <span class="ident">GpuState::Configured</span>) {
+                <span class="ident">GpuState::Init</span> {
+                    <span class="ident">host_gpu_tube</span>,
+                    <span class="ident">device_control_tube</span>,
+                } =&gt; (<span class="ident">host_gpu_tube</span>, <span class="ident">device_control_tube</span>),
+                <span class="ident">GpuState::Configured</span> =&gt; {
+                    <span class="macro">panic!</span>(<span class="string">&quot;get_device_bars shall not be called more than once!&quot;</span>)
+                }
+            };
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">host_gpu_tube</span>.<span class="ident">send</span>(<span class="kw-2">&amp;</span><span class="ident">address</span>) {
             <span class="macro">error!</span>(<span class="string">&quot;failed to send `PciAddress` to gpu device: {}&quot;</span>, <span class="ident">e</span>);
             <span class="kw">return</span> <span class="ident">Vec::new</span>();
         }
 
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">host_tube</span>.<span class="ident">recv</span>() {
+        <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">host_gpu_tube</span>.<span class="ident">recv</span>() {
             <span class="prelude-val">Ok</span>(<span class="ident">cfg</span>) =&gt; <span class="ident">cfg</span>,
             <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
                 <span class="macro">error!</span>(
                     <span class="string">&quot;failed to receive `PciBarConfiguration` from gpu device: {}&quot;</span>,
                     <span class="ident">e</span>
                 );
-                <span class="ident">Vec::new</span>()
+                <span class="kw">return</span> <span class="ident">Vec::new</span>();
             }
+        };
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">host_gpu_tube</span>.<span class="ident">send</span>(<span class="kw-2">&amp;</span><span class="ident">device_control_tube</span>) {
+            <span class="macro">error!</span>(<span class="string">&quot;failed to send device control tube to gpu device: {}&quot;</span>, <span class="ident">e</span>);
+            <span class="kw">return</span> <span class="ident">Vec::new</span>();
         }
+
+        <span class="ident">res</span>
     }
 
     <span class="kw">fn</span> <span class="ident">get_device_caps</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">PciCapability</span><span class="op">&gt;</span><span class="op">&gt;</span> {

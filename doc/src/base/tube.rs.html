@@ -248,6 +248,7 @@
 <span id="247">247</span>
 <span id="248">248</span>
 <span id="249">249</span>
+<span id="250">250</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -262,7 +263,7 @@
 
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">Executor</span>, <span class="ident">IntoAsync</span>, <span class="ident">IoSourceExt</span>};
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::DeserializeOwned</span>, <span class="ident">Serialize</span>};
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::DeserializeOwned</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">sys_util</span>::{
     <span class="ident">deserialize_with_descriptors</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="ident">SerializeDescriptors</span>,
 };
@@ -294,6 +295,7 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 
 <span class="doccomment">/// Bidirectional tube that support both send and recv.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Tube</span> {
     <span class="ident">socket</span>: <span class="ident">UnixSeqpacket</span>,
     <span class="ident">_unsync_marker</span>: <span class="ident">UnsyncMarker</span>,
