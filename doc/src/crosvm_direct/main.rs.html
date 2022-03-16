@@ -4272,6 +4272,7 @@
 <span id="4271">4271</span>
 <span id="4272">4272</span>
 <span id="4273">4273</span>
+<span id="4274">4274</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -7343,10 +7344,11 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
             <span class="kw">if</span> <span class="kw">let</span> [<span class="ident">label</span>, <span class="ident">path</span>] <span class="op">=</span> <span class="ident">partition_arg</span>.<span class="ident">split</span>(<span class="string">&quot;:&quot;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>()[..] {
                 <span class="kw">let</span> <span class="ident">partition_file</span> <span class="op">=</span> <span class="ident">File::open</span>(<span class="ident">path</span>)
                     .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="string">&quot;Failed to open partition image: {}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">create_disk_file</span>(<span class="ident">partition_file</span>, <span class="ident">disk::MAX_NESTING_DEPTH</span>)
-                    .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="string">&quot;Failed to create DiskFile instance: {}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>
-                    .<span class="ident">get_len</span>()
-                    .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="string">&quot;Failed to get length of partition image: {}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span>
+                    <span class="ident">create_disk_file</span>(<span class="ident">partition_file</span>, <span class="ident">disk::MAX_NESTING_DEPTH</span>, <span class="ident">Path::new</span>(<span class="ident">path</span>))
+                        .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="string">&quot;Failed to create DiskFile instance: {}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>
+                        .<span class="ident">get_len</span>()
+                        .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="string">&quot;Failed to get length of partition image: {}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(<span class="ident">PartitionInfo</span> {
                     <span class="ident">label</span>: <span class="ident">label</span>.<span class="ident">to_owned</span>(),
                     <span class="ident">path</span>: <span class="ident">Path::new</span>(<span class="ident">path</span>).<span class="ident">to_owned</span>(),

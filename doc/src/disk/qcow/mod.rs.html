@@ -2507,6 +2507,12 @@
 <span id="2506">2506</span>
 <span id="2507">2507</span>
 <span id="2508">2508</span>
+<span id="2509">2509</span>
+<span id="2510">2510</span>
+<span id="2511">2511</span>
+<span id="2512">2512</span>
+<span id="2513">2513</span>
+<span id="2514">2514</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2946,8 +2952,9 @@
                 <span class="bool-val">false</span>, <span class="comment">/*O_DIRECT*/</span>
             )
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::BackingFileIo</span>(<span class="ident">e</span>.<span class="ident">into</span>()))<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">backing_file</span> <span class="op">=</span> <span class="ident">create_disk_file</span>(<span class="ident">backing_raw_file</span>, <span class="ident">max_nesting_depth</span>)
-                .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::BackingFileOpen</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">backing_file</span> <span class="op">=</span>
+                <span class="ident">create_disk_file</span>(<span class="ident">backing_raw_file</span>, <span class="ident">max_nesting_depth</span>, <span class="ident">Path::new</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>))
+                    .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::BackingFileOpen</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>;
             <span class="prelude-val">Some</span>(<span class="ident">backing_file</span>)
         } <span class="kw">else</span> {
             <span class="prelude-val">None</span>
@@ -3083,15 +3090,20 @@
         <span class="ident">backing_file_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
         <span class="ident">backing_file_max_nesting_depth</span>: <span class="ident">u32</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">QcowFile</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">backing_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="ident">backing_file_name</span>);
         <span class="kw">let</span> <span class="ident">backing_raw_file</span> <span class="op">=</span> <span class="ident">open_file</span>(
-            <span class="ident">Path::new</span>(<span class="ident">backing_file_name</span>),
+            <span class="ident">backing_path</span>,
             <span class="bool-val">true</span>, <span class="comment">/*read_only*/</span>
             <span class="comment">// TODO(b/190435784): add support for O_DIRECT.</span>
             <span class="bool-val">false</span>, <span class="comment">/*O_DIRECT*/</span>
         )
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::BackingFileIo</span>(<span class="ident">e</span>.<span class="ident">into</span>()))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">backing_file</span> <span class="op">=</span> <span class="ident">create_disk_file</span>(<span class="ident">backing_raw_file</span>, <span class="ident">backing_file_max_nesting_depth</span>)
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::BackingFileOpen</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">backing_file</span> <span class="op">=</span> <span class="ident">create_disk_file</span>(
+            <span class="ident">backing_raw_file</span>,
+            <span class="ident">backing_file_max_nesting_depth</span>,
+            <span class="ident">backing_path</span>,
+        )
+        .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::BackingFileOpen</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">backing_file</span>.<span class="ident">get_len</span>().<span class="ident">map_err</span>(<span class="ident">Error::BackingFileIo</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="ident">QcowHeader::create_for_size_and_path</span>(<span class="ident">size</span>, <span class="prelude-val">Some</span>(<span class="ident">backing_file_name</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">QcowFile::new_from_header</span>(<span class="ident">file</span>, <span class="ident">header</span>, <span class="ident">backing_file_max_nesting_depth</span>)<span class="question-mark">?</span>;

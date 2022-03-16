@@ -516,6 +516,11 @@
 <span id="515">515</span>
 <span id="516">516</span>
 <span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -524,6 +529,7 @@
 <span class="kw">use</span> <span class="ident">std::fmt::Debug</span>;
 <span class="kw">use</span> <span class="ident">std::fs::File</span>;
 <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">Read</span>, <span class="ident">Seek</span>, <span class="ident">SeekFrom</span>};
+<span class="kw">use</span> <span class="ident">std::path::Path</span>;
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="ident">async_trait::async_trait</span>;
@@ -752,7 +758,11 @@
 }
 
 <span class="doccomment">/// Inspect the image file type and create an appropriate disk file to match it.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_disk_file</span>(<span class="ident">raw_image</span>: <span class="ident">File</span>, <span class="kw-2">mut</span> <span class="ident">max_nesting_depth</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">DiskFile</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_disk_file</span>(
+    <span class="ident">raw_image</span>: <span class="ident">File</span>,
+    <span class="kw-2">mut</span> <span class="ident">max_nesting_depth</span>: <span class="ident">u32</span>,
+    <span class="ident">image_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
+) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">DiskFile</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">max_nesting_depth</span> <span class="op">==</span> <span class="number">0</span> {
         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::MaxNestingDepthExceeded</span>);
     }
@@ -769,7 +779,7 @@
         <span class="ident">ImageType::CompositeDisk</span> =&gt; {
             <span class="comment">// Valid composite disk header present</span>
             <span class="ident">Box::new</span>(
-                <span class="ident">CompositeDiskFile::from_file</span>(<span class="ident">raw_image</span>, <span class="ident">max_nesting_depth</span>)
+                <span class="ident">CompositeDiskFile::from_file</span>(<span class="ident">raw_image</span>, <span class="ident">max_nesting_depth</span>, <span class="ident">image_path</span>)
                     .<span class="ident">map_err</span>(<span class="ident">Error::CreateCompositeDisk</span>)<span class="question-mark">?</span>,
             ) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">DiskFile</span><span class="op">&gt;</span>
         }

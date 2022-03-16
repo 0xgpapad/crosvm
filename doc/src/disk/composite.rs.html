@@ -1012,6 +1012,15 @@
 <span id="1011">1011</span>
 <span id="1012">1012</span>
 <span id="1013">1013</span>
+<span id="1014">1014</span>
+<span id="1015">1015</span>
+<span id="1016">1016</span>
+<span id="1017">1017</span>
+<span id="1018">1018</span>
+<span id="1019">1019</span>
+<span id="1020">1020</span>
+<span id="1021">1021</span>
+<span id="1022">1022</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1138,7 +1147,7 @@
 }
 
 <span class="doccomment">/// The version of the composite disk format supported by this implementation.</span>
-<span class="kw">const</span> <span class="ident">COMPOSITE_DISK_VERSION</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span>;
+<span class="kw">const</span> <span class="ident">COMPOSITE_DISK_VERSION</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">2</span>;
 
 <span class="doccomment">/// A magic string placed at the beginning of a composite disk file to identify it.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CDISK_MAGIC</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;composite_disk\x1d&quot;</span>;
@@ -1171,7 +1180,11 @@
     <span class="doccomment">/// Set up a composite disk by reading the specification from a file. The file must consist of</span>
     <span class="doccomment">/// the CDISK_MAGIC string followed by one binary instance of the CompositeDisk protocol</span>
     <span class="doccomment">/// buffer. Returns an error if it could not read the file or if the specification was invalid.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_file</span>(<span class="kw-2">mut</span> <span class="ident">file</span>: <span class="ident">File</span>, <span class="ident">max_nesting_depth</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">CompositeDiskFile</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_file</span>(
+        <span class="kw-2">mut</span> <span class="ident">file</span>: <span class="ident">File</span>,
+        <span class="ident">max_nesting_depth</span>: <span class="ident">u32</span>,
+        <span class="ident">image_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">CompositeDiskFile</span><span class="op">&gt;</span> {
         <span class="ident">file</span>.<span class="ident">seek</span>(<span class="ident">SeekFrom::Start</span>(<span class="number">0</span>))
             .<span class="ident">map_err</span>(<span class="ident">Error::ReadSpecificationError</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">magic_space</span> <span class="op">=</span> [<span class="number">0u8</span>; <span class="ident">CDISK_MAGIC_LEN</span>];
@@ -1182,22 +1195,27 @@
         }
         <span class="kw">let</span> <span class="ident">proto</span>: <span class="ident">cdisk_spec::CompositeDisk</span> <span class="op">=</span>
             <span class="ident">Message::parse_from_reader</span>(<span class="kw-2">&amp;mut</span> <span class="ident">file</span>).<span class="ident">map_err</span>(<span class="ident">Error::InvalidProto</span>)<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">proto</span>.<span class="ident">get_version</span>() <span class="op">!</span><span class="op">=</span> <span class="ident">COMPOSITE_DISK_VERSION</span> {
+        <span class="kw">if</span> <span class="ident">proto</span>.<span class="ident">get_version</span>() <span class="op">&gt;</span> <span class="ident">COMPOSITE_DISK_VERSION</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::UnknownVersion</span>(<span class="ident">proto</span>.<span class="ident">get_version</span>()));
         }
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">disks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ComponentDiskPart</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">proto</span>
             .<span class="ident">get_component_disks</span>()
             .<span class="ident">iter</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">disk</span><span class="op">|</span> {
-                <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">open_file</span>(
-                    <span class="ident">Path::new</span>(<span class="ident">disk</span>.<span class="ident">get_file_path</span>()),
+                <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">proto</span>.<span class="ident">get_version</span>() <span class="op">==</span> <span class="number">1</span> {
+                    <span class="ident">PathBuf::from</span>(<span class="ident">disk</span>.<span class="ident">get_file_path</span>())
+                } <span class="kw">else</span> {
+                    <span class="ident">image_path</span>.<span class="ident">parent</span>().<span class="ident">unwrap</span>().<span class="ident">join</span>(<span class="ident">disk</span>.<span class="ident">get_file_path</span>())
+                };
+                <span class="kw">let</span> <span class="ident">comp_file</span> <span class="op">=</span> <span class="ident">open_file</span>(
+                    <span class="kw-2">&amp;</span><span class="ident">path</span>,
                     <span class="ident">disk</span>.<span class="ident">get_read_write_capability</span>() <span class="op">!</span><span class="op">=</span> <span class="ident">cdisk_spec::ReadWriteCapability::READ_WRITE</span>,
                     <span class="comment">// TODO(b/190435784): add support for O_DIRECT.</span>
                     <span class="bool-val">false</span>, <span class="comment">/*O_DIRECT*/</span>
                 )
                 .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::OpenFile</span>(<span class="ident">e</span>.<span class="ident">into</span>(), <span class="ident">disk</span>.<span class="ident">get_file_path</span>().<span class="ident">to_string</span>()))<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(<span class="ident">ComponentDiskPart</span> {
-                    <span class="ident">file</span>: <span class="ident">create_disk_file</span>(<span class="ident">file</span>, <span class="ident">max_nesting_depth</span>)
+                    <span class="ident">file</span>: <span class="ident">create_disk_file</span>(<span class="ident">comp_file</span>, <span class="ident">max_nesting_depth</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>)
                         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::DiskError</span>(<span class="ident">Box::new</span>(<span class="ident">e</span>)))<span class="question-mark">?</span>,
                     <span class="ident">offset</span>: <span class="ident">disk</span>.<span class="ident">get_offset</span>(),
                     <span class="ident">length</span>: <span class="number">0</span>, <span class="comment">// Assigned later</span>
