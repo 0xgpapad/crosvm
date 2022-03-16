@@ -2244,6 +2244,14 @@
 <span id="2243">2243</span>
 <span id="2244">2244</span>
 <span id="2245">2245</span>
+<span id="2246">2246</span>
+<span id="2247">2247</span>
+<span id="2248">2248</span>
+<span id="2249">2249</span>
+<span id="2250">2250</span>
+<span id="2251">2251</span>
+<span id="2252">2252</span>
+<span id="2253">2253</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3823,6 +3831,7 @@
         <span class="ident">IrqFd</span> { <span class="ident">index</span>: <span class="ident">IrqEventIndex</span> },
         <span class="ident">VmControlServer</span>,
         <span class="ident">VmControl</span> { <span class="ident">index</span>: <span class="ident">usize</span> },
+        <span class="ident">DelayedIrqFd</span>,
     }
 
     <span class="ident">stdin</span>()
@@ -3858,6 +3867,12 @@
     <span class="kw">for</span> (<span class="ident">index</span>, <span class="ident">_gsi</span>, <span class="ident">evt</span>) <span class="kw">in</span> <span class="ident">events</span> {
         <span class="ident">wait_ctx</span>
             .<span class="ident">add</span>(<span class="kw-2">&amp;</span><span class="ident">evt</span>, <span class="ident">Token::IrqFd</span> { <span class="ident">index</span> })
+            .<span class="ident">context</span>(<span class="string">&quot;failed to add descriptor to wait context&quot;</span>)<span class="question-mark">?</span>;
+    }
+
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">delayed_ioapic_irq_trigger</span>) <span class="op">=</span> <span class="ident">linux</span>.<span class="ident">irq_chip</span>.<span class="ident">irq_delayed_event_token</span>()<span class="question-mark">?</span> {
+        <span class="ident">wait_ctx</span>
+            .<span class="ident">add</span>(<span class="kw-2">&amp;</span><span class="ident">delayed_ioapic_irq_trigger</span>, <span class="ident">Token::DelayedIrqFd</span>)
             .<span class="ident">context</span>(<span class="string">&quot;failed to add descriptor to wait context&quot;</span>)<span class="question-mark">?</span>;
     }
 
@@ -3986,10 +4001,6 @@
             }
         };
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">linux</span>.<span class="ident">irq_chip</span>.<span class="ident">process_delayed_irq_events</span>() {
-            <span class="macro">warn!</span>(<span class="string">&quot;can&#39;t deliver delayed irqs: {}&quot;</span>, <span class="ident">e</span>);
-        }
-
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vm_control_indices_to_remove</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">for</span> <span class="ident">event</span> <span class="kw">in</span> <span class="ident">events</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">is_readable</span>) {
             <span class="kw">match</span> <span class="ident">event</span>.<span class="ident">token</span> {
@@ -4056,6 +4067,11 @@
                 <span class="ident">Token::IrqFd</span> { <span class="ident">index</span> } =&gt; {
                     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">linux</span>.<span class="ident">irq_chip</span>.<span class="ident">service_irq_event</span>(<span class="ident">index</span>) {
                         <span class="macro">error!</span>(<span class="string">&quot;failed to signal irq {}: {}&quot;</span>, <span class="ident">index</span>, <span class="ident">e</span>);
+                    }
+                }
+                <span class="ident">Token::DelayedIrqFd</span> =&gt; {
+                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">linux</span>.<span class="ident">irq_chip</span>.<span class="ident">process_delayed_irq_events</span>() {
+                        <span class="macro">warn!</span>(<span class="string">&quot;can&#39;t deliver delayed irqs: {}&quot;</span>, <span class="ident">e</span>);
                     }
                 }
                 <span class="ident">Token::VmControlServer</span> =&gt; {

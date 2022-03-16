@@ -1120,6 +1120,19 @@
 <span id="1119">1119</span>
 <span id="1120">1120</span>
 <span id="1121">1121</span>
+<span id="1122">1122</span>
+<span id="1123">1123</span>
+<span id="1124">1124</span>
+<span id="1125">1125</span>
+<span id="1126">1126</span>
+<span id="1127">1127</span>
+<span id="1128">1128</span>
+<span id="1129">1129</span>
+<span id="1130">1130</span>
+<span id="1131">1131</span>
+<span id="1132">1132</span>
+<span id="1133">1133</span>
+<span id="1134">1134</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1286,6 +1299,8 @@
     <span class="doccomment">/// locked the ioapic and the ioapic sends a AddMsiRoute signal to the main thread (which</span>
     <span class="doccomment">/// itself may be busy trying to call service_irq).</span>
     <span class="ident">delayed_ioapic_irq_events</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// Event which is meant to trigger process of any irqs events that were delayed.</span>
+    <span class="ident">delayed_ioapic_irq_trigger</span>: <span class="ident">Event</span>,
     <span class="doccomment">/// Array of Events that devices will use to assert ioapic pins.</span>
     <span class="ident">irq_events</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">IrqEvent</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
@@ -1340,6 +1355,7 @@
             <span class="ident">ioapic</span>: <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">Ioapic::new</span>(<span class="ident">irq_tube</span>, <span class="ident">ioapic_pins</span>)<span class="question-mark">?</span>)),
             <span class="ident">ioapic_pins</span>,
             <span class="ident">delayed_ioapic_irq_events</span>: <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">Vec::new</span>())),
+            <span class="ident">delayed_ioapic_irq_trigger</span>: <span class="ident">Event::new</span>()<span class="question-mark">?</span>,
             <span class="ident">irq_events</span>: <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">Default::default</span>())),
         };
 
@@ -1587,6 +1603,7 @@
                             }
                         } <span class="kw">else</span> {
                             <span class="self">self</span>.<span class="ident">delayed_ioapic_irq_events</span>.<span class="ident">lock</span>().<span class="ident">push</span>(<span class="ident">event_index</span>);
+                            <span class="self">self</span>.<span class="ident">delayed_ioapic_irq_trigger</span>.<span class="ident">write</span>(<span class="number">1</span>).<span class="ident">unwrap</span>();
                         }
                     }
                     <span class="kw">_</span> =&gt; {}
@@ -1671,6 +1688,7 @@
             <span class="ident">ioapic</span>: <span class="self">self</span>.<span class="ident">ioapic</span>.<span class="ident">clone</span>(),
             <span class="ident">ioapic_pins</span>: <span class="self">self</span>.<span class="ident">ioapic_pins</span>,
             <span class="ident">delayed_ioapic_irq_events</span>: <span class="self">self</span>.<span class="ident">delayed_ioapic_irq_events</span>.<span class="ident">clone</span>(),
+            <span class="ident">delayed_ioapic_irq_trigger</span>: <span class="ident">Event::new</span>()<span class="question-mark">?</span>,
             <span class="ident">irq_events</span>: <span class="self">self</span>.<span class="ident">irq_events</span>.<span class="ident">clone</span>(),
         })
     }
@@ -1763,7 +1781,15 @@
                 }
             });
 
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">delayed_ioapic_irq_events</span>.<span class="ident">lock</span>().<span class="ident">is_empty</span>() {
+            <span class="self">self</span>.<span class="ident">delayed_ioapic_irq_trigger</span>.<span class="ident">read</span>()<span class="question-mark">?</span>;
+        }
+
         <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">fn</span> <span class="ident">irq_delayed_event_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">delayed_ioapic_irq_trigger</span>.<span class="ident">try_clone</span>()<span class="question-mark">?</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">check_capability</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">c</span>: <span class="ident">IrqChipCap</span>) -&gt; <span class="ident">bool</span> {

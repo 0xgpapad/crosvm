@@ -155,6 +155,12 @@
 <span id="154">154</span>
 <span id="155">155</span>
 <span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -291,6 +297,12 @@
 
     <span class="doccomment">/// Process any irqs events that were delayed because of any locking issues.</span>
     <span class="kw">fn</span> <span class="ident">process_delayed_irq_events</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+
+    <span class="doccomment">/// Return an event which is meant to trigger process of any irqs events that were delayed</span>
+    <span class="doccomment">/// by calling process_delayed_irq_events(). This should be used by the main thread to wait</span>
+    <span class="doccomment">/// for delayed irq event kick. It is process_delayed_irq_events() responsibility to read</span>
+    <span class="doccomment">/// the event as long as there is no more irqs to be serviced.</span>
+    <span class="kw">fn</span> <span class="ident">irq_delayed_event_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// Checks if a particular `IrqChipCap` is available.</span>
     <span class="kw">fn</span> <span class="ident">check_capability</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">c</span>: <span class="ident">IrqChipCap</span>) -&gt; <span class="ident">bool</span>;
