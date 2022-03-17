@@ -141,6 +141,9 @@
 <span id="140">140</span>
 <span id="141">141</span>
 <span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
 
@@ -153,12 +156,15 @@
 <span class="kw">use</span> <span class="ident">std::os::unix::io::RawFd</span>;
 <span class="kw">use</span> <span class="ident">std::path::Path</span>;
 
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">EventFd</span>, <span class="ident">RawDescriptor</span>};
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">RawDescriptor</span>};
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span> <span class="kw">as</span> <span class="ident">ThisError</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::connection</span>::{<span class="ident">Endpoint</span> <span class="kw">as</span> <span class="ident">EndpointTrait</span>, <span class="ident">Listener</span> <span class="kw">as</span> <span class="ident">ListenerTrait</span>, <span class="ident">Req</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{
+    <span class="ident">connection</span>::{<span class="ident">Endpoint</span> <span class="kw">as</span> <span class="ident">EndpointTrait</span>, <span class="ident">Listener</span> <span class="kw">as</span> <span class="ident">ListenerTrait</span>, <span class="ident">Req</span>},
+    <span class="ident">EventFd</span>,
+};
 
 <span class="doccomment">/// Errors for `Device::recv_into_bufs()`.</span>
 <span class="attribute">#[<span class="ident">sorted</span>]</span>

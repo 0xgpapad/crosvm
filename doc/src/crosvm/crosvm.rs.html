@@ -568,6 +568,9 @@
 <span id="567">567</span>
 <span id="568">568</span>
 <span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -585,6 +588,7 @@
 
 <span class="kw">use</span> <span class="ident">std::collections::BTreeMap</span>;
 <span class="kw">use</span> <span class="ident">std::net</span>;
+<span class="kw">use</span> <span class="ident">std::ops::RangeInclusive</span>;
 <span class="kw">use</span> <span class="ident">std::os::unix::io::RawFd</span>;
 <span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 <span class="kw">use</span> <span class="ident">std::str::FromStr</span>;
@@ -1017,6 +1021,7 @@
     <span class="kw">pub</span> <span class="ident">pivot_root</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">force_s2idle</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">strict_balloon</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">mmio_address_ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Config</span> {
@@ -1134,6 +1139,7 @@
             <span class="ident">pivot_root</span>: <span class="prelude-val">None</span>,
             <span class="ident">force_s2idle</span>: <span class="bool-val">false</span>,
             <span class="ident">strict_balloon</span>: <span class="bool-val">false</span>,
+            <span class="ident">mmio_address_ranges</span>: <span class="ident">Vec::new</span>(),
         }
     }
 }

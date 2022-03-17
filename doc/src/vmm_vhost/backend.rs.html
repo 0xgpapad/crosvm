@@ -506,6 +506,26 @@
 <span id="505">505</span>
 <span id="506">506</span>
 <span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2019-2021 Alibaba Cloud. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0 or BSD-3-Clause</span>
 <span class="comment">//</span>
@@ -517,7 +537,7 @@
 
 <span class="doccomment">//! Common traits and structs for vhost-user backend drivers.</span>
 
-<span class="kw">use</span> <span class="ident">base::RawDescriptor</span>;
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">RawDescriptor</span>, <span class="ident">INVALID_DESCRIPTOR</span>};
 <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
 <span class="kw">use</span> <span class="ident">std::sync::RwLock</span>;
 
@@ -568,7 +588,7 @@
 }
 
 <span class="doccomment">/// Memory region configuration data.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">VhostUserMemoryRegionInfo</span> {
     <span class="doccomment">/// Guest physical address of the memory region.</span>
     <span class="kw">pub</span> <span class="ident">guest_phys_addr</span>: <span class="ident">u64</span>,
@@ -580,6 +600,19 @@
     <span class="kw">pub</span> <span class="ident">mmap_offset</span>: <span class="ident">u64</span>,
     <span class="doccomment">/// Optional file descriptor for mmap.</span>
     <span class="kw">pub</span> <span class="ident">mmap_handle</span>: <span class="ident">RawDescriptor</span>,
+}
+
+<span class="comment">// We cannot derive default because windows Handle does not implement a default.</span>
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">VhostUserMemoryRegionInfo</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
+        <span class="ident">VhostUserMemoryRegionInfo</span> {
+            <span class="ident">guest_phys_addr</span>: <span class="ident">u64::default</span>(),
+            <span class="ident">memory_size</span>: <span class="ident">u64::default</span>(),
+            <span class="ident">userspace_addr</span>: <span class="ident">u64::default</span>(),
+            <span class="ident">mmap_offset</span>: <span class="ident">u64::default</span>(),
+            <span class="ident">mmap_handle</span>: <span class="ident">INVALID_DESCRIPTOR</span>,
+        }
+    }
 }
 
 <span class="doccomment">/// An interface for setting up vhost-based backend drivers with interior mutability.</span>
@@ -901,12 +934,16 @@
 
         <span class="kw">fn</span> <span class="ident">set_log_base</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">base</span>: <span class="ident">u64</span>, <span class="ident">fd</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RawDescriptor</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
             <span class="macro">assert_eq!</span>(<span class="ident">base</span>, <span class="number">0x100</span>);
-            <span class="macro">assert_eq!</span>(<span class="ident">fd</span>, <span class="prelude-val">Some</span>(<span class="number">100</span>));
+            <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unnecessary_cast</span>)]</span>
+            <span class="kw">let</span> <span class="ident">rd</span> <span class="op">=</span> <span class="number">100</span> <span class="kw">as</span> <span class="ident">RawDescriptor</span>;
+            <span class="macro">assert_eq!</span>(<span class="ident">fd</span>, <span class="prelude-val">Some</span>(<span class="ident">rd</span>));
             <span class="prelude-val">Ok</span>(())
         }
 
         <span class="kw">fn</span> <span class="ident">set_log_fd</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">fd</span>: <span class="ident">RawDescriptor</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-            <span class="macro">assert_eq!</span>(<span class="ident">fd</span>, <span class="number">100</span>);
+            <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unnecessary_cast</span>)]</span>
+            <span class="kw">let</span> <span class="ident">rd</span> <span class="op">=</span> <span class="number">100</span> <span class="kw">as</span> <span class="ident">RawDescriptor</span>;
+            <span class="macro">assert_eq!</span>(<span class="ident">fd</span>, <span class="ident">rd</span>);
             <span class="prelude-val">Ok</span>(())
         }
 
@@ -961,8 +998,11 @@
         <span class="ident">b</span>.<span class="ident">set_owner</span>().<span class="ident">unwrap</span>();
         <span class="ident">b</span>.<span class="ident">reset_owner</span>().<span class="ident">unwrap</span>();
         <span class="ident">b</span>.<span class="ident">set_mem_table</span>(<span class="kw-2">&amp;</span>[]).<span class="ident">unwrap</span>();
-        <span class="ident">b</span>.<span class="ident">set_log_base</span>(<span class="number">0x100</span>, <span class="prelude-val">Some</span>(<span class="number">100</span>)).<span class="ident">unwrap</span>();
-        <span class="ident">b</span>.<span class="ident">set_log_fd</span>(<span class="number">100</span>).<span class="ident">unwrap</span>();
+
+        <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unnecessary_cast</span>)]</span>
+        <span class="kw">let</span> <span class="ident">rd</span> <span class="op">=</span> <span class="number">100</span> <span class="kw">as</span> <span class="ident">RawDescriptor</span>;
+        <span class="ident">b</span>.<span class="ident">set_log_base</span>(<span class="number">0x100</span>, <span class="prelude-val">Some</span>(<span class="ident">rd</span>)).<span class="ident">unwrap</span>();
+        <span class="ident">b</span>.<span class="ident">set_log_fd</span>(<span class="ident">rd</span>).<span class="ident">unwrap</span>();
         <span class="ident">b</span>.<span class="ident">set_vring_num</span>(<span class="number">1</span>, <span class="number">256</span>).<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">VringConfigData</span> {

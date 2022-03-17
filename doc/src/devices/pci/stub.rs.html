@@ -180,6 +180,10 @@
 <span id="179">179</span>
 <span id="180">180</span>
 <span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -338,22 +342,26 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">address_allocation</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">allocator</span> <span class="op">=</span> <span class="ident">SystemAllocator::new</span>(<span class="ident">SystemAllocatorConfig</span> {
-            <span class="ident">io</span>: <span class="prelude-val">Some</span>(<span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0x1000</span>,
-                <span class="ident">size</span>: <span class="number">0x2000</span>,
-            }),
-            <span class="ident">low_mmio</span>: <span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0x2000_0000</span>,
-                <span class="ident">size</span>: <span class="number">0x1000_0000</span>,
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">allocator</span> <span class="op">=</span> <span class="ident">SystemAllocator::new</span>(
+            <span class="ident">SystemAllocatorConfig</span> {
+                <span class="ident">io</span>: <span class="prelude-val">Some</span>(<span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0x1000</span>,
+                    <span class="ident">size</span>: <span class="number">0x2000</span>,
+                }),
+                <span class="ident">low_mmio</span>: <span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0x2000_0000</span>,
+                    <span class="ident">size</span>: <span class="number">0x1000_0000</span>,
+                },
+                <span class="ident">high_mmio</span>: <span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0x1_0000_0000</span>,
+                    <span class="ident">size</span>: <span class="number">0x1000_0000</span>,
+                },
+                <span class="ident">platform_mmio</span>: <span class="prelude-val">None</span>,
+                <span class="ident">first_irq</span>: <span class="number">5</span>,
             },
-            <span class="ident">high_mmio</span>: <span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0x1_0000_0000</span>,
-                <span class="ident">size</span>: <span class="number">0x1000_0000</span>,
-            },
-            <span class="ident">platform_mmio</span>: <span class="prelude-val">None</span>,
-            <span class="ident">first_irq</span>: <span class="number">5</span>,
-        })
+            <span class="prelude-val">None</span>,
+            <span class="kw-2">&amp;</span>[],
+        )
         .<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">device</span> <span class="op">=</span> <span class="ident">StubPciDevice::new</span>(<span class="kw-2">&amp;</span><span class="ident">CONFIG</span>);
 

@@ -1518,6 +1518,9 @@
 <span id="1517">1517</span>
 <span id="1518">1518</span>
 <span id="1519">1519</span>
+<span id="1520">1520</span>
+<span id="1521">1521</span>
+<span id="1522">1522</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1566,6 +1569,7 @@
 <span class="kw">mod</span> <span class="ident">smbios</span>;
 
 <span class="kw">use</span> <span class="ident">std::collections::BTreeMap</span>;
+<span class="kw">use</span> <span class="ident">std::convert::TryFrom</span>;
 <span class="kw">use</span> <span class="ident">std::ffi</span>::{<span class="ident">CStr</span>, <span class="ident">CString</span>};
 <span class="kw">use</span> <span class="ident">std::fs::File</span>;
 <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">Seek</span>};
@@ -1657,8 +1661,6 @@
     <span class="ident">LoadKernel</span>(<span class="ident">kernel_loader::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;error translating address: Page not present&quot;</span>)]</span>
     <span class="ident">PageNotPresent</span>,
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to allocate pstore region: {0}&quot;</span>)]</span>
-    <span class="ident">Pstore</span>(<span class="ident">arch::pstore::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;error reading guest memory {0}&quot;</span>)]</span>
     <span class="ident">ReadingGuestMemory</span>(<span class="ident">vm_memory::GuestMemoryError</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;error reading CPU registers {0}&quot;</span>)]</span>
@@ -1911,11 +1913,11 @@
         <span class="prelude-val">Ok</span>(<span class="ident">arch_memory_regions</span>(<span class="ident">components</span>.<span class="ident">memory_size</span>, <span class="ident">bios_size</span>))
     }
 
-    <span class="kw">fn</span> <span class="ident">create_system_allocator</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Vm</span><span class="op">&gt;</span>(<span class="ident">vm</span>: <span class="kw-2">&amp;</span><span class="ident">V</span>) -&gt; <span class="ident">SystemAllocator</span> {
+    <span class="kw">fn</span> <span class="ident">get_system_allocator_config</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Vm</span><span class="op">&gt;</span>(<span class="ident">vm</span>: <span class="kw-2">&amp;</span><span class="ident">V</span>) -&gt; <span class="ident">SystemAllocatorConfig</span> {
         <span class="kw">let</span> <span class="ident">guest_mem</span> <span class="op">=</span> <span class="ident">vm</span>.<span class="ident">get_memory</span>();
         <span class="kw">let</span> <span class="ident">high_mmio_start</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::get_high_mmio_base</span>(<span class="ident">guest_mem</span>);
         <span class="kw">let</span> <span class="ident">high_mmio_size</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::get_high_mmio_size</span>(<span class="ident">vm</span>);
-        <span class="ident">SystemAllocator::new</span>(<span class="ident">SystemAllocatorConfig</span> {
+        <span class="ident">SystemAllocatorConfig</span> {
             <span class="ident">io</span>: <span class="prelude-val">Some</span>(<span class="ident">MemRegion</span> {
                 <span class="ident">base</span>: <span class="number">0xc000</span>,
                 <span class="ident">size</span>: <span class="number">0x4000</span>,
@@ -1930,8 +1932,7 @@
             },
             <span class="ident">platform_mmio</span>: <span class="prelude-val">None</span>,
             <span class="ident">first_irq</span>: <span class="ident">X86_64_IRQ_BASE</span>,
-        })
-        .<span class="ident">unwrap</span>()
+        }
     }
 
     <span class="kw">fn</span> <span class="ident">build_vm</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">Vcpu</span><span class="op">&gt;</span>(
@@ -2052,7 +2053,6 @@
         <span class="kw">let</span> <span class="ident">max_bus</span> <span class="op">=</span> ((<span class="ident">PCIE_CFG_MMIO_SIZE</span> <span class="op">/</span> <span class="number">0x100000</span>) <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">u8</span>;
 
         <span class="kw">let</span> (<span class="ident">acpi_dev_resource</span>, <span class="ident">bat_control</span>) <span class="op">=</span> <span class="ident"><span class="self">Self</span>::setup_acpi_devices</span>(
-            <span class="kw-2">&amp;</span><span class="ident">vm</span>,
             <span class="kw-2">&amp;</span><span class="ident">mem</span>,
             <span class="kw-2">&amp;</span><span class="ident">io_bus</span>,
             <span class="ident">system_allocator</span>,
@@ -2784,8 +2784,7 @@
     <span class="doccomment">/// * - `irq_chip` the IrqChip object for registering irq events</span>
     <span class="doccomment">/// * - `battery` indicate whether to create the battery</span>
     <span class="doccomment">/// * - `mmio_bus` the MMIO bus to add the devices to</span>
-    <span class="kw">fn</span> <span class="ident">setup_acpi_devices</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">VmX86_64</span><span class="op">&gt;</span>(
-        <span class="ident">vm</span>: <span class="kw-2">&amp;</span><span class="ident">V</span>,
+    <span class="kw">fn</span> <span class="ident">setup_acpi_devices</span>(
         <span class="ident">mem</span>: <span class="kw-2">&amp;</span><span class="ident">GuestMemory</span>,
         <span class="ident">io_bus</span>: <span class="kw-2">&amp;</span><span class="ident">devices::Bus</span>,
         <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
@@ -2825,6 +2824,28 @@
         <span class="kw">let</span> <span class="ident">pmresource</span> <span class="op">=</span> <span class="ident">devices::ACPIPMResource::new</span>(<span class="ident">pm_sci_evt</span>, <span class="ident">suspend_evt</span>, <span class="ident">exit_evt</span>);
         <span class="ident">pmresource</span>.<span class="ident">to_aml_bytes</span>(<span class="kw-2">&amp;mut</span> <span class="ident">amls</span>);
 
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">crs_entries</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Aml</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec!</span>[
+            <span class="ident">Box::new</span>(<span class="ident">aml::AddressSpace::new_bus_number</span>(<span class="number">0x0u16</span>, <span class="ident">max_bus</span> <span class="kw">as</span> <span class="ident">u16</span>)),
+            <span class="ident">Box::new</span>(<span class="ident">aml::IO::new</span>(<span class="number">0xcf8</span>, <span class="number">0xcf8</span>, <span class="number">1</span>, <span class="number">0x8</span>)),
+        ];
+        <span class="kw">for</span> <span class="ident">r</span> <span class="kw">in</span> <span class="ident">resources</span>.<span class="ident">mmio_pools</span>() {
+            <span class="kw">let</span> <span class="ident">entry</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Aml</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">match</span> (<span class="ident">u32::try_from</span>(<span class="kw-2">*</span><span class="ident">r</span>.<span class="ident">start</span>()), <span class="ident">u32::try_from</span>(<span class="kw-2">*</span><span class="ident">r</span>.<span class="ident">end</span>())) {
+                (<span class="prelude-val">Ok</span>(<span class="ident">start</span>), <span class="prelude-val">Ok</span>(<span class="ident">end</span>)) =&gt; <span class="ident">Box::new</span>(<span class="ident">aml::AddressSpace::new_memory</span>(
+                    <span class="ident">aml::AddressSpaceCachable::NotCacheable</span>,
+                    <span class="bool-val">true</span>,
+                    <span class="ident">start</span>,
+                    <span class="ident">end</span>,
+                )),
+                <span class="kw">_</span> =&gt; <span class="ident">Box::new</span>(<span class="ident">aml::AddressSpace::new_memory</span>(
+                    <span class="ident">aml::AddressSpaceCachable::NotCacheable</span>,
+                    <span class="bool-val">true</span>,
+                    <span class="kw-2">*</span><span class="ident">r</span>.<span class="ident">start</span>(),
+                    <span class="kw-2">*</span><span class="ident">r</span>.<span class="ident">end</span>(),
+                )),
+            };
+            <span class="ident">crs_entries</span>.<span class="ident">push</span>(<span class="ident">entry</span>);
+        }
+
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pci_dsdt_inner_data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">aml::Aml</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">let</span> <span class="ident">hid</span> <span class="op">=</span> <span class="ident">aml::Name::new</span>(<span class="string">&quot;_HID&quot;</span>.<span class="ident">into</span>(), <span class="kw-2">&amp;</span><span class="ident">aml::EISAName::new</span>(<span class="string">&quot;PNP0A08&quot;</span>));
         <span class="ident">pci_dsdt_inner_data</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">hid</span>);
@@ -2840,22 +2861,7 @@
         <span class="ident">pci_dsdt_inner_data</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">supp</span>);
         <span class="kw">let</span> <span class="ident">crs</span> <span class="op">=</span> <span class="ident">aml::Name::new</span>(
             <span class="string">&quot;_CRS&quot;</span>.<span class="ident">into</span>(),
-            <span class="kw-2">&amp;</span><span class="ident">aml::ResourceTemplate::new</span>(<span class="macro">vec!</span>[
-                <span class="kw-2">&amp;</span><span class="ident">aml::AddressSpace::new_bus_number</span>(<span class="number">0x0u16</span>, <span class="ident">max_bus</span> <span class="kw">as</span> <span class="ident">u16</span>),
-                <span class="kw-2">&amp;</span><span class="ident">aml::IO::new</span>(<span class="number">0xcf8</span>, <span class="number">0xcf8</span>, <span class="number">1</span>, <span class="number">0x8</span>),
-                <span class="kw-2">&amp;</span><span class="ident">aml::AddressSpace::new_memory</span>(
-                    <span class="ident">aml::AddressSpaceCachable::NotCacheable</span>,
-                    <span class="bool-val">true</span>,
-                    <span class="ident">END_ADDR_BEFORE_32BITS</span> <span class="kw">as</span> <span class="ident">u32</span>,
-                    (<span class="ident">END_ADDR_BEFORE_32BITS</span> <span class="op">+</span> <span class="ident">PCI_MMIO_SIZE</span> <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">u32</span>,
-                ),
-                <span class="kw-2">&amp;</span><span class="ident">aml::AddressSpace::new_memory</span>(
-                    <span class="ident">aml::AddressSpaceCachable::NotCacheable</span>,
-                    <span class="bool-val">true</span>,
-                    <span class="ident"><span class="self">Self</span>::get_high_mmio_base</span>(<span class="ident">mem</span>),
-                    <span class="ident"><span class="self">Self</span>::get_high_mmio_size</span>(<span class="ident">vm</span>),
-                ),
-            ]),
+            <span class="kw-2">&amp;</span><span class="ident">aml::ResourceTemplate::new</span>(<span class="ident">crs_entries</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="ident">b</span>.<span class="ident">as_ref</span>()).<span class="ident">collect</span>()),
         );
         <span class="ident">pci_dsdt_inner_data</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">crs</span>);
 

@@ -219,21 +219,22 @@
 <span id="218">218</span>
 <span id="219">219</span>
 <span id="220">220</span>
+<span id="221">221</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2020 Alibaba Cloud. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
 
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">SlaveFsCacheReqSocket</span>, <span class="ident">SystemStream</span>};
 <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">RawDescriptor</span>};
 <span class="kw">use</span> <span class="ident">std::io</span>;
 <span class="kw">use</span> <span class="ident">std::mem</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::net::UnixStream</span>;
 <span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>, <span class="ident">MutexGuard</span>};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::connection</span>::{<span class="ident">socket::Endpoint</span> <span class="kw">as</span> <span class="ident">SocketEndpoint</span>, <span class="ident">EndpointExt</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::connection::EndpointExt</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::message</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Error</span>, <span class="ident">HandlerResult</span>, <span class="prelude-ty">Result</span>, <span class="ident">VhostUserMasterReqHandler</span>};
 
 <span class="kw">struct</span> <span class="ident">SlaveFsCacheReqInternal</span> {
-    <span class="ident">sock</span>: <span class="ident">SocketEndpoint</span><span class="op">&lt;</span><span class="ident">SlaveReq</span><span class="op">&gt;</span>,
+    <span class="ident">sock</span>: <span class="ident">SlaveFsCacheReqSocket</span>,
 
     <span class="comment">// Protocol feature VHOST_USER_PROTOCOL_F_REPLY_ACK has been negotiated.</span>
     <span class="ident">reply_ack_negotiated</span>: <span class="ident">bool</span>,
@@ -297,12 +298,12 @@
 <span class="doccomment">/// [MasterReqHandler]: struct.MasterReqHandler.html</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SlaveFsCacheReq</span> {
-    <span class="comment">// underlying Unix domain socket for communication</span>
+    <span class="comment">// underlying socket for communication</span>
     <span class="ident">node</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">SlaveFsCacheReqInternal</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">SlaveFsCacheReq</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">ep</span>: <span class="ident">SocketEndpoint</span><span class="op">&lt;</span><span class="ident">SlaveReq</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">ep</span>: <span class="ident">SlaveFsCacheReqSocket</span>) -&gt; <span class="self">Self</span> {
         <span class="ident">SlaveFsCacheReq</span> {
             <span class="ident">node</span>: <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">SlaveFsCacheReqInternal</span> {
                 <span class="ident">sock</span>: <span class="ident">ep</span>,
@@ -327,9 +328,9 @@
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::Other</span>, <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">e</span>)))
     }
 
-    <span class="doccomment">/// Create a new instance from a `UnixStream` object.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_stream</span>(<span class="ident">sock</span>: <span class="ident">UnixStream</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::new</span>(<span class="ident">SocketEndpoint</span>::<span class="op">&lt;</span><span class="ident">SlaveReq</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="ident">sock</span>))
+    <span class="doccomment">/// Create a new instance from a `SystemStream` object.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_stream</span>(<span class="ident">sock</span>: <span class="ident">SystemStream</span>) -&gt; <span class="self">Self</span> {
+        <span class="ident"><span class="self">Self</span>::new</span>(<span class="ident">SlaveFsCacheReqSocket::from</span>(<span class="ident">sock</span>))
     }
 
     <span class="doccomment">/// Set the negotiation state of the `VHOST_USER_PROTOCOL_F_REPLY_ACK` protocol feature.</span>
@@ -367,10 +368,11 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
 
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::connection::Endpoint</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_slave_fs_cache_req_set_failed</span>() {
-        <span class="kw">let</span> (<span class="ident">p1</span>, <span class="ident">_p2</span>) <span class="op">=</span> <span class="ident">UnixStream::pair</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> (<span class="ident">p1</span>, <span class="ident">_p2</span>) <span class="op">=</span> <span class="ident">SystemStream::pair</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">fs_cache</span> <span class="op">=</span> <span class="ident">SlaveFsCacheReq::from_stream</span>(<span class="ident">p1</span>);
 
         <span class="macro">assert!</span>(<span class="ident">fs_cache</span>.<span class="ident">node</span>().<span class="ident">error</span>.<span class="ident">is_none</span>());
@@ -380,7 +382,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_slave_fs_cache_send_failure</span>() {
-        <span class="kw">let</span> (<span class="ident">p1</span>, <span class="ident">p2</span>) <span class="op">=</span> <span class="ident">UnixStream::pair</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> (<span class="ident">p1</span>, <span class="ident">p2</span>) <span class="op">=</span> <span class="ident">SystemStream::pair</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">fs_cache</span> <span class="op">=</span> <span class="ident">SlaveFsCacheReq::from_stream</span>(<span class="ident">p1</span>);
 
         <span class="ident">fs_cache</span>.<span class="ident">set_failed</span>(<span class="ident">libc::ECONNRESET</span>);
@@ -395,9 +397,9 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_slave_fs_cache_recv_negative</span>() {
-        <span class="kw">let</span> (<span class="ident">p1</span>, <span class="ident">p2</span>) <span class="op">=</span> <span class="ident">UnixStream::pair</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> (<span class="ident">p1</span>, <span class="ident">p2</span>) <span class="op">=</span> <span class="ident">SystemStream::pair</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">fs_cache</span> <span class="op">=</span> <span class="ident">SlaveFsCacheReq::from_stream</span>(<span class="ident">p1</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">master</span> <span class="op">=</span> <span class="ident">SocketEndpoint</span>::<span class="op">&lt;</span><span class="ident">SlaveReq</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="ident">p2</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">master</span> <span class="op">=</span> <span class="ident">SlaveFsCacheReqSocket::from_connection</span>(<span class="ident">p2</span>);
 
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">VhostUserFSSlaveMsg</span><span class="op">&gt;</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hdr</span> <span class="op">=</span> <span class="ident">VhostUserMsgHeader::new</span>(

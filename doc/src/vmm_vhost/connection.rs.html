@@ -450,15 +450,47 @@
 <span id="449">449</span>
 <span id="450">450</span>
 <span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2019 Alibaba Cloud Computing. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
 
 <span class="doccomment">//! Common data structures for listener and endpoint.</span>
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">socket</span>;
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vfio-device&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">vfio</span>;
+<span class="macro">cfg_if::cfg_if!</span> {
+    <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span> {
+        <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">socket</span>;
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vfio-device&quot;</span>)]</span>
+        <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">vfio</span>;
+        <span class="kw">mod</span> <span class="ident">unix</span>;
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span> {
+        <span class="kw">mod</span> <span class="ident">tube</span>;
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tube</span>::{<span class="ident">TubeEndpoint</span>, <span class="ident">TubeListener</span>};
+        <span class="kw">mod</span> <span class="ident">windows</span>;
+    }
+}
 
 <span class="kw">use</span> <span class="ident">base::RawDescriptor</span>;
 <span class="kw">use</span> <span class="ident">std::fs::File</span>;
@@ -644,8 +676,11 @@
         <span class="kw">if</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">&gt;</span> <span class="ident">MAX_MSG_SIZE</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::OversizedMsg</span>);
         }
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iovs</span> <span class="op">=</span> [<span class="ident">hdr</span>.<span class="ident">as_slice</span>(), <span class="ident">body</span>.<span class="ident">as_slice</span>()];
-        <span class="kw">let</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">send_iovec_all</span>(<span class="kw-2">&amp;mut</span> <span class="ident">iovs</span>[..], <span class="ident">fds</span>)<span class="question-mark">?</span>;
+
+        <span class="comment">// We send the header and the body separately here. This is necessary on Windows. Otherwise</span>
+        <span class="comment">// the recv side cannot read the header independently (the transport is message oriented).</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">send_iovec_all</span>(<span class="kw-2">&amp;mut</span> [<span class="ident">hdr</span>.<span class="ident">as_slice</span>()], <span class="ident">fds</span>)<span class="question-mark">?</span>;
+        <span class="ident">bytes</span> <span class="op">+</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">send_iovec_all</span>(<span class="kw-2">&amp;mut</span> [<span class="ident">body</span>.<span class="ident">as_slice</span>()], <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="ident">bytes</span> <span class="op">!</span><span class="op">=</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">VhostUserMsgHeader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>() <span class="op">+</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::PartialMessage</span>);
         }
@@ -681,9 +716,13 @@
             }
         }
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iovs</span> <span class="op">=</span> [<span class="ident">hdr</span>.<span class="ident">as_slice</span>(), <span class="ident">body</span>.<span class="ident">as_slice</span>(), <span class="ident">payload</span>];
         <span class="kw">let</span> <span class="ident">total</span> <span class="op">=</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">VhostUserMsgHeader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span>() <span class="op">+</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">+</span> <span class="ident">len</span>;
-        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">send_iovec_all</span>(<span class="kw-2">&amp;mut</span> <span class="ident">iovs</span>, <span class="ident">fds</span>)<span class="question-mark">?</span>;
+
+        <span class="comment">// We send the header and the body separately here. This is necessary on Windows. Otherwise</span>
+        <span class="comment">// the recv side cannot read the header independently (the transport is message oriented).</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">send_iovec_all</span>(<span class="kw-2">&amp;mut</span> [<span class="ident">hdr</span>.<span class="ident">as_slice</span>()], <span class="ident">fds</span>)<span class="question-mark">?</span>;
+        <span class="ident">len</span> <span class="op">+</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">send_iovec_all</span>(<span class="kw-2">&amp;mut</span> [<span class="ident">body</span>.<span class="ident">as_slice</span>(), <span class="ident">payload</span>], <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
+
         <span class="kw">if</span> <span class="ident">len</span> <span class="op">!</span><span class="op">=</span> <span class="ident">total</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::PartialMessage</span>);
         }
@@ -874,8 +913,17 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Req</span>, <span class="ident">E</span>: <span class="ident">Endpoint</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">EndpointExt</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">E</span> {}
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="macro">cfg_if::cfg_if!</span> {
+        <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span> {
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>)]</span>
+            <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::unix::tests</span>::<span class="kw-2">*</span>;
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span> {
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>)]</span>
+            <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">windows::tests</span>::<span class="kw-2">*</span>;
+        }
+    }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_advance_slices</span>() {

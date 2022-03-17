@@ -479,9 +479,6 @@
 <span id="478">478</span>
 <span id="479">479</span>
 <span id="480">480</span>
-<span id="481">481</span>
-<span id="482">482</span>
-<span id="483">483</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2019 Alibaba Cloud. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0 or BSD-3-Clause</span>
 
@@ -530,32 +527,40 @@
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">connection</span>;
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>)]</span>
-<span class="kw">mod</span> <span class="ident">master</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::master</span>::{<span class="ident">Master</span>, <span class="ident">VhostUserMaster</span>};
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>)]</span>
-<span class="kw">mod</span> <span class="ident">master_req_handler</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::master_req_handler</span>::{
-    <span class="ident">MasterReqHandler</span>, <span class="ident">VhostUserMasterReqHandler</span>, <span class="ident">VhostUserMasterReqHandlerMut</span>,
-};
+<span class="kw">mod</span> <span class="ident">sys</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys</span>::{<span class="ident">SystemStream</span>, <span class="kw-2">*</span>};
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
-<span class="kw">mod</span> <span class="ident">slave</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::slave::SlaveListener</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
-<span class="kw">mod</span> <span class="ident">slave_req_handler</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::slave_req_handler</span>::{
-    <span class="ident">Protocol</span>, <span class="ident">SlaveReqHandler</span>, <span class="ident">SlaveReqHelper</span>, <span class="ident">VhostUserSlaveReqHandler</span>,
-    <span class="ident">VhostUserSlaveReqHandlerMut</span>,
-};
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
-<span class="kw">mod</span> <span class="ident">slave_fs_cache</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::slave_fs_cache::SlaveFsCacheReq</span>;
+<span class="macro">cfg_if::cfg_if!</span> {
+    <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>)]</span> {
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">master</span>;
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::master</span>::{<span class="ident">Master</span>, <span class="ident">VhostUserMaster</span>};
+        <span class="kw">mod</span> <span class="ident">master_req_handler</span>;
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::master_req_handler</span>::{<span class="ident">VhostUserMasterReqHandler</span>,
+                                    <span class="ident">VhostUserMasterReqHandlerMut</span>};
+    }
+}
+<span class="macro">cfg_if::cfg_if!</span> {
+    <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span> {
+        <span class="kw">mod</span> <span class="ident">slave_req_handler</span>;
+        <span class="kw">mod</span> <span class="ident">slave_fs_cache</span>;
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::slave_req_handler</span>::{
+            <span class="ident">Protocol</span>, <span class="ident">SlaveReqHandler</span>, <span class="ident">SlaveReqHelper</span>, <span class="ident">VhostUserSlaveReqHandler</span>,
+            <span class="ident">VhostUserSlaveReqHandlerMut</span>,
+        };
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::slave_fs_cache::SlaveFsCacheReq</span>;
+    }
+}
+<span class="macro">cfg_if::cfg_if!</span> {
+    <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>, <span class="ident">unix</span>))]</span> {
+        <span class="kw">mod</span> <span class="ident">slave</span>;
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::slave::SlaveListener</span>;
+    }
+}
+<span class="macro">cfg_if::cfg_if!</span> {
+    <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>, <span class="ident">unix</span>))]</span> {
+        <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::master_req_handler::MasterReqHandler</span>;
+    }
+}
 
 <span class="doccomment">/// Errors for vhost-user operations</span>
 <span class="attribute">#[<span class="ident">sorted</span>]</span>
@@ -592,6 +597,14 @@
     <span class="doccomment">/// Only part of a message have been sent or received successfully</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;partial message&quot;</span>)]</span>
     <span class="ident">PartialMessage</span>,
+    <span class="doccomment">/// Provided recv buffer was too small, and data was dropped.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;buffer for recv was too small, data was dropped: got size {got}, needed {want}&quot;</span>)]</span>
+    <span class="ident">RecvBufferTooSmall</span> {
+        <span class="doccomment">/// The size of the buffer received.</span>
+        <span class="ident">got</span>: <span class="ident">usize</span>,
+        <span class="doccomment">/// The expected size of the buffer.</span>
+        <span class="ident">want</span>: <span class="ident">usize</span>,
+    },
     <span class="doccomment">/// Error from request handler</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;handler failed to handle request: {0}&quot;</span>)]</span>
     <span class="ident">ReqHandlerError</span>(<span class="ident">IOError</span>),
@@ -610,6 +623,9 @@
     <span class="doccomment">/// Should retry the socket operation again.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;temporary socket error: {0}&quot;</span>)]</span>
     <span class="ident">SocketRetry</span>(<span class="ident">std::io::Error</span>),
+    <span class="doccomment">/// Error from tx/rx on a Tube.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to read/write on Tube: {0}&quot;</span>)]</span>
+    <span class="ident">TubeError</span>(<span class="ident">base::TubeError</span>),
     <span class="doccomment">/// Error from VFIO device.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;error occurred in VFIO device: {0}&quot;</span>)]</span>
     <span class="ident">VfioDeviceError</span>(<span class="ident">anyhow::Error</span>),
@@ -676,40 +692,17 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">test</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vmm&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>))]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">std::path::Path</span>;
+    <span class="kw">use</span> <span class="ident">base::AsRawDescriptor</span>;
     <span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Barrier</span>, <span class="ident">Mutex</span>};
     <span class="kw">use</span> <span class="ident">std::thread</span>;
 
-    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::connection::socket</span>::{<span class="ident">Endpoint</span>, <span class="ident">Listener</span>};
-
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::connection::tests</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::dummy_slave</span>::{<span class="ident">DummySlaveReqHandler</span>, <span class="ident">VIRTIO_FEATURES</span>};
     <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::message</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::backend::VhostBackend</span>;
     <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">VhostUserMemoryRegionInfo</span>, <span class="ident">VringConfigData</span>};
-    <span class="kw">use</span> <span class="ident">base::AsRawDescriptor</span>;
-    <span class="kw">use</span> <span class="ident">tempfile</span>::{<span class="ident">tempfile</span>, <span class="ident">Builder</span>, <span class="ident">TempDir</span>};
-
-    <span class="kw">fn</span> <span class="ident">temp_dir</span>() -&gt; <span class="ident">TempDir</span> {
-        <span class="ident">Builder::new</span>().<span class="ident">prefix</span>(<span class="string">&quot;/tmp/vhost_test&quot;</span>).<span class="ident">tempdir</span>().<span class="ident">unwrap</span>()
-    }
-
-    <span class="kw">fn</span> <span class="ident">create_slave</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">S</span><span class="op">&gt;</span>(
-        <span class="ident">path</span>: <span class="ident">P</span>,
-        <span class="ident">backend</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
-    ) -&gt; (
-        <span class="ident">Master</span><span class="op">&lt;</span><span class="ident">Endpoint</span><span class="op">&lt;</span><span class="ident">MasterReq</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-        <span class="ident">SlaveReqHandler</span><span class="op">&lt;</span><span class="ident">S</span>, <span class="ident">Endpoint</span><span class="op">&lt;</span><span class="ident">MasterReq</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    )
-    <span class="kw">where</span>
-        <span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>,
-        <span class="ident">S</span>: <span class="ident">VhostUserSlaveReqHandler</span>,
-    {
-        <span class="kw">let</span> <span class="ident">listener</span> <span class="op">=</span> <span class="ident">Listener::new</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>, <span class="bool-val">true</span>).<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slave_listener</span> <span class="op">=</span> <span class="ident">SlaveListener::new</span>(<span class="ident">listener</span>, <span class="ident">backend</span>).<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">master</span> <span class="op">=</span> <span class="ident">Master::connect</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>, <span class="number">1</span>).<span class="ident">unwrap</span>();
-        (<span class="ident">master</span>, <span class="ident">slave_listener</span>.<span class="ident">accept</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>())
-    }
+    <span class="kw">use</span> <span class="ident">tempfile::tempfile</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">create_dummy_slave</span>() {
@@ -722,10 +715,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_set_owner</span>() {
         <span class="kw">let</span> <span class="ident">slave_be</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">DummySlaveReqHandler::new</span>()));
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">temp_dir</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">dir</span>.<span class="ident">path</span>().<span class="ident">to_owned</span>();
-        <span class="ident">path</span>.<span class="ident">push</span>(<span class="string">&quot;sock&quot;</span>);
-        <span class="kw">let</span> (<span class="ident">master</span>, <span class="kw-2">mut</span> <span class="ident">slave</span>) <span class="op">=</span> <span class="ident">create_slave</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>, <span class="ident">slave_be</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">master</span>, <span class="kw-2">mut</span> <span class="ident">slave</span>) <span class="op">=</span> <span class="ident">create_master_slave_pair</span>(<span class="ident">slave_be</span>.<span class="ident">clone</span>());
 
         <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">slave_be</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>().<span class="ident">owned</span>);
         <span class="ident">master</span>.<span class="ident">set_owner</span>().<span class="ident">unwrap</span>();
@@ -740,11 +730,8 @@
     <span class="kw">fn</span> <span class="ident">test_set_features</span>() {
         <span class="kw">let</span> <span class="ident">mbar</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">Barrier::new</span>(<span class="number">2</span>));
         <span class="kw">let</span> <span class="ident">sbar</span> <span class="op">=</span> <span class="ident">mbar</span>.<span class="ident">clone</span>();
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">temp_dir</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">dir</span>.<span class="ident">path</span>().<span class="ident">to_owned</span>();
-        <span class="ident">path</span>.<span class="ident">push</span>(<span class="string">&quot;sock&quot;</span>);
         <span class="kw">let</span> <span class="ident">slave_be</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">DummySlaveReqHandler::new</span>()));
-        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">master</span>, <span class="kw-2">mut</span> <span class="ident">slave</span>) <span class="op">=</span> <span class="ident">create_slave</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>, <span class="ident">slave_be</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">master</span>, <span class="kw-2">mut</span> <span class="ident">slave</span>) <span class="op">=</span> <span class="ident">create_master_slave_pair</span>(<span class="ident">slave_be</span>.<span class="ident">clone</span>());
 
         <span class="ident">thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
             <span class="ident">slave</span>.<span class="ident">handle_request</span>().<span class="ident">unwrap</span>();
@@ -786,11 +773,8 @@
     <span class="kw">fn</span> <span class="ident">test_master_slave_process</span>() {
         <span class="kw">let</span> <span class="ident">mbar</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">Barrier::new</span>(<span class="number">2</span>));
         <span class="kw">let</span> <span class="ident">sbar</span> <span class="op">=</span> <span class="ident">mbar</span>.<span class="ident">clone</span>();
-        <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> <span class="ident">temp_dir</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">dir</span>.<span class="ident">path</span>().<span class="ident">to_owned</span>();
-        <span class="ident">path</span>.<span class="ident">push</span>(<span class="string">&quot;sock&quot;</span>);
         <span class="kw">let</span> <span class="ident">slave_be</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">DummySlaveReqHandler::new</span>()));
-        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">master</span>, <span class="kw-2">mut</span> <span class="ident">slave</span>) <span class="op">=</span> <span class="ident">create_slave</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>, <span class="ident">slave_be</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">master</span>, <span class="kw-2">mut</span> <span class="ident">slave</span>) <span class="op">=</span> <span class="ident">create_master_slave_pair</span>(<span class="ident">slave_be</span>.<span class="ident">clone</span>());
 
         <span class="ident">thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
             <span class="comment">// set_own()</span>
@@ -827,8 +811,12 @@
             <span class="ident">slave</span>.<span class="ident">handle_request</span>().<span class="ident">unwrap</span>();
             <span class="ident">slave</span>.<span class="ident">handle_request</span>().<span class="ident">unwrap</span>();
 
-            <span class="comment">// set_slave_request_fd</span>
-            <span class="ident">slave</span>.<span class="ident">handle_request</span>().<span class="ident">unwrap</span>();
+            <span class="comment">// set_slave_request_rd isn&#39;t implemented on Windows.</span>
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+            {
+                <span class="comment">// set_slave_request_fd</span>
+                <span class="ident">slave</span>.<span class="ident">handle_request</span>().<span class="ident">unwrap</span>();
+            }
 
             <span class="comment">// set_vring_enable</span>
             <span class="ident">slave</span>.<span class="ident">handle_request</span>().<span class="ident">unwrap</span>();
@@ -906,7 +894,13 @@
         <span class="macro">assert_eq!</span>(<span class="ident">offset</span>, <span class="number">0x100</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">reply_payload</span>[<span class="number">0</span>], <span class="number">0xa5</span>);
 
-        <span class="ident">master</span>.<span class="ident">set_slave_request_fd</span>(<span class="kw-2">&amp;</span><span class="ident">eventfd</span>).<span class="ident">unwrap</span>();
+        <span class="comment">// slave request rds are not implemented on Windows.</span>
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+        {
+            <span class="ident">master</span>
+                .<span class="ident">set_slave_request_fd</span>(<span class="kw-2">&amp;</span><span class="ident">eventfd</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AsRawDescriptor</span>)
+                .<span class="ident">unwrap</span>();
+        }
         <span class="ident">master</span>.<span class="ident">set_vring_enable</span>(<span class="number">0</span>, <span class="bool-val">true</span>).<span class="ident">unwrap</span>();
 
         <span class="comment">// unimplemented yet</span>

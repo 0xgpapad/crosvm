@@ -495,19 +495,57 @@
 <span id="494">494</span>
 <span id="495">495</span>
 <span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2019-2021 Alibaba Cloud. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">use</span> <span class="ident">std::fs::File</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">use</span> <span class="ident">std::mem</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix</span>::{<span class="ident">io::AsRawFd</span>, <span class="ident">net::UnixStream</span>};
-<span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+<span class="kw">use</span> <span class="ident">std::os::unix::io::AsRawFd</span>;
+<span class="kw">use</span> <span class="ident">std::sync::Mutex</span>;
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::connection</span>::{<span class="ident">socket::Endpoint</span> <span class="kw">as</span> <span class="ident">SocketEndpoint</span>, <span class="ident">EndpointExt</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::message</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Error</span>, <span class="ident">HandlerResult</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::HandlerResult</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::SystemStream</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">RawDescriptor</span>};
+<span class="kw">use</span> <span class="ident">base::AsRawDescriptor</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+<span class="kw">use</span> <span class="ident">base::RawDescriptor</span>;
 
 <span class="doccomment">/// Define services provided by masters for the slave communication channel.</span>
 <span class="doccomment">///</span>
@@ -634,18 +672,27 @@
     }
 }
 
-<span class="doccomment">/// Server to handle service requests from slaves from the slave communication channel.</span>
-<span class="doccomment">///</span>
 <span class="doccomment">/// The [MasterReqHandler] acts as a server on the master side, to handle service requests from</span>
 <span class="doccomment">/// slaves on the slave communication channel. It&#39;s actually a proxy invoking the registered</span>
 <span class="doccomment">/// handler implementing [VhostUserMasterReqHandler] to do the real work.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// [MasterReqHandler]: struct.MasterReqHandler.html</span>
 <span class="doccomment">/// [VhostUserMasterReqHandler]: trait.VhostUserMasterReqHandler.html</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// TODO(b/221882601): we can write a version of this for Windows by switching the socket for a Tube.</span>
+<span class="doccomment">/// The interfaces would need to change so that we fetch a full Tube (which is 2 rds on Windows)</span>
+<span class="doccomment">/// and send it to the device backend (slave) as a message on the master -&gt; slave channel.</span>
+<span class="doccomment">/// (Currently the interface only supports sending a single rd.)</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Note that handling requests from slaves is not needed for the initial devices we plan to</span>
+<span class="doccomment">/// support.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Server to handle service requests from slaves from the slave communication channel.</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MasterReqHandler</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">VhostUserMasterReqHandler</span><span class="op">&gt;</span> {
     <span class="comment">// underlying Unix domain socket for communication</span>
     <span class="ident">sub_sock</span>: <span class="ident">SocketEndpoint</span><span class="op">&lt;</span><span class="ident">SlaveReq</span><span class="op">&gt;</span>,
-    <span class="ident">tx_sock</span>: <span class="ident">UnixStream</span>,
+    <span class="ident">tx_sock</span>: <span class="ident">SystemStream</span>,
     <span class="comment">// Protocol feature VHOST_USER_PROTOCOL_F_REPLY_ACK has been negotiated.</span>
     <span class="ident">reply_ack_negotiated</span>: <span class="ident">bool</span>,
     <span class="comment">// the VirtIO backend device object</span>
@@ -654,6 +701,7 @@
     <span class="ident">error</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>,
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">VhostUserMasterReqHandler</span><span class="op">&gt;</span> <span class="ident">MasterReqHandler</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a server to handle service requests from slaves on the slave communication channel.</span>
     <span class="doccomment">///</span>
@@ -664,7 +712,7 @@
     <span class="doccomment">/// [Self::get_tx_raw_fd()]: struct.MasterReqHandler.html#method.get_tx_raw_fd</span>
     <span class="doccomment">/// [VhostUserMaster::set_slave_request_fd()]: trait.VhostUserMaster.html#tymethod.set_slave_request_fd</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">backend</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">UnixStream::pair</span>().<span class="ident">map_err</span>(<span class="ident">Error::SocketError</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">SystemStream::pair</span>().<span class="ident">map_err</span>(<span class="ident">Error::SocketError</span>)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">MasterReqHandler</span> {
             <span class="ident">sub_sock</span>: <span class="ident">SocketEndpoint</span>::<span class="op">&lt;</span><span class="ident">SlaveReq</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="ident">rx</span>),
@@ -884,21 +932,25 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">VhostUserMasterReqHandler</span><span class="op">&gt;</span> <span class="ident">AsRawDescriptor</span> <span class="kw">for</span> <span class="ident">MasterReqHandler</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">as_raw_descriptor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawDescriptor</span> {
+        <span class="comment">// TODO(b/221882601): figure out whether this is used for polling. If so, we need theTube&#39;s</span>
+        <span class="comment">// read notifier here instead.</span>
         <span class="self">self</span>.<span class="ident">sub_sock</span>.<span class="ident">as_raw_descriptor</span>()
     }
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">Descriptor</span>, <span class="ident">INVALID_DESCRIPTOR</span>};
+    <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">INVALID_DESCRIPTOR</span>};
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
+    <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">Descriptor</span>, <span class="ident">FromRawDescriptor</span>};
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::SlaveFsCacheReq</span>;
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;device&quot;</span>)]</span>
-    <span class="kw">use</span> <span class="ident">std::os::unix::io::FromRawFd</span>;
 
     <span class="kw">struct</span> <span class="ident">MockMasterReqHandler</span> {}
 
@@ -943,7 +995,7 @@
         <span class="kw">if</span> <span class="ident">fd</span> <span class="op">&lt;</span> <span class="number">0</span> {
             <span class="macro">panic!</span>(<span class="string">&quot;failed to duplicated tx fd!&quot;</span>);
         }
-        <span class="kw">let</span> <span class="ident">stream</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">UnixStream::from_raw_fd</span>(<span class="ident">fd</span>) };
+        <span class="kw">let</span> <span class="ident">stream</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">SystemStream::from_raw_descriptor</span>(<span class="ident">fd</span>) };
         <span class="kw">let</span> <span class="ident">fs_cache</span> <span class="op">=</span> <span class="ident">SlaveFsCacheReq::from_stream</span>(<span class="ident">stream</span>);
 
         <span class="ident">std::thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
@@ -973,7 +1025,7 @@
         <span class="kw">if</span> <span class="ident">fd</span> <span class="op">&lt;</span> <span class="number">0</span> {
             <span class="macro">panic!</span>(<span class="string">&quot;failed to duplicated tx fd!&quot;</span>);
         }
-        <span class="kw">let</span> <span class="ident">stream</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">UnixStream::from_raw_fd</span>(<span class="ident">fd</span>) };
+        <span class="kw">let</span> <span class="ident">stream</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">SystemStream::from_raw_descriptor</span>(<span class="ident">fd</span>) };
         <span class="kw">let</span> <span class="ident">fs_cache</span> <span class="op">=</span> <span class="ident">SlaveFsCacheReq::from_stream</span>(<span class="ident">stream</span>);
 
         <span class="ident">std::thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {

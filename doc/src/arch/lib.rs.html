@@ -828,6 +828,10 @@
 <span id="827">827</span>
 <span id="828">828</span>
 <span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -856,7 +860,7 @@
 <span class="kw">use</span> <span class="ident">hypervisor</span>::{<span class="ident">IoEventAddress</span>, <span class="ident">ProtectionType</span>, <span class="ident">Vm</span>};
 <span class="kw">use</span> <span class="ident">minijail::Minijail</span>;
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
-<span class="kw">use</span> <span class="ident">resources</span>::{<span class="ident">MmioType</span>, <span class="ident">SystemAllocator</span>};
+<span class="kw">use</span> <span class="ident">resources</span>::{<span class="ident">MmioType</span>, <span class="ident">SystemAllocator</span>, <span class="ident">SystemAllocatorConfig</span>};
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 <span class="kw">use</span> <span class="ident">vm_control</span>::{<span class="ident">BatControl</span>, <span class="ident">BatteryType</span>, <span class="ident">PmResource</span>};
@@ -981,12 +985,16 @@
         <span class="ident">components</span>: <span class="kw-2">&amp;</span><span class="ident">VmComponents</span>,
     ) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">GuestAddress</span>, <span class="ident">u64</span>)<span class="op">&gt;</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Creates a new `SystemAllocator` that fits the given `Vm`&#39;s memory layout.</span>
+    <span class="doccomment">/// Gets the configuration for a new `SystemAllocator` that fits the given `Vm`&#39;s memory layout.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This is the per-architecture template for constructing the `SystemAllocator`. Platform</span>
+    <span class="doccomment">/// agnostic modifications may be made to this configuration, but the final `SystemAllocator`</span>
+    <span class="doccomment">/// will be at least as strict as this configuration.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// * `vm` - The virtual machine to be used as a template for the `SystemAllocator`.</span>
-    <span class="kw">fn</span> <span class="ident">create_system_allocator</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Vm</span><span class="op">&gt;</span>(<span class="ident">vm</span>: <span class="kw-2">&amp;</span><span class="ident">V</span>) -&gt; <span class="ident">SystemAllocator</span>;
+    <span class="kw">fn</span> <span class="ident">get_system_allocator_config</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Vm</span><span class="op">&gt;</span>(<span class="ident">vm</span>: <span class="kw-2">&amp;</span><span class="ident">V</span>) -&gt; <span class="ident">SystemAllocatorConfig</span>;
 
     <span class="doccomment">/// Takes `VmComponents` and generates a `RunnableLinuxVm`.</span>
     <span class="doccomment">///</span>
@@ -998,7 +1006,7 @@
     <span class="doccomment">/// * `reset_evt` - Event used by sub-devices to request that crosvm exit because guest</span>
     <span class="doccomment">///     requested reset.</span>
     <span class="doccomment">/// * `system_allocator` - Allocator created by this trait&#39;s implementation of</span>
-    <span class="doccomment">///   `create_system_allocator`.</span>
+    <span class="doccomment">///   `get_system_allocator_config`.</span>
     <span class="doccomment">/// * `serial_parameters` - Definitions for how the serial devices should be configured.</span>
     <span class="doccomment">/// * `serial_jail` - Jail used for serial devices created here.</span>
     <span class="doccomment">/// * `battery` - Defines what battery device will be created.</span>

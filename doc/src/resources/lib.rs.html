@@ -69,11 +69,21 @@
 <span id="68">68</span>
 <span id="69">69</span>
 <span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="doccomment">//! Manages system resources that can be allocated to VMs and their devices.</span>
+
+<span class="kw">use</span> <span class="ident">std::ops::RangeInclusive</span>;
 
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
@@ -139,6 +149,12 @@
 }
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+
+<span class="doccomment">/// Computes the length of a RangeInclusive value. Returns None</span>
+<span class="doccomment">/// if the range is 0..=u64::MAX.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">range_inclusive_len</span>(<span class="ident">r</span>: <span class="kw-2">&amp;</span><span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
+    (<span class="ident">r</span>.<span class="ident">end</span>() <span class="op">-</span> <span class="ident">r</span>.<span class="ident">start</span>()).<span class="ident">checked_add</span>(<span class="number">1</span>)
+}
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="resources" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
 </body></html>

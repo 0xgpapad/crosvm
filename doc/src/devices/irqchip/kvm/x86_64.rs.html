@@ -1133,6 +1133,14 @@
 <span id="1132">1132</span>
 <span id="1133">1133</span>
 <span id="1134">1134</span>
+<span id="1135">1135</span>
+<span id="1136">1136</span>
+<span id="1137">1137</span>
+<span id="1138">1138</span>
+<span id="1139">1139</span>
+<span id="1140">1140</span>
+<span id="1141">1141</span>
+<span id="1142">1142</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2061,22 +2069,26 @@
 
         <span class="kw">let</span> <span class="ident">mmio_bus</span> <span class="op">=</span> <span class="ident">Bus::new</span>();
         <span class="kw">let</span> <span class="ident">io_bus</span> <span class="op">=</span> <span class="ident">Bus::new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">resources</span> <span class="op">=</span> <span class="ident">SystemAllocator::new</span>(<span class="ident">SystemAllocatorConfig</span> {
-            <span class="ident">io</span>: <span class="prelude-val">Some</span>(<span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0xc000</span>,
-                <span class="ident">size</span>: <span class="number">0x4000</span>,
-            }),
-            <span class="ident">low_mmio</span>: <span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0</span>,
-                <span class="ident">size</span>: <span class="number">2048</span>,
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">resources</span> <span class="op">=</span> <span class="ident">SystemAllocator::new</span>(
+            <span class="ident">SystemAllocatorConfig</span> {
+                <span class="ident">io</span>: <span class="prelude-val">Some</span>(<span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0xc000</span>,
+                    <span class="ident">size</span>: <span class="number">0x4000</span>,
+                }),
+                <span class="ident">low_mmio</span>: <span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0</span>,
+                    <span class="ident">size</span>: <span class="number">2048</span>,
+                },
+                <span class="ident">high_mmio</span>: <span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0x1_0000_0000</span>,
+                    <span class="ident">size</span>: <span class="number">0x2_0000_0000</span>,
+                },
+                <span class="ident">platform_mmio</span>: <span class="prelude-val">None</span>,
+                <span class="ident">first_irq</span>: <span class="number">5</span>,
             },
-            <span class="ident">high_mmio</span>: <span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0x1_0000_0000</span>,
-                <span class="ident">size</span>: <span class="number">0x2_0000_0000</span>,
-            },
-            <span class="ident">platform_mmio</span>: <span class="prelude-val">None</span>,
-            <span class="ident">first_irq</span>: <span class="number">5</span>,
-        })
+            <span class="prelude-val">None</span>,
+            <span class="kw-2">&amp;</span>[],
+        )
         .<span class="ident">expect</span>(<span class="string">&quot;failed to create SystemAllocator&quot;</span>);
 
         <span class="comment">// setup an event and a resample event for irq line 1</span>
@@ -2190,22 +2202,26 @@
 
         <span class="kw">let</span> <span class="ident">mmio_bus</span> <span class="op">=</span> <span class="ident">Bus::new</span>();
         <span class="kw">let</span> <span class="ident">io_bus</span> <span class="op">=</span> <span class="ident">Bus::new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">resources</span> <span class="op">=</span> <span class="ident">SystemAllocator::new</span>(<span class="ident">SystemAllocatorConfig</span> {
-            <span class="ident">io</span>: <span class="prelude-val">Some</span>(<span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0xc000</span>,
-                <span class="ident">size</span>: <span class="number">0x4000</span>,
-            }),
-            <span class="ident">low_mmio</span>: <span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0</span>,
-                <span class="ident">size</span>: <span class="number">2048</span>,
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">resources</span> <span class="op">=</span> <span class="ident">SystemAllocator::new</span>(
+            <span class="ident">SystemAllocatorConfig</span> {
+                <span class="ident">io</span>: <span class="prelude-val">Some</span>(<span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0xc000</span>,
+                    <span class="ident">size</span>: <span class="number">0x4000</span>,
+                }),
+                <span class="ident">low_mmio</span>: <span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0</span>,
+                    <span class="ident">size</span>: <span class="number">2048</span>,
+                },
+                <span class="ident">high_mmio</span>: <span class="ident">MemRegion</span> {
+                    <span class="ident">base</span>: <span class="number">0x1_0000_0000</span>,
+                    <span class="ident">size</span>: <span class="number">0x2_0000_0000</span>,
+                },
+                <span class="ident">platform_mmio</span>: <span class="prelude-val">None</span>,
+                <span class="ident">first_irq</span>: <span class="number">5</span>,
             },
-            <span class="ident">high_mmio</span>: <span class="ident">MemRegion</span> {
-                <span class="ident">base</span>: <span class="number">0x1_0000_0000</span>,
-                <span class="ident">size</span>: <span class="number">0x2_0000_0000</span>,
-            },
-            <span class="ident">platform_mmio</span>: <span class="prelude-val">None</span>,
-            <span class="ident">first_irq</span>: <span class="number">5</span>,
-        })
+            <span class="prelude-val">None</span>,
+            <span class="kw-2">&amp;</span>[],
+        )
         .<span class="ident">expect</span>(<span class="string">&quot;failed to create SystemAllocator&quot;</span>);
 
         <span class="comment">// setup an event and a resample event for irq line 1</span>
