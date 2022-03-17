@@ -521,6 +521,7 @@
 <span id="520">520</span>
 <span id="521">521</span>
 <span id="522">522</span>
+<span id="523">523</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -761,7 +762,8 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_disk_file</span>(
     <span class="ident">raw_image</span>: <span class="ident">File</span>,
     <span class="kw-2">mut</span> <span class="ident">max_nesting_depth</span>: <span class="ident">u32</span>,
-    <span class="ident">image_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
+    <span class="comment">// image_path is only used if the composite-disk feature is enabled.</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused_variables</span>)]</span> <span class="ident">image_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">DiskFile</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">max_nesting_depth</span> <span class="op">==</span> <span class="number">0</span> {
         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::MaxNestingDepthExceeded</span>);
