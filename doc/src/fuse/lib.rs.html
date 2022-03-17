@@ -110,6 +110,32 @@
 <span id="109">109</span>
 <span id="110">110</span>
 <span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -168,6 +194,9 @@
     <span class="doccomment">/// One or more parameters are missing.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;one or more parameters are missing&quot;</span>)]</span>
     <span class="ident">MissingParameter</span>,
+    <span class="doccomment">/// Thread exited</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Thread exited&quot;</span>)]</span>
+    <span class="ident">ThreadExited</span>,
     <span class="doccomment">/// Requested too many `iovec`s for an `ioctl` retry.</span>
     <span class="attribute">#[<span class="ident">error</span>(
         <span class="string">&quot;requested too many `iovec`s for an `ioctl` retry reply: requested\
@@ -183,6 +212,7 @@
     <span class="ident">dev_fuse_file</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span>,
     <span class="ident">max_write_bytes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
     <span class="ident">max_read_bytes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
+    <span class="ident">num_of_threads</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">FuseConfig</span> {
@@ -192,18 +222,28 @@
         }
     }
 
+    <span class="doccomment">/// Set the FUSE device.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">dev_fuse</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">file</span>: <span class="ident">File</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">dev_fuse_file</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">file</span>);
         <span class="self">self</span>
     }
 
+    <span class="doccomment">/// Set the maximum data in a read request. Must be large enough (usually equal) to `n` in</span>
+    <span class="doccomment">/// `MountOption::MaxRead(n)`.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max_read</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">bytes</span>: <span class="ident">u32</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">max_read_bytes</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">bytes</span>);
         <span class="self">self</span>
     }
 
+    <span class="doccomment">/// Set the maximum data in a write request.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max_write</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">bytes</span>: <span class="ident">u32</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">max_write_bytes</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">bytes</span>);
+        <span class="self">self</span>
+    }
+
+    <span class="doccomment">/// Set the number of threads to run the `FileSystem`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">num_threads</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">num</span>: <span class="ident">usize</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
+        <span class="self">self</span>.<span class="ident">num_of_threads</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">num</span>);
         <span class="self">self</span>
     }
 
@@ -212,13 +252,25 @@
             <span class="ident">dev_fuse_file</span>,
             <span class="ident">max_write_bytes</span>,
             <span class="ident">max_read_bytes</span>,
+            <span class="ident">num_of_threads</span>,
         } <span class="op">=</span> <span class="self">self</span>;
-        <span class="ident">worker::start_message_loop</span>(
-            <span class="ident">dev_fuse_file</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
-            <span class="ident">max_write_bytes</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
-            <span class="ident">max_read_bytes</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
-            <span class="ident">fs</span>,
-        )
+        <span class="kw">let</span> <span class="ident">num</span> <span class="op">=</span> <span class="ident">num_of_threads</span>.<span class="ident">unwrap_or</span>(<span class="number">1</span>);
+        <span class="kw">if</span> <span class="ident">num</span> <span class="op">==</span> <span class="number">1</span> {
+            <span class="ident">worker::start_message_loop</span>(
+                <span class="ident">dev_fuse_file</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
+                <span class="ident">max_read_bytes</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
+                <span class="ident">max_write_bytes</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
+                <span class="ident">fs</span>,
+            )
+        } <span class="kw">else</span> {
+            <span class="ident">worker::internal::start_message_loop_mt</span>(
+                <span class="ident">dev_fuse_file</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
+                <span class="ident">max_read_bytes</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
+                <span class="ident">max_write_bytes</span>.<span class="ident">ok_or</span>(<span class="ident">Error::MissingParameter</span>)<span class="question-mark">?</span>,
+                <span class="ident">num</span>,
+                <span class="ident">fs</span>,
+            )
+        }
     }
 }
 </code></pre></div>
