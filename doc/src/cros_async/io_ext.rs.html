@@ -470,6 +470,14 @@
 <span id="469">469</span>
 <span id="470">470</span>
 <span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -487,28 +495,30 @@
 <span class="doccomment">//! Operations can only access memory in a `Vec` or an implementor of `BackingMemory`. See the</span>
 <span class="doccomment">//! `URingExecutor` documentation for an explaination of why.</span>
 
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
-<span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>};
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">fs::File</span>,
+    <span class="ident">io</span>,
+    <span class="ident">ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>},
+    <span class="ident">os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>},
+    <span class="ident">sync::Arc</span>,
+};
 
 <span class="kw">use</span> <span class="ident">async_trait::async_trait</span>;
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">sys_util::net::UnixSeqpacket</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span> <span class="kw">as</span> <span class="ident">ThisError</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">BackingMemory</span>, <span class="ident">MemRegion</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">BackingMemory</span>, <span class="ident">MemRegion</span>};
 
 <span class="attribute">#[<span class="ident">sorted</span>]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">ThisError</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
     <span class="doccomment">/// An error with a polled(FD) source.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;An error with a poll source: {0}&quot;</span>)]</span>
-    <span class="ident">Poll</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident"><span class="kw">crate</span>::poll_source::Error</span>),
+    <span class="ident">Poll</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident"><span class="kw">super</span>::poll_source::Error</span>),
     <span class="doccomment">/// An error with a uring source.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;An error with a uring source: {0}&quot;</span>)]</span>
-    <span class="ident">Uring</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident"><span class="kw">crate</span>::uring_executor::Error</span>),
+    <span class="ident">Uring</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident"><span class="kw">super</span>::uring_executor::Error</span>),
 }
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 
@@ -636,21 +646,27 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">std::fs</span>::{<span class="ident">File</span>, <span class="ident">OpenOptions</span>};
-    <span class="kw">use</span> <span class="ident">std::future::Future</span>;
-    <span class="kw">use</span> <span class="ident">std::os::unix::io::AsRawFd</span>;
-    <span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
-    <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
-    <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>};
-    <span class="kw">use</span> <span class="ident">std::thread</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">fs</span>::{<span class="ident">File</span>, <span class="ident">OpenOptions</span>},
+        <span class="ident">future::Future</span>,
+        <span class="ident">os::unix::io::AsRawFd</span>,
+        <span class="ident">pin::Pin</span>,
+        <span class="ident">sync::Arc</span>,
+        <span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>},
+        <span class="ident">thread</span>,
+    };
 
     <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
 
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::executor</span>::{<span class="ident">async_poll_from</span>, <span class="ident">async_uring_from</span>};
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::VecIoWrapper</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::uring_executor::use_uring</span>;
-    <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Executor</span>, <span class="ident">FdExecutor</span>, <span class="ident">MemRegion</span>, <span class="ident">PollSource</span>, <span class="ident">URingExecutor</span>, <span class="ident">UringSource</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::{
+        <span class="kw">super</span>::{
+            <span class="ident">executor</span>::{<span class="ident">async_poll_from</span>, <span class="ident">async_uring_from</span>},
+            <span class="ident">mem::VecIoWrapper</span>,
+            <span class="ident">uring_executor::use_uring</span>,
+            <span class="ident">Executor</span>, <span class="ident">FdExecutor</span>, <span class="ident">MemRegion</span>, <span class="ident">PollSource</span>, <span class="ident">URingExecutor</span>, <span class="ident">UringSource</span>,
+        },
+        <span class="kw-2">*</span>,
+    };
 
     <span class="kw">struct</span> <span class="ident">State</span> {
         <span class="ident">should_quit</span>: <span class="ident">bool</span>,

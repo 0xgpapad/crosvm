@@ -408,27 +408,39 @@
 <span id="407">407</span>
 <span id="408">408</span>
 <span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="doccomment">//! Provides a struct for registering signal handlers that get cleared on drop.</span>
 
-<span class="kw">use</span> <span class="ident">std::convert::TryFrom</span>;
-<span class="kw">use</span> <span class="ident">std::fmt</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Cursor</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std::panic::catch_unwind</span>;
-<span class="kw">use</span> <span class="ident">std::result</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">convert::TryFrom</span>,
+    <span class="ident">fmt</span>,
+    <span class="ident">io</span>::{<span class="ident">Cursor</span>, <span class="ident">Write</span>},
+    <span class="ident">panic::catch_unwind</span>,
+    <span class="ident">result</span>,
+};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{<span class="ident">c_int</span>, <span class="ident">c_void</span>, <span class="ident">STDERR_FILENO</span>};
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::signal</span>::{
-    <span class="ident">clear_signal_handler</span>, <span class="ident">has_default_signal_handler</span>, <span class="ident">register_signal_handler</span>, <span class="ident">wait_for_signal</span>,
-    <span class="ident">Signal</span>,
+<span class="kw">use</span> <span class="kw">super</span>::{
+    <span class="ident">signal</span>::{
+        <span class="ident">clear_signal_handler</span>, <span class="ident">has_default_signal_handler</span>, <span class="ident">register_signal_handler</span>, <span class="ident">wait_for_signal</span>,
+        <span class="ident">Signal</span>,
+    },
+    <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">ErrnoError</span>,
 };
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Error</span> <span class="kw">as</span> <span class="ident">ErrnoError</span>;
 
 <span class="attribute">#[<span class="ident">sorted</span>]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Error</span>, <span class="ident">Debug</span>)]</span>
@@ -587,18 +599,22 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="kw">use</span> <span class="ident">std::fs::File</span>;
-    <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">BufRead</span>, <span class="ident">BufReader</span>};
-    <span class="kw">use</span> <span class="ident">std::mem::zeroed</span>;
-    <span class="kw">use</span> <span class="ident">std::ptr</span>::{<span class="ident">null</span>, <span class="ident">null_mut</span>};
-    <span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicI32</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
-    <span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>, <span class="ident">MutexGuard</span>, <span class="ident">Once</span>};
-    <span class="kw">use</span> <span class="ident">std::thread</span>::{<span class="ident">sleep</span>, <span class="ident">spawn</span>};
-    <span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">fs::File</span>,
+        <span class="ident">io</span>::{<span class="ident">BufRead</span>, <span class="ident">BufReader</span>},
+        <span class="ident">mem::zeroed</span>,
+        <span class="ident">ptr</span>::{<span class="ident">null</span>, <span class="ident">null_mut</span>},
+        <span class="ident">sync</span>::{
+            <span class="ident">atomic</span>::{<span class="ident">AtomicI32</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>},
+            <span class="ident">Arc</span>, <span class="ident">Mutex</span>, <span class="ident">MutexGuard</span>, <span class="ident">Once</span>,
+        },
+        <span class="ident">thread</span>::{<span class="ident">sleep</span>, <span class="ident">spawn</span>},
+        <span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>},
+    };
 
     <span class="kw">use</span> <span class="ident">libc::sigaction</span>;
 
-    <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">gettid</span>, <span class="ident">kill</span>, <span class="ident">Pid</span>};
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span></span>::{<span class="ident">gettid</span>, <span class="ident">kill</span>, <span class="ident">Pid</span>};
 
     <span class="kw">const</span> <span class="ident">TEST_SIGNAL</span>: <span class="ident">Signal</span> <span class="op">=</span> <span class="ident">Signal::User1</span>;
     <span class="kw">const</span> <span class="ident">TEST_SIGNALS</span>: <span class="kw-2">&amp;</span>[<span class="ident">Signal</span>] <span class="op">=</span> <span class="kw-2">&amp;</span>[<span class="ident">Signal::User1</span>, <span class="ident">Signal::User2</span>];

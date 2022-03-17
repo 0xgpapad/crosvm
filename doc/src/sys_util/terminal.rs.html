@@ -93,22 +93,18 @@
 <span id="92">92</span>
 <span id="93">93</span>
 <span id="94">94</span>
-<span id="95">95</span>
-<span id="96">96</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::io::Stdin</span>;
-<span class="kw">use</span> <span class="ident">std::mem::zeroed</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io::RawFd</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">io::Stdin</span>, <span class="ident">mem::zeroed</span>, <span class="ident">os::unix::io::RawFd</span>};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{
     <span class="ident">isatty</span>, <span class="ident">read</span>, <span class="ident">tcgetattr</span>, <span class="ident">tcsetattr</span>, <span class="ident">termios</span>, <span class="ident">ECHO</span>, <span class="ident">ICANON</span>, <span class="ident">ISIG</span>, <span class="ident">O_NONBLOCK</span>, <span class="ident">STDIN_FILENO</span>,
     <span class="ident">TCSANOW</span>,
 };
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">add_fd_flags</span>, <span class="ident">clear_fd_flags</span>, <span class="ident">errno_result</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">add_fd_flags</span>, <span class="ident">clear_fd_flags</span>, <span class="ident">errno_result</span>, <span class="prelude-ty">Result</span>};
 
 <span class="kw">fn</span> <span class="ident">modify_mode</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FnOnce</span>(<span class="kw-2">&amp;mut</span> <span class="ident">termios</span>)<span class="op">&gt;</span>(<span class="ident">fd</span>: <span class="ident">RawFd</span>, <span class="ident">f</span>: <span class="ident">F</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="comment">// Safe because we check the return value of isatty.</span>

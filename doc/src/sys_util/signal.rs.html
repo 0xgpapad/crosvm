@@ -693,6 +693,7 @@
 <span id="692">692</span>
 <span id="693">693</span>
 <span id="694">694</span>
+<span id="695">695</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -705,18 +706,19 @@
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 
-<span class="kw">use</span> <span class="ident">std::cmp::Ordering</span>;
-<span class="kw">use</span> <span class="ident">std::convert::TryFrom</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
-<span class="kw">use</span> <span class="ident">std::mem</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::thread::JoinHandleExt</span>;
-<span class="kw">use</span> <span class="ident">std::process::Child</span>;
-<span class="kw">use</span> <span class="ident">std::ptr</span>::{<span class="ident">null</span>, <span class="ident">null_mut</span>};
-<span class="kw">use</span> <span class="ident">std::result</span>;
-<span class="kw">use</span> <span class="ident">std::thread::JoinHandle</span>;
-<span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">cmp::Ordering</span>,
+    <span class="ident">convert::TryFrom</span>,
+    <span class="ident">io</span>, <span class="ident">mem</span>,
+    <span class="ident">os::unix::thread::JoinHandleExt</span>,
+    <span class="ident">process::Child</span>,
+    <span class="ident">ptr</span>::{<span class="ident">null</span>, <span class="ident">null_mut</span>},
+    <span class="ident">result</span>,
+    <span class="ident">thread::JoinHandle</span>,
+    <span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>},
+};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">duration_to_timespec</span>, <span class="ident">errno_result</span>, <span class="ident">getsid</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">ErrnoError</span>, <span class="ident">Pid</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">duration_to_timespec</span>, <span class="ident">errno_result</span>, <span class="ident">getsid</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">ErrnoError</span>, <span class="ident">Pid</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>};
 
 <span class="kw">const</span> <span class="ident">POLL_RATE</span>: <span class="ident">Duration</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">50</span>);

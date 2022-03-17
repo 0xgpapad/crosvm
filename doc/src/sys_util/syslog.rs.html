@@ -578,6 +578,11 @@
 <span id="577">577</span>
 <span id="578">578</span>
 <span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -600,17 +605,20 @@
 <span class="doccomment">//! error!(&quot;something went horribly wrong: {}&quot;, &quot;out of RAMs&quot;);</span>
 <span class="doccomment">//! ```</span>
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::target_os::syslog::PlatformSyslog</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::RawDescriptor</span>;
-<span class="kw">use</span> <span class="ident">std::env</span>;
-<span class="kw">use</span> <span class="ident">std::ffi</span>::{<span class="ident">OsStr</span>, <span class="ident">OsString</span>};
-<span class="kw">use</span> <span class="ident">std::fmt</span>::{<span class="self">self</span>, <span class="ident">Display</span>};
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">stderr</span>, <span class="ident">Cursor</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::path::PathBuf</span>;
-<span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">MutexGuard</span>, <span class="ident">Once</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">target_os::syslog::PlatformSyslog</span>, <span class="ident">RawDescriptor</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">env</span>,
+    <span class="ident">ffi</span>::{<span class="ident">OsStr</span>, <span class="ident">OsString</span>},
+    <span class="ident">fmt</span>::{
+        <span class="ident">Display</span>, {<span class="self">self</span>},
+    },
+    <span class="ident">fs::File</span>,
+    <span class="ident">io</span>,
+    <span class="ident">io</span>::{<span class="ident">stderr</span>, <span class="ident">Cursor</span>, <span class="ident">Write</span>},
+    <span class="ident">os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>},
+    <span class="ident">path::PathBuf</span>,
+    <span class="ident">sync</span>::{<span class="ident">MutexGuard</span>, <span class="ident">Once</span>},
+};
 
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
@@ -1030,9 +1038,11 @@
 
     <span class="kw">use</span> <span class="ident">libc</span>::{<span class="ident">shm_open</span>, <span class="ident">shm_unlink</span>, <span class="ident">O_CREAT</span>, <span class="ident">O_EXCL</span>, <span class="ident">O_RDWR</span>};
 
-    <span class="kw">use</span> <span class="ident">std::ffi::CStr</span>;
-    <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Read</span>, <span class="ident">Seek</span>, <span class="ident">SeekFrom</span>};
-    <span class="kw">use</span> <span class="ident">std::os::unix::io::FromRawFd</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">ffi::CStr</span>,
+        <span class="ident">io</span>::{<span class="ident">Read</span>, <span class="ident">Seek</span>, <span class="ident">SeekFrom</span>},
+        <span class="ident">os::unix::io::FromRawFd</span>,
+    };
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">init_syslog</span>() {

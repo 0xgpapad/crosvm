@@ -461,28 +461,36 @@
 <span id="460">460</span>
 <span id="461">461</span>
 <span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::ffi</span>::{<span class="ident">CStr</span>, <span class="ident">CString</span>};
-<span class="kw">use</span> <span class="ident">std::fs</span>::{<span class="ident">read_link</span>, <span class="ident">File</span>};
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">Read</span>, <span class="ident">Seek</span>, <span class="ident">SeekFrom</span>, <span class="ident">Write</span>};
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>, <span class="ident">RawFd</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">ffi</span>::{<span class="ident">CStr</span>, <span class="ident">CString</span>},
+    <span class="ident">fs</span>::{<span class="ident">read_link</span>, <span class="ident">File</span>},
+    <span class="ident">io</span>::{
+        <span class="ident">Read</span>, <span class="ident">Seek</span>, <span class="ident">SeekFrom</span>, <span class="ident">Write</span>, {<span class="self">self</span>},
+    },
+    <span class="ident">os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>, <span class="ident">RawFd</span>},
+};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{
-    <span class="self">self</span>, <span class="ident">c_char</span>, <span class="ident">c_int</span>, <span class="ident">c_long</span>, <span class="ident">c_uint</span>, <span class="ident">close</span>, <span class="ident">fcntl</span>, <span class="ident">ftruncate64</span>, <span class="ident">off64_t</span>, <span class="ident">syscall</span>,
-    <span class="ident">SYS_memfd_create</span>, <span class="ident">EINVAL</span>, <span class="ident">F_ADD_SEALS</span>, <span class="ident">F_GET_SEALS</span>, <span class="ident">F_SEAL_FUTURE_WRITE</span>, <span class="ident">F_SEAL_GROW</span>,
-    <span class="ident">F_SEAL_SEAL</span>, <span class="ident">F_SEAL_SHRINK</span>, <span class="ident">F_SEAL_WRITE</span>, <span class="ident">MFD_ALLOW_SEALING</span>,
+    <span class="ident">c_char</span>, <span class="ident">c_int</span>, <span class="ident">c_long</span>, <span class="ident">c_uint</span>, <span class="ident">close</span>, <span class="ident">fcntl</span>, <span class="ident">ftruncate64</span>, <span class="ident">off64_t</span>, <span class="ident">syscall</span>, <span class="ident">SYS_memfd_create</span>,
+    <span class="ident">EINVAL</span>, <span class="ident">F_ADD_SEALS</span>, <span class="ident">F_GET_SEALS</span>, <span class="ident">F_SEAL_FUTURE_WRITE</span>, <span class="ident">F_SEAL_GROW</span>, <span class="ident">F_SEAL_SEAL</span>, <span class="ident">F_SEAL_SHRINK</span>,
+    <span class="ident">F_SEAL_WRITE</span>, <span class="ident">MFD_ALLOW_SEALING</span>, {<span class="self">self</span>},
 };
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">errno_result</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">errno_result</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
 
 <span class="doccomment">/// A shared memory file descriptor and its size.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SharedMemory</span> {
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::with_as_descriptor&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;super::with_as_descriptor&quot;</span>)]</span>
     <span class="ident">fd</span>: <span class="ident">File</span>,
     <span class="ident">size</span>: <span class="ident">u64</span>,
 }
@@ -779,7 +787,7 @@
 
     <span class="kw">use</span> <span class="ident">data_model::VolatileMemory</span>;
 
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::MemoryMapping</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::MemoryMapping</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">named</span>() {

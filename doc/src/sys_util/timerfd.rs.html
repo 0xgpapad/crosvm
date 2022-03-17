@@ -318,24 +318,30 @@
 <span id="317">317</span>
 <span id="318">318</span>
 <span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::mem</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::ptr</span>;
-<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">fs::File</span>,
+    <span class="ident">mem</span>,
+    <span class="ident">os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>, <span class="ident">RawFd</span>},
+    <span class="ident">ptr</span>,
+    <span class="ident">sync::Arc</span>,
+    <span class="ident">time::Duration</span>,
+};
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
 
 <span class="kw">use</span> <span class="ident">libc</span>::{
-    <span class="self">self</span>, <span class="ident">clock_getres</span>, <span class="ident">timerfd_create</span>, <span class="ident">timerfd_gettime</span>, <span class="ident">timerfd_settime</span>, <span class="ident">CLOCK_MONOTONIC</span>,
-    <span class="ident">TFD_CLOEXEC</span>,
+    <span class="ident">clock_getres</span>, <span class="ident">timerfd_create</span>, <span class="ident">timerfd_gettime</span>, <span class="ident">timerfd_settime</span>, <span class="ident">CLOCK_MONOTONIC</span>, <span class="ident">TFD_CLOEXEC</span>,
+    {<span class="self">self</span>},
 };
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">errno_result</span>, <span class="ident">EventFd</span>, <span class="ident">FakeClock</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">errno_result</span>, <span class="ident">EventFd</span>, <span class="ident">FakeClock</span>, <span class="prelude-ty">Result</span>};
 
 <span class="doccomment">/// A safe wrapper around a Linux timerfd (man 2 timerfd_create).</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TimerFd</span>(<span class="ident">File</span>);
@@ -566,8 +572,10 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident">std::thread::sleep</span>;
-    <span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">thread::sleep</span>,
+        <span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>},
+    };
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">one_shot</span>() {

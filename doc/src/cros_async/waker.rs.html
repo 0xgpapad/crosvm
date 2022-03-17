@@ -67,13 +67,17 @@
 <span id="66">66</span>
 <span id="67">67</span>
 <span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::mem</span>::{<span class="ident">drop</span>, <span class="ident">ManuallyDrop</span>};
-<span class="kw">use</span> <span class="ident">std::sync::Weak</span>;
-<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">RawWaker</span>, <span class="ident">RawWakerVTable</span>, <span class="ident">Waker</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">mem</span>::{<span class="ident">drop</span>, <span class="ident">ManuallyDrop</span>},
+    <span class="ident">sync::Weak</span>,
+    <span class="ident">task</span>::{<span class="ident">RawWaker</span>, <span class="ident">RawWakerVTable</span>, <span class="ident">Waker</span>},
+};
 
 <span class="doccomment">/// Wrapper around a usize used as a token to uniquely identify a pending waker.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>

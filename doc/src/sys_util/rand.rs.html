@@ -109,19 +109,17 @@
 <span id="108">108</span>
 <span id="109">109</span>
 <span id="110">110</span>
-<span id="111">111</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="doccomment">//! Rust implementation of functionality parallel to libchrome&#39;s base/rand_util.h.</span>
 
-<span class="kw">use</span> <span class="ident">std::thread::sleep</span>;
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">thread::sleep</span>, <span class="ident">time::Duration</span>};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{<span class="ident">c_uint</span>, <span class="ident">c_void</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">errno_result</span>, <span class="ident">handle_eintr_errno</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">errno_result</span>, <span class="ident">handle_eintr_errno</span>, <span class="prelude-ty">Result</span>};
 
 <span class="doccomment">/// How long to wait before calling getrandom again if it does not return</span>
 <span class="doccomment">/// enough bytes.</span>

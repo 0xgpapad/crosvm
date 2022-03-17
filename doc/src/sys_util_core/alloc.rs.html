@@ -212,12 +212,16 @@
 <span id="211">211</span>
 <span id="212">212</span>
 <span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::alloc</span>::{<span class="ident">alloc</span>, <span class="ident">alloc_zeroed</span>, <span class="ident">dealloc</span>, <span class="ident">Layout</span>};
-<span class="kw">use</span> <span class="ident">std::cmp::min</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">alloc</span>::{<span class="ident">alloc</span>, <span class="ident">alloc_zeroed</span>, <span class="ident">dealloc</span>, <span class="ident">Layout</span>},
+    <span class="ident">cmp::min</span>,
+};
 
 <span class="doccomment">/// A contiguous memory allocation with a specified size and alignment, with a</span>
 <span class="doccomment">/// Drop impl to perform the deallocation.</span>

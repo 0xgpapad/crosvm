@@ -41,7 +41,7 @@
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">errno_result</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">errno_result</span>, <span class="prelude-ty">Result</span>};
 
 <span class="doccomment">/// Enables real time thread priorities in the current thread up to `limit`.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_rt_prio_limit</span>(<span class="ident">limit</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {

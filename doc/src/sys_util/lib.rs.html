@@ -678,6 +678,10 @@
 <span id="677">677</span>
 <span id="678">678</span>
 <span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -732,55 +736,59 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">vsock</span>;
 <span class="kw">mod</span> <span class="ident">write_zeroes</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi_event</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::capabilities::drop_capabilities</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::clock</span>::{<span class="ident">Clock</span>, <span class="ident">FakeClock</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::eventfd</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::file_flags</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fork</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::get_filesystem_type</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::ioctl</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mmap</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::netlink</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::poll</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::priority</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::raw_fd</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sched</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::scoped_signal_handler</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::shm</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::signal</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::signalfd</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sock_ctrl_msg</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::terminal</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::timerfd</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">acpi_event</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">capabilities::drop_capabilities</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">clock</span>::{<span class="ident">Clock</span>, <span class="ident">FakeClock</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">descriptor</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">descriptor_reflection</span>::{
     <span class="ident">deserialize_with_descriptors</span>, <span class="ident">with_as_descriptor</span>, <span class="ident">with_raw_descriptor</span>, <span class="ident">FileSerdeWrapper</span>,
     <span class="ident">SerializeDescriptors</span>,
 };
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">eventfd</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_flags</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">fork</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">get_filesystem_type</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ioctl</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">mmap</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">netlink</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">poll</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">poll_token_derive</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">priority</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">raw_fd</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sched</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">scoped_signal_handler</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">shm</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">signal</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">signalfd</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sock_ctrl_msg</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util_core</span>::{<span class="ident">generate_scoped_event</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>, <span class="kw-2">*</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">terminal</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">timerfd</span>::<span class="kw-2">*</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::file_traits</span>::{
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_traits</span>::{
     <span class="ident">AsRawFds</span>, <span class="ident">FileAllocate</span>, <span class="ident">FileGetLen</span>, <span class="ident">FileReadWriteAtVolatile</span>, <span class="ident">FileReadWriteVolatile</span>, <span class="ident">FileSetLen</span>,
     <span class="ident">FileSync</span>,
 };
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mmap::Error</span> <span class="kw">as</span> <span class="ident">MmapError</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::signalfd::Error</span> <span class="kw">as</span> <span class="ident">SignalFdError</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::write_zeroes</span>::{<span class="ident">PunchHole</span>, <span class="ident">WriteZeroes</span>, <span class="ident">WriteZeroesAt</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">mmap::Error</span> <span class="kw">as</span> <span class="ident">MmapError</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">signalfd::Error</span> <span class="kw">as</span> <span class="ident">SignalFdError</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">write_zeroes</span>::{<span class="ident">PunchHole</span>, <span class="ident">WriteZeroes</span>, <span class="ident">WriteZeroesAt</span>};
 
-<span class="kw">use</span> <span class="ident">std::cell::Cell</span>;
-<span class="kw">use</span> <span class="ident">std::convert::TryFrom</span>;
-<span class="kw">use</span> <span class="ident">std::ffi::CStr</span>;
-<span class="kw">use</span> <span class="ident">std::fs</span>::{<span class="ident">remove_file</span>, <span class="ident">File</span>, <span class="ident">OpenOptions</span>};
-<span class="kw">use</span> <span class="ident">std::mem</span>;
-<span class="kw">use</span> <span class="ident">std::ops::Deref</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::fs::OpenOptionsExt</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::os::unix::net</span>::{<span class="ident">UnixDatagram</span>, <span class="ident">UnixListener</span>};
-<span class="kw">use</span> <span class="ident">std::path::Path</span>;
-<span class="kw">use</span> <span class="ident">std::ptr</span>;
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">cell::Cell</span>,
+    <span class="ident">convert::TryFrom</span>,
+    <span class="ident">ffi::CStr</span>,
+    <span class="ident">fs</span>::{<span class="ident">remove_file</span>, <span class="ident">File</span>, <span class="ident">OpenOptions</span>},
+    <span class="ident">mem</span>,
+    <span class="ident">ops::Deref</span>,
+    <span class="ident">os::unix</span>::{
+        <span class="ident">fs::OpenOptionsExt</span>,
+        <span class="ident">io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">RawFd</span>},
+        <span class="ident">net</span>::{<span class="ident">UnixDatagram</span>, <span class="ident">UnixListener</span>},
+    },
+    <span class="ident">path::Path</span>,
+    <span class="ident">ptr</span>,
+    <span class="ident">time::Duration</span>,
+};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{
     <span class="ident">c_int</span>, <span class="ident">c_long</span>, <span class="ident">fcntl</span>, <span class="ident">pipe2</span>, <span class="ident">syscall</span>, <span class="ident">sysconf</span>, <span class="ident">waitpid</span>, <span class="ident">SYS_getpid</span>, <span class="ident">SYS_gettid</span>, <span class="ident">EINVAL</span>,

@@ -153,23 +153,17 @@
 <span id="152">152</span>
 <span id="153">153</span>
 <span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::fs</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
-<span class="kw">use</span> <span class="ident">std::path::Path</span>;
-<span class="kw">use</span> <span class="ident">std::process</span>;
-<span class="kw">use</span> <span class="ident">std::result</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fs</span>, <span class="ident">io</span>, <span class="ident">path::Path</span>, <span class="ident">process</span>, <span class="ident">result</span>};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{<span class="ident">c_long</span>, <span class="ident">pid_t</span>, <span class="ident">syscall</span>, <span class="ident">SYS_clone</span>, <span class="ident">CLONE_NEWPID</span>, <span class="ident">CLONE_NEWUSER</span>, <span class="ident">SIGCHLD</span>};
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::errno_result</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::errno_result</span>;
 
 <span class="doccomment">/// Controls what namespace `clone_process` will have. See NAMESPACES(7).</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u32</span>)]</span>
@@ -191,10 +185,10 @@
     <span class="ident">Multithreaded</span>(<span class="ident">usize</span>),
     <span class="doccomment">/// There was an error while cloning.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;error while cloning&quot;</span>)]</span>
-    <span class="ident">Sys</span>(<span class="ident"><span class="kw">crate</span>::Error</span>),
+    <span class="ident">Sys</span>(<span class="ident"><span class="kw">super</span>::Error</span>),
 }
 
-<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">do_clone</span>(<span class="ident">flags</span>: <span class="ident">i32</span>) -&gt; <span class="ident"><span class="kw">crate</span>::Result</span><span class="op">&lt;</span><span class="ident">pid_t</span><span class="op">&gt;</span> {
+<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">do_clone</span>(<span class="ident">flags</span>: <span class="ident">i32</span>) -&gt; <span class="ident"><span class="kw">super</span>::Result</span><span class="op">&lt;</span><span class="ident">pid_t</span><span class="op">&gt;</span> {
     <span class="comment">// Forking is unsafe, this function must be unsafe as there is no way to guarantee safety</span>
     <span class="comment">// without more context about the state of the program.</span>
     <span class="kw">let</span> <span class="ident">pid</span> <span class="op">=</span> <span class="ident">syscall</span>(<span class="ident">SYS_clone</span> <span class="kw">as</span> <span class="ident">c_long</span>, <span class="ident">flags</span> <span class="op">|</span> <span class="ident">SIGCHLD</span> <span class="kw">as</span> <span class="ident">i32</span>, <span class="number">0</span>);
@@ -257,10 +251,12 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">getpid</span>, <span class="ident">EventFd</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::{
+        <span class="kw">super</span>::{<span class="ident">getpid</span>, <span class="ident">EventFd</span>},
+        <span class="kw-2">*</span>,
+    };
 
-    <span class="kw">fn</span> <span class="ident">wait_process</span>(<span class="ident">pid</span>: <span class="ident">libc::pid_t</span>) -&gt; <span class="ident"><span class="kw">crate</span>::Result</span><span class="op">&lt;</span><span class="ident">libc::c_int</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">wait_process</span>(<span class="ident">pid</span>: <span class="ident">libc::pid_t</span>) -&gt; <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::Result</span><span class="op">&lt;</span><span class="ident">libc::c_int</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">status</span>: <span class="ident">libc::c_int</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">unsafe</span> {
             <span class="kw">if</span> <span class="ident">libc::waitpid</span>(<span class="ident">pid</span>, <span class="kw-2">&amp;mut</span> <span class="ident">status</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">libc::c_int</span>, <span class="number">0</span>) <span class="op">&lt;</span> <span class="number">0</span> {

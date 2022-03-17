@@ -521,6 +521,8 @@
 <span id="520">520</span>
 <span id="521">521</span>
 <span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -532,7 +534,9 @@
         <span class="ident">mpsc</span>::{<span class="ident">channel</span>, <span class="ident">Receiver</span>, <span class="ident">Sender</span>},
         <span class="ident">Arc</span>,
     },
-    <span class="ident">thread</span>::{<span class="self">self</span>, <span class="ident">JoinHandle</span>},
+    <span class="ident">thread</span>::{
+        <span class="ident">JoinHandle</span>, {<span class="self">self</span>},
+    },
     <span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>},
 };
 
@@ -864,7 +868,7 @@
     <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">stream::FuturesUnordered</span>, <span class="ident">StreamExt</span>};
     <span class="kw">use</span> <span class="ident">sync</span>::{<span class="ident">Condvar</span>, <span class="ident">Mutex</span>};
 
-    <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">block_on</span>, <span class="ident">BlockingPool</span>};
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span></span>::{<span class="ident">block_on</span>, <span class="ident">BlockingPool</span>};
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">blocking_sleep</span>() {

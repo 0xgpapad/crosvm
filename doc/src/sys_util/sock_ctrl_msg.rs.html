@@ -541,6 +541,10 @@
 <span id="540">540</span>
 <span id="541">541</span>
 <span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -548,13 +552,17 @@
 <span class="doccomment">//! Used to send and receive messages with file descriptors on sockets that accept control messages</span>
 <span class="doccomment">//! (e.g. Unix domain sockets).</span>
 
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">IoSlice</span>, <span class="ident">IoSliceMut</span>};
-<span class="kw">use</span> <span class="ident">std::mem::size_of</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::os::unix::net</span>::{<span class="ident">UnixDatagram</span>, <span class="ident">UnixStream</span>};
-<span class="kw">use</span> <span class="ident">std::ptr</span>::{<span class="ident">copy_nonoverlapping</span>, <span class="ident">null_mut</span>, <span class="ident">write_unaligned</span>};
-<span class="kw">use</span> <span class="ident">std::slice</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">fs::File</span>,
+    <span class="ident">io</span>::{<span class="ident">IoSlice</span>, <span class="ident">IoSliceMut</span>},
+    <span class="ident">mem::size_of</span>,
+    <span class="ident">os::unix</span>::{
+        <span class="ident">io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">RawFd</span>},
+        <span class="ident">net</span>::{<span class="ident">UnixDatagram</span>, <span class="ident">UnixStream</span>},
+    },
+    <span class="ident">ptr</span>::{<span class="ident">copy_nonoverlapping</span>, <span class="ident">null_mut</span>, <span class="ident">write_unaligned</span>},
+    <span class="ident">slice</span>,
+};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{
     <span class="ident">c_long</span>, <span class="ident">c_void</span>, <span class="ident">cmsghdr</span>, <span class="ident">iovec</span>, <span class="ident">msghdr</span>, <span class="ident">recvmsg</span>, <span class="ident">sendmsg</span>, <span class="ident">MSG_NOSIGNAL</span>, <span class="ident">SCM_RIGHTS</span>, <span class="ident">SOL_SOCKET</span>,
@@ -562,8 +570,7 @@
 
 <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">IoBufMut</span>, <span class="ident">VolatileSlice</span>};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::net::UnixSeqpacket</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">net::UnixSeqpacket</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
 
 <span class="comment">// Each of the following macros performs the same function as their C counterparts. They are each</span>
 <span class="comment">// macros because they are used to size statically allocated arrays.</span>
@@ -952,15 +959,16 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="kw">use</span> <span class="ident">std::io::Write</span>;
-    <span class="kw">use</span> <span class="ident">std::mem::size_of</span>;
-    <span class="kw">use</span> <span class="ident">std::os::raw::c_long</span>;
-    <span class="kw">use</span> <span class="ident">std::os::unix::net::UnixDatagram</span>;
-    <span class="kw">use</span> <span class="ident">std::slice::from_raw_parts</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">io::Write</span>,
+        <span class="ident">mem::size_of</span>,
+        <span class="ident">os</span>::{<span class="ident">raw::c_long</span>, <span class="ident">unix::net::UnixDatagram</span>},
+        <span class="ident">slice::from_raw_parts</span>,
+    };
 
     <span class="kw">use</span> <span class="ident">libc::cmsghdr</span>;
 
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::EventFd</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::EventFd</span>;
 
     <span class="comment">// Doing this as a macro makes it easier to see the line if it fails</span>
     <span class="macro">macro_rules!</span> <span class="ident">CMSG_SPACE_TEST</span> {

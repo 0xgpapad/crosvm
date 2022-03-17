@@ -191,18 +191,34 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::future::Future</span>;
-<span class="kw">use</span> <span class="ident">std::ptr</span>;
-<span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicI32</span>, <span class="ident">Ordering</span>};
-<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
-<span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">future::Future</span>,
+    <span class="ident">ptr</span>,
+    <span class="ident">sync</span>::{
+        <span class="ident">atomic</span>::{<span class="ident">AtomicI32</span>, <span class="ident">Ordering</span>},
+        <span class="ident">Arc</span>,
+    },
+    <span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>},
+};
 
-<span class="kw">use</span> <span class="ident">futures::pin_mut</span>;
-<span class="kw">use</span> <span class="ident">futures::task</span>::{<span class="ident">waker_ref</span>, <span class="ident">ArcWake</span>};
+<span class="kw">use</span> <span class="ident">futures</span>::{
+    <span class="ident">pin_mut</span>,
+    <span class="ident">task</span>::{<span class="ident">waker_ref</span>, <span class="ident">ArcWake</span>},
+};
 
 <span class="comment">// Randomly generated values to indicate the state of the current thread.</span>
 <span class="kw">const</span> <span class="ident">WAITING</span>: <span class="ident">i32</span> <span class="op">=</span> <span class="number">0x25de_74d1</span>;
@@ -300,15 +316,19 @@
 <span class="kw">mod</span> <span class="ident">test</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="kw">use</span> <span class="ident">std::future::Future</span>;
-    <span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
-    <span class="kw">use</span> <span class="ident">std::sync::mpsc</span>::{<span class="ident">channel</span>, <span class="ident">Sender</span>};
-    <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
-    <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>};
-    <span class="kw">use</span> <span class="ident">std::thread</span>;
-    <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">future::Future</span>,
+        <span class="ident">pin::Pin</span>,
+        <span class="ident">sync</span>::{
+            <span class="ident">mpsc</span>::{<span class="ident">channel</span>, <span class="ident">Sender</span>},
+            <span class="ident">Arc</span>,
+        },
+        <span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>, <span class="ident">Waker</span>},
+        <span class="ident">thread</span>,
+        <span class="ident">time::Duration</span>,
+    };
 
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sync::SpinLock</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span>::sync::SpinLock</span>;
 
     <span class="kw">struct</span> <span class="ident">TimerState</span> {
         <span class="ident">fired</span>: <span class="ident">bool</span>,

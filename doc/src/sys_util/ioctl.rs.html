@@ -203,7 +203,6 @@
 <span id="202">202</span>
 <span id="203">203</span>
 <span id="204">204</span>
-<span id="205">205</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -214,8 +213,7 @@
 <span class="comment">// `libc::ioctl`. Their safety follows `libc::ioctl`&#39;s safety.</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::missing_safety_doc</span>)]</span>
 
-<span class="kw">use</span> <span class="ident">std::os::raw</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io::AsRawFd</span>;
+<span class="kw">use</span> <span class="ident">std::os</span>::{<span class="ident">raw</span>::<span class="kw-2">*</span>, <span class="ident">unix::io::AsRawFd</span>};
 
 <span class="doccomment">/// Raw macro to declare the expression that calculates an ioctl number</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>

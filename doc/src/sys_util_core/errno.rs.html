@@ -71,14 +71,20 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::convert</span>::{<span class="ident">From</span>, <span class="ident">TryInto</span>};
-<span class="kw">use</span> <span class="ident">std::fmt</span>::{<span class="self">self</span>, <span class="ident">Display</span>};
-<span class="kw">use</span> <span class="ident">std::io</span>;
-<span class="kw">use</span> <span class="ident">std::result</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">convert</span>::{<span class="ident">From</span>, <span class="ident">TryInto</span>},
+    <span class="ident">fmt</span>::{
+        <span class="ident">Display</span>, {<span class="self">self</span>},
+    },
+    <span class="ident">io</span>, <span class="ident">result</span>,
+};
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;

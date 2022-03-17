@@ -277,14 +277,22 @@
 <span id="276">276</span>
 <span id="277">277</span>
 <span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::cell::UnsafeCell</span>;
-<span class="kw">use</span> <span class="ident">std::hint</span>;
-<span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>};
-<span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">Ordering</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">cell::UnsafeCell</span>,
+    <span class="ident">hint</span>,
+    <span class="ident">ops</span>::{<span class="ident">Deref</span>, <span class="ident">DerefMut</span>},
+    <span class="ident">sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">Ordering</span>},
+};
 
 <span class="kw">const</span> <span class="ident">UNLOCKED</span>: <span class="ident">bool</span> <span class="op">=</span> <span class="bool-val">false</span>;
 <span class="kw">const</span> <span class="ident">LOCKED</span>: <span class="ident">bool</span> <span class="op">=</span> <span class="bool-val">true</span>;
@@ -413,10 +421,14 @@
 <span class="kw">mod</span> <span class="ident">test</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="kw">use</span> <span class="ident">std::mem</span>;
-    <span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
-    <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
-    <span class="kw">use</span> <span class="ident">std::thread</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">mem</span>,
+        <span class="ident">sync</span>::{
+            <span class="ident">atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>},
+            <span class="ident">Arc</span>,
+        },
+        <span class="ident">thread</span>,
+    };
 
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Debug</span>)]</span>
     <span class="kw">struct</span> <span class="ident">NonCopy</span>(<span class="ident">u32</span>);

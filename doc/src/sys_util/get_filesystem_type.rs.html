@@ -27,19 +27,13 @@
 <span id="26">26</span>
 <span id="27">27</span>
 <span id="28">28</span>
-<span id="29">29</span>
-<span id="30">30</span>
-<span id="31">31</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Result</span>;
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">syscall</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">libc::fstatfs</span>;
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::mem::MaybeUninit</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io::AsRawFd</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fs::File</span>, <span class="ident">mem::MaybeUninit</span>, <span class="ident">os::unix::io::AsRawFd</span>};
 
 <span class="doccomment">/// Obtain file system type of the file system that the file is served from.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_filesystem_type</span>(<span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="ident">File</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> {

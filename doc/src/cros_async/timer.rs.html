@@ -133,9 +133,10 @@
 
 <span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="prelude-ty">Result</span> <span class="kw">as</span> <span class="ident">SysResult</span>, <span class="ident">TimerFd</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">AsyncResult</span>, <span class="ident">Error</span>, <span class="ident">Executor</span>, <span class="ident">IntoAsync</span>, <span class="ident">IoSourceExt</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">AsyncResult</span>, <span class="ident">Error</span>, <span class="ident">Executor</span>, <span class="ident">IntoAsync</span>, <span class="ident">IoSourceExt</span>};
+
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">FdExecutor</span>, <span class="ident">URingExecutor</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">FdExecutor</span>, <span class="ident">URingExecutor</span>};
 
 <span class="doccomment">/// An async version of sys_util::TimerFd.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TimerAsync</span> {
@@ -150,12 +151,12 @@
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new_poll</span>(<span class="ident">timer</span>: <span class="ident">TimerFd</span>, <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">FdExecutor</span>) -&gt; <span class="ident">AsyncResult</span><span class="op">&lt;</span><span class="ident">TimerAsync</span><span class="op">&gt;</span> {
-        <span class="ident"><span class="kw">crate</span>::executor::async_poll_from</span>(<span class="ident">timer</span>, <span class="ident">ex</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">io_source</span><span class="op">|</span> <span class="ident">TimerAsync</span> { <span class="ident">io_source</span> })
+        <span class="ident"><span class="kw">super</span>::executor::async_poll_from</span>(<span class="ident">timer</span>, <span class="ident">ex</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">io_source</span><span class="op">|</span> <span class="ident">TimerAsync</span> { <span class="ident">io_source</span> })
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new_uring</span>(<span class="ident">timer</span>: <span class="ident">TimerFd</span>, <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">URingExecutor</span>) -&gt; <span class="ident">AsyncResult</span><span class="op">&lt;</span><span class="ident">TimerAsync</span><span class="op">&gt;</span> {
-        <span class="ident"><span class="kw">crate</span>::executor::async_uring_from</span>(<span class="ident">timer</span>, <span class="ident">ex</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">io_source</span><span class="op">|</span> <span class="ident">TimerAsync</span> { <span class="ident">io_source</span> })
+        <span class="ident"><span class="kw">super</span>::executor::async_uring_from</span>(<span class="ident">timer</span>, <span class="ident">ex</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">io_source</span><span class="op">|</span> <span class="ident">TimerAsync</span> { <span class="ident">io_source</span> })
     }
 
     <span class="doccomment">/// Gets the next value from the timer.</span>
@@ -184,8 +185,7 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::uring_executor::use_uring</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident"><span class="kw">super</span>::uring_executor::use_uring</span>, <span class="kw-2">*</span>};
     <span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

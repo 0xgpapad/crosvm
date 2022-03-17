@@ -343,7 +343,6 @@
 <span id="342">342</span>
 <span id="343">343</span>
 <span id="344">344</span>
-<span id="345">345</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -352,10 +351,9 @@
 
 <span class="kw">use</span> <span class="ident">async_task::Task</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::poll_source::Error</span> <span class="kw">as</span> <span class="ident">PollError</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::uring_executor::use_uring</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">AsyncResult</span>, <span class="ident">FdExecutor</span>, <span class="ident">IntoAsync</span>, <span class="ident">IoSourceExt</span>, <span class="ident">PollSource</span>, <span class="ident">URingExecutor</span>, <span class="ident">UringSource</span>,
+<span class="kw">use</span> <span class="kw">super</span>::{
+    <span class="ident">poll_source::Error</span> <span class="kw">as</span> <span class="ident">PollError</span>, <span class="ident">uring_executor::use_uring</span>, <span class="ident">AsyncResult</span>, <span class="ident">FdExecutor</span>, <span class="ident">IntoAsync</span>,
+    <span class="ident">IoSourceExt</span>, <span class="ident">PollSource</span>, <span class="ident">URingExecutor</span>, <span class="ident">UringSource</span>,
 };
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">async_uring_from</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">F</span>: <span class="ident">IntoAsync</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(

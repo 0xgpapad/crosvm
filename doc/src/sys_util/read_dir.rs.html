@@ -147,21 +147,15 @@
 <span id="146">146</span>
 <span id="147">147</span>
 <span id="148">148</span>
-<span id="149">149</span>
-<span id="150">150</span>
-<span id="151">151</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::ffi::CStr</span>;
-<span class="kw">use</span> <span class="ident">std::io::Result</span>;
-<span class="kw">use</span> <span class="ident">std::mem::size_of</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io::AsRawFd</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">ffi::CStr</span>, <span class="ident">io::Result</span>, <span class="ident">mem::size_of</span>, <span class="ident">os::unix::io::AsRawFd</span>};
 
 <span class="kw">use</span> <span class="ident">data_model::DataInit</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::syscall</span>;
 
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>, <span class="ident">packed</span>)]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>

@@ -212,17 +212,23 @@
 <span id="211">211</span>
 <span id="212">212</span>
 <span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::cmp::min</span>;
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="ident">Seek</span>, <span class="ident">SeekFrom</span>};
-<span class="kw">use</span> <span class="ident">std::os::unix::fs::FileExt</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">cmp::min</span>,
+    <span class="ident">fs::File</span>,
+    <span class="ident">io</span>::{
+        <span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="ident">Seek</span>, <span class="ident">SeekFrom</span>, {<span class="self">self</span>},
+    },
+    <span class="ident">os::unix::fs::FileExt</span>,
+};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fallocate</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::FallocateMode</span>;
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">fallocate</span>, <span class="ident">FallocateMode</span>};
 
 <span class="doccomment">/// A trait for deallocating space in a file.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">PunchHole</span> {

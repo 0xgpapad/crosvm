@@ -142,22 +142,20 @@
 <span id="141">141</span>
 <span id="142">142</span>
 <span id="143">143</span>
-<span id="144">144</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="doccomment">//! Wrappers for CPU affinity functions.</span>
 
-<span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
-<span class="kw">use</span> <span class="ident">std::mem</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">iter::FromIterator</span>, <span class="ident">mem</span>};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{
     <span class="ident">cpu_set_t</span>, <span class="ident">prctl</span>, <span class="ident">sched_getaffinity</span>, <span class="ident">sched_setaffinity</span>, <span class="ident">CPU_ISSET</span>, <span class="ident">CPU_SET</span>, <span class="ident">CPU_SETSIZE</span>,
     <span class="ident">CPU_ZERO</span>, <span class="ident">EINVAL</span>,
 };
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">errno_result</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">errno_result</span>, <span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
 
 <span class="comment">// This is needed because otherwise the compiler will complain that the</span>
 <span class="comment">// impl doesn&#39;t reference any types from inside this crate.</span>
@@ -236,7 +234,7 @@
 
     <span class="comment">// Safe because we pass 0 for the current thread, and cpu_set.0 is a valid pointer and only</span>
     <span class="comment">// used for the duration of this call.</span>
-    <span class="macro">crate::syscall!</span>(<span class="kw">unsafe</span> { <span class="ident">sched_getaffinity</span>(<span class="number">0</span>, <span class="ident">mem::size_of_val</span>(<span class="kw-2">&amp;</span><span class="ident">cpu_set</span>.<span class="number">0</span>), <span class="kw-2">&amp;mut</span> <span class="ident">cpu_set</span>.<span class="number">0</span>) })<span class="question-mark">?</span>;
+    <span class="macro">super::syscall!</span>(<span class="kw">unsafe</span> { <span class="ident">sched_getaffinity</span>(<span class="number">0</span>, <span class="ident">mem::size_of_val</span>(<span class="kw-2">&amp;</span><span class="ident">cpu_set</span>.<span class="number">0</span>), <span class="kw-2">&amp;mut</span> <span class="ident">cpu_set</span>.<span class="number">0</span>) })<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(<span class="ident">cpu_set</span>.<span class="ident">to_cpus</span>())
 }

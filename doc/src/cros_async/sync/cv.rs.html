@@ -1165,18 +1165,36 @@
 <span id="1164">1164</span>
 <span id="1165">1165</span>
 <span id="1166">1166</span>
+<span id="1167">1167</span>
+<span id="1168">1168</span>
+<span id="1169">1169</span>
+<span id="1170">1170</span>
+<span id="1171">1171</span>
+<span id="1172">1172</span>
+<span id="1173">1173</span>
+<span id="1174">1174</span>
+<span id="1175">1175</span>
+<span id="1176">1176</span>
+<span id="1177">1177</span>
+<span id="1178">1178</span>
+<span id="1179">1179</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::cell::UnsafeCell</span>;
-<span class="kw">use</span> <span class="ident">std::hint</span>;
-<span class="kw">use</span> <span class="ident">std::mem</span>;
-<span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
-<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">cell::UnsafeCell</span>,
+    <span class="ident">hint</span>, <span class="ident">mem</span>,
+    <span class="ident">sync</span>::{
+        <span class="ident">atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>},
+        <span class="ident">Arc</span>,
+    },
+};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sync::mu</span>::{<span class="ident">MutexGuard</span>, <span class="ident">MutexReadGuard</span>, <span class="ident">RawMutex</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sync::waiter</span>::{<span class="ident">Kind</span> <span class="kw">as</span> <span class="ident">WaiterKind</span>, <span class="ident">Waiter</span>, <span class="ident">WaiterAdapter</span>, <span class="ident">WaiterList</span>, <span class="ident">WaitingFor</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::sync</span>::{
+    <span class="ident">mu</span>::{<span class="ident">MutexGuard</span>, <span class="ident">MutexReadGuard</span>, <span class="ident">RawMutex</span>},
+    <span class="ident">waiter</span>::{<span class="ident">Kind</span> <span class="kw">as</span> <span class="ident">WaiterKind</span>, <span class="ident">Waiter</span>, <span class="ident">WaiterAdapter</span>, <span class="ident">WaiterList</span>, <span class="ident">WaitingFor</span>},
+};
 
 <span class="kw">const</span> <span class="ident">SPINLOCK</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
 <span class="kw">const</span> <span class="ident">HAS_WAITERS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">1</span>;
@@ -1615,23 +1633,31 @@
 <span class="kw">mod</span> <span class="ident">test</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="kw">use</span> <span class="ident">std::future::Future</span>;
-    <span class="kw">use</span> <span class="ident">std::mem</span>;
-    <span class="kw">use</span> <span class="ident">std::ptr</span>;
-    <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
-    <span class="kw">use</span> <span class="ident">std::sync::mpsc</span>::{<span class="ident">channel</span>, <span class="ident">Sender</span>};
-    <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
-    <span class="kw">use</span> <span class="ident">std::task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>};
-    <span class="kw">use</span> <span class="ident">std::thread</span>::{<span class="self">self</span>, <span class="ident">JoinHandle</span>};
-    <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">future::Future</span>,
+        <span class="ident">mem</span>, <span class="ident">ptr</span>,
+        <span class="ident">rc::Rc</span>,
+        <span class="ident">sync</span>::{
+            <span class="ident">mpsc</span>::{<span class="ident">channel</span>, <span class="ident">Sender</span>},
+            <span class="ident">Arc</span>,
+        },
+        <span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>},
+        <span class="ident">thread</span>::{
+            <span class="ident">JoinHandle</span>, {<span class="self">self</span>},
+        },
+        <span class="ident">time::Duration</span>,
+    };
 
-    <span class="kw">use</span> <span class="ident">futures::channel::oneshot</span>;
-    <span class="kw">use</span> <span class="ident">futures::task</span>::{<span class="ident">waker_ref</span>, <span class="ident">ArcWake</span>};
-    <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">select</span>, <span class="ident">FutureExt</span>};
+    <span class="kw">use</span> <span class="ident">futures</span>::{
+        <span class="ident">channel::oneshot</span>,
+        <span class="ident">select</span>,
+        <span class="ident">task</span>::{<span class="ident">waker_ref</span>, <span class="ident">ArcWake</span>},
+        <span class="ident">FutureExt</span>,
+    };
     <span class="kw">use</span> <span class="ident">futures_executor</span>::{<span class="ident">LocalPool</span>, <span class="ident">LocalSpawner</span>, <span class="ident">ThreadPool</span>};
     <span class="kw">use</span> <span class="ident">futures_util::task::LocalSpawnExt</span>;
 
-    <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">block_on</span>, <span class="ident">sync::Mutex</span>};
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::<span class="kw">super</span></span>::{<span class="ident">block_on</span>, <span class="ident">sync::Mutex</span>};
 
     <span class="comment">// Dummy waker used when we want to manually drive futures.</span>
     <span class="kw">struct</span> <span class="ident">TestWaker</span>;

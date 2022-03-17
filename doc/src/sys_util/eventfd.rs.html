@@ -224,20 +224,24 @@
 <span id="223">223</span>
 <span id="224">224</span>
 <span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::mem</span>;
-<span class="kw">use</span> <span class="ident">std::ops::Deref</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::ptr</span>;
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">mem</span>,
+    <span class="ident">ops::Deref</span>,
+    <span class="ident">os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>, <span class="ident">RawFd</span>},
+    <span class="ident">ptr</span>,
+    <span class="ident">time::Duration</span>,
+};
 
 <span class="kw">use</span> <span class="ident">libc</span>::{<span class="ident">c_void</span>, <span class="ident">eventfd</span>, <span class="ident">read</span>, <span class="ident">write</span>, <span class="ident">POLLIN</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{
+<span class="kw">use</span> <span class="kw">super</span>::{
     <span class="ident">duration_to_timespec</span>, <span class="ident">errno_result</span>, <span class="ident">generate_scoped_event</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>,
     <span class="ident">IntoRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>, <span class="ident">SafeDescriptor</span>,
 };

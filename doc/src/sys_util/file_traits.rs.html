@@ -500,18 +500,26 @@
 <span id="499">499</span>
 <span id="500">500</span>
 <span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="prelude-ty">Result</span>};
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::os::unix::net::UnixStream</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">fs::File</span>,
+    <span class="ident">io</span>::{<span class="ident">Error</span>, <span class="ident">ErrorKind</span>, <span class="prelude-ty">Result</span>},
+    <span class="ident">os::unix</span>::{
+        <span class="ident">io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>},
+        <span class="ident">net::UnixStream</span>,
+    },
+};
 
 <span class="kw">use</span> <span class="ident">data_model::VolatileSlice</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">fallocate</span>, <span class="ident">FallocateMode</span>};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">fallocate</span>, <span class="ident">FallocateMode</span>};
 
 <span class="doccomment">/// A trait for flushing the contents of a file to disk.</span>
 <span class="doccomment">/// This is equivalent to File&#39;s `sync_all` method, but</span>
