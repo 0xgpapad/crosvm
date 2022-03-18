@@ -1521,6 +1521,8 @@
 <span id="1520">1520</span>
 <span id="1521">1521</span>
 <span id="1522">1522</span>
+<span id="1523">1523</span>
+<span id="1524">1524</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2818,10 +2820,12 @@
         <span class="ident">pcie_vcfg</span>.<span class="ident">to_aml_bytes</span>(<span class="kw-2">&amp;mut</span> <span class="ident">amls</span>);
 
         <span class="kw">let</span> <span class="ident">pm_sci_evt</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateEvent</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">pm_sci_evt_resample</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateEvent</span>)<span class="question-mark">?</span>;
         <span class="ident">irq_chip</span>
-            .<span class="ident">register_irq_event</span>(<span class="ident">sci_irq</span>, <span class="kw-2">&amp;</span><span class="ident">pm_sci_evt</span>, <span class="prelude-val">None</span>)
+            .<span class="ident">register_irq_event</span>(<span class="ident">sci_irq</span>, <span class="kw-2">&amp;</span><span class="ident">pm_sci_evt</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">pm_sci_evt_resample</span>))
             .<span class="ident">map_err</span>(<span class="ident">Error::RegisterIrqfd</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">pmresource</span> <span class="op">=</span> <span class="ident">devices::ACPIPMResource::new</span>(<span class="ident">pm_sci_evt</span>, <span class="ident">suspend_evt</span>, <span class="ident">exit_evt</span>);
+        <span class="kw">let</span> <span class="ident">pmresource</span> <span class="op">=</span>
+            <span class="ident">devices::ACPIPMResource::new</span>(<span class="ident">pm_sci_evt</span>, <span class="ident">pm_sci_evt_resample</span>, <span class="ident">suspend_evt</span>, <span class="ident">exit_evt</span>);
         <span class="ident">pmresource</span>.<span class="ident">to_aml_bytes</span>(<span class="kw-2">&amp;mut</span> <span class="ident">amls</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">crs_entries</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Aml</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec!</span>[

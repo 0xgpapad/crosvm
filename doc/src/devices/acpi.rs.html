@@ -332,6 +332,13 @@
 <span id="331">331</span>
 <span id="332">332</span>
 <span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -345,6 +352,7 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ACPIPMResource</span> {
     <span class="ident">sci_evt</span>: <span class="ident">Event</span>,
+    <span class="ident">sci_evt_resample</span>: <span class="ident">Event</span>,
     <span class="ident">suspend_evt</span>: <span class="ident">Event</span>,
     <span class="ident">exit_evt</span>: <span class="ident">Event</span>,
     <span class="ident">pm1_status</span>: <span class="ident">u16</span>,
@@ -357,9 +365,15 @@
 <span class="kw">impl</span> <span class="ident">ACPIPMResource</span> {
     <span class="doccomment">/// Constructs ACPI Power Management Resouce.</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">sci_evt</span>: <span class="ident">Event</span>, <span class="ident">suspend_evt</span>: <span class="ident">Event</span>, <span class="ident">exit_evt</span>: <span class="ident">Event</span>) -&gt; <span class="ident">ACPIPMResource</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
+        <span class="ident">sci_evt</span>: <span class="ident">Event</span>,
+        <span class="ident">sci_evt_resample</span>: <span class="ident">Event</span>,
+        <span class="ident">suspend_evt</span>: <span class="ident">Event</span>,
+        <span class="ident">exit_evt</span>: <span class="ident">Event</span>,
+    ) -&gt; <span class="ident">ACPIPMResource</span> {
         <span class="ident">ACPIPMResource</span> {
             <span class="ident">sci_evt</span>,
+            <span class="ident">sci_evt_resample</span>,
             <span class="ident">suspend_evt</span>,
             <span class="ident">exit_evt</span>,
             <span class="ident">pm1_status</span>: <span class="number">0</span>,
