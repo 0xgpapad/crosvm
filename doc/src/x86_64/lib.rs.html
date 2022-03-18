@@ -1721,7 +1721,7 @@
 
 <span class="kw">const</span> <span class="ident">BOOT_STACK_POINTER</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0x8000</span>;
 <span class="comment">// Make sure it align to 256MB for MTRR convenient</span>
-<span class="kw">const</span> <span class="ident">MEM_32BIT_GAP_SIZE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">768</span> <span class="op">*</span> <span class="ident">MB</span>;
+<span class="kw">const</span> <span class="ident">MEM_32BIT_GAP_SIZE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1024</span> <span class="op">*</span> <span class="ident">MB</span>;
 <span class="kw">const</span> <span class="ident">START_OF_RAM_32BITS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
 <span class="kw">const</span> <span class="ident">FIRST_ADDR_PAST_32BITS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>;
 <span class="comment">// Reserved memory for nand_bios/LAPIC/IOAPIC/HPET/.....</span>
