@@ -491,15 +491,19 @@
 <span id="490">490</span>
 <span id="491">491</span>
 <span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">net</span>;
 <span class="kw">mod</span> <span class="ident">vsock</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::net::Net</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::net::NetT</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::net</span>::{<span class="ident">Net</span>, <span class="ident">NetT</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::vsock::Vsock</span>;
 
 <span class="kw">use</span> <span class="ident">std::alloc::Layout</span>;
@@ -553,7 +557,7 @@
     <span class="doccomment">/// Set the current process as the owner of this file descriptor.</span>
     <span class="doccomment">/// This must be run before any other vhost ioctls.</span>
     <span class="kw">fn</span> <span class="ident">set_owner</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
+        <span class="comment">// This ioctl is called on a valid vhost_net descriptor and has its</span>
         <span class="comment">// return value checked.</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">ioctl</span>(<span class="self">self</span>, <span class="ident">virtio_sys::VHOST_SET_OWNER</span>()) };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -577,7 +581,7 @@
     <span class="doccomment">/// Get a bitmask of supported virtio/vhost features.</span>
     <span class="kw">fn</span> <span class="ident">get_features</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">avail_features</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
+        <span class="comment">// This ioctl is called on a valid vhost_net descriptor and has its</span>
         <span class="comment">// return value checked.</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
             <span class="ident">ioctl_with_mut_ref</span>(<span class="self">self</span>, <span class="ident">virtio_sys::VHOST_GET_FEATURES</span>(), <span class="kw-2">&amp;mut</span> <span class="ident">avail_features</span>)
@@ -594,7 +598,7 @@
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">/// * `features` - Bitmask of features to set.</span>
     <span class="kw">fn</span> <span class="ident">set_features</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">features</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
+        <span class="comment">// This ioctl is called on a valid vhost_net descriptor and has its</span>
         <span class="comment">// return value checked.</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">ioctl_with_ref</span>(<span class="self">self</span>, <span class="ident">virtio_sys::VHOST_SET_FEATURES</span>(), <span class="kw-2">&amp;</span><span class="ident">features</span>) };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -659,7 +663,7 @@
             <span class="ident">num</span>: <span class="ident">num</span> <span class="kw">as</span> <span class="ident">u32</span>,
         };
 
-        <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
+        <span class="comment">// This ioctl is called on a valid vhost_net descriptor and has its</span>
         <span class="comment">// return value checked.</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">ioctl_with_ref</span>(<span class="self">self</span>, <span class="ident">virtio_sys::VHOST_SET_VRING_NUM</span>(), <span class="kw-2">&amp;</span><span class="ident">vring_state</span>) };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -763,7 +767,7 @@
             <span class="ident">log_guest_addr</span>: <span class="ident">log_addr</span> <span class="kw">as</span> <span class="ident">u64</span>,
         };
 
-        <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
+        <span class="comment">// This ioctl is called on a valid vhost_net descriptor and has its</span>
         <span class="comment">// return value checked.</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">ioctl_with_ref</span>(<span class="self">self</span>, <span class="ident">virtio_sys::VHOST_SET_VRING_ADDR</span>(), <span class="kw-2">&amp;</span><span class="ident">vring_addr</span>) };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -783,7 +787,7 @@
             <span class="ident">num</span>: <span class="ident">num</span> <span class="kw">as</span> <span class="ident">u32</span>,
         };
 
-        <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
+        <span class="comment">// This ioctl is called on a valid vhost_net descriptor and has its</span>
         <span class="comment">// return value checked.</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">ioctl_with_ref</span>(<span class="self">self</span>, <span class="ident">virtio_sys::VHOST_SET_VRING_BASE</span>(), <span class="kw-2">&amp;</span><span class="ident">vring_state</span>) };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -821,10 +825,10 @@
     <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">vring_file</span> <span class="op">=</span> <span class="ident">virtio_sys::vhost_vring_file</span> {
             <span class="ident">index</span>: <span class="ident">queue_index</span> <span class="kw">as</span> <span class="ident">u32</span>,
-            <span class="ident">event</span>: <span class="ident">event</span>.<span class="ident">as_raw_descriptor</span>(),
+            <span class="ident">event</span>: <span class="ident">event</span>.<span class="ident">as_raw_descriptor</span>() <span class="kw">as</span> <span class="ident">i32</span>,
         };
 
-        <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
+        <span class="comment">// This ioctl is called on a valid vhost_net descriptor and has its</span>
         <span class="comment">// return value checked.</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">ioctl_with_ref</span>(<span class="self">self</span>, <span class="ident">virtio_sys::VHOST_SET_VRING_CALL</span>(), <span class="kw-2">&amp;</span><span class="ident">vring_file</span>) };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -841,7 +845,7 @@
     <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">vring_file</span> <span class="op">=</span> <span class="ident">virtio_sys::vhost_vring_file</span> {
             <span class="ident">index</span>: <span class="ident">queue_index</span> <span class="kw">as</span> <span class="ident">u32</span>,
-            <span class="ident">event</span>: <span class="ident">event</span>.<span class="ident">as_raw_descriptor</span>(),
+            <span class="ident">event</span>: <span class="ident">event</span>.<span class="ident">as_raw_descriptor</span>() <span class="kw">as</span> <span class="ident">i32</span>,
         };
 
         <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
@@ -858,14 +862,14 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">/// * `queue_index` - Index of the queue to modify.</span>
-    <span class="doccomment">/// * `fd` - Event that will be signaled from guest.</span>
+    <span class="doccomment">/// * `event` - Event that will be signaled from guest.</span>
     <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">vring_file</span> <span class="op">=</span> <span class="ident">virtio_sys::vhost_vring_file</span> {
             <span class="ident">index</span>: <span class="ident">queue_index</span> <span class="kw">as</span> <span class="ident">u32</span>,
-            <span class="ident">event</span>: <span class="ident">event</span>.<span class="ident">as_raw_descriptor</span>(),
+            <span class="ident">event</span>: <span class="ident">event</span>.<span class="ident">as_raw_descriptor</span>() <span class="kw">as</span> <span class="ident">i32</span>,
         };
 
-        <span class="comment">// This ioctl is called on a valid vhost_net fd and has its</span>
+        <span class="comment">// This ioctl is called on a valid vhost_net descriptor and has its</span>
         <span class="comment">// return value checked.</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">ioctl_with_ref</span>(<span class="self">self</span>, <span class="ident">virtio_sys::VHOST_SET_VRING_KICK</span>(), <span class="kw-2">&amp;</span><span class="ident">vring_file</span>) };
         <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -875,6 +879,8 @@
     }
 }
 
+<span class="comment">// TODO(225193541): Enable/add tests for windows.</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
