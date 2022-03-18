@@ -683,6 +683,23 @@
 <span id="682">682</span>
 <span id="683">683</span>
 <span id="684">684</span>
+<span id="685">685</span>
+<span id="686">686</span>
+<span id="687">687</span>
+<span id="688">688</span>
+<span id="689">689</span>
+<span id="690">690</span>
+<span id="691">691</span>
+<span id="692">692</span>
+<span id="693">693</span>
+<span id="694">694</span>
+<span id="695">695</span>
+<span id="696">696</span>
+<span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -800,11 +817,13 @@
 <span class="kw">const</span> <span class="ident">FADT_FIELD_PM1A_CONTROL_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">64</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_PM1B_CONTROL_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">68</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_PM2_CONTROL_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">72</span>;
+<span class="kw">const</span> <span class="ident">FADT_FIELD_PM_TMR_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">76</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_GPE0_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">80</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_GPE1_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">84</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_PM1A_EVENT_BLK_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">88</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_PM1A_CONTROL_BLK_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">89</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_PM2_CONTROL_BLK_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">90</span>;
+<span class="kw">const</span> <span class="ident">FADT_FIELD_PM_TMR_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">91</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_GPE0_BLK_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">92</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_GPE1_BLK_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">93</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_GPE1_BASE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">94</span>;
@@ -819,6 +838,7 @@
 <span class="kw">const</span> <span class="ident">FADT_FIELD_X_PM1A_CONTROL_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">172</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_X_PM1B_CONTROL_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">184</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_X_PM2_CONTROL_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">196</span>;
+<span class="kw">const</span> <span class="ident">FADT_FIELD_X_PM_TMR_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">208</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_X_GPE0_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">220</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_X_GPE1_BLK_ADDR</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">232</span>;
 <span class="kw">const</span> <span class="ident">FADT_FIELD_HYPERVISOR_ID</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">268</span>;
@@ -937,6 +957,9 @@
     <span class="comment">// PM2 Control Block Address (not supported)</span>
     <span class="ident">facp</span>.<span class="ident">write</span>(<span class="ident">FADT_FIELD_PM2_CONTROL_BLK_ADDR</span>, <span class="number">0u32</span>);
 
+    <span class="comment">// PM Timer Control Block Address (not supported)</span>
+    <span class="ident">facp</span>.<span class="ident">write</span>(<span class="ident">FADT_FIELD_PM_TMR_BLK_ADDR</span>, <span class="number">0u32</span>);
+
     <span class="comment">// GPE0 Block Address</span>
     <span class="ident">facp</span>.<span class="ident">write</span>(
         <span class="ident">FADT_FIELD_GPE0_BLK_ADDR</span>,
@@ -960,6 +983,9 @@
 
     <span class="comment">// PM2 Control Block Length (not supported)</span>
     <span class="ident">facp</span>.<span class="ident">write</span>(<span class="ident">FADT_FIELD_PM2_CONTROL_BLK_LEN</span>, <span class="number">0u8</span>);
+
+    <span class="comment">// PM Timer Control Block Length (not supported)</span>
+    <span class="ident">facp</span>.<span class="ident">write</span>(<span class="ident">FADT_FIELD_PM_TMR_LEN</span>, <span class="number">0u8</span>);
 
     <span class="comment">// GPE0 Block Length</span>
     <span class="ident">facp</span>.<span class="ident">write</span>(
@@ -1008,6 +1034,14 @@
     <span class="comment">// PM2 Extended Control Block Address (not supported)</span>
     <span class="ident">facp</span>.<span class="ident">write</span>(
         <span class="ident">FADT_FIELD_X_PM2_CONTROL_BLK_ADDR</span>,
+        <span class="ident">GenericAddress</span> {
+            ..<span class="ident">Default::default</span>()
+        },
+    );
+
+    <span class="comment">// PM Timer Extended Control Block Address (not supported)</span>
+    <span class="ident">facp</span>.<span class="ident">write</span>(
+        <span class="ident">FADT_FIELD_X_PM_TMR_BLK_ADDR</span>,
         <span class="ident">GenericAddress</span> {
             ..<span class="ident">Default::default</span>()
         },
