@@ -339,27 +339,184 @@
 <span id="338">338</span>
 <span id="339">339</span>
 <span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">BusAccessInfo</span>, <span class="ident">BusDevice</span>, <span class="ident">BusResumeDevice</span>};
 <span class="kw">use</span> <span class="ident">acpi_tables</span>::{<span class="ident">aml</span>, <span class="ident">aml::Aml</span>};
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">Event</span>};
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">Error</span> <span class="kw">as</span> <span class="ident">SysError</span>, <span class="ident">Event</span>, <span class="ident">PollToken</span>, <span class="ident">WaitContext</span>};
+<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
+<span class="kw">use</span> <span class="ident">std::thread</span>;
+<span class="kw">use</span> <span class="ident">sync::Mutex</span>;
+<span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 <span class="kw">use</span> <span class="ident">vm_control::PmResource</span>;
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Error</span>, <span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ACPIPMError</span> {
+    <span class="doccomment">/// Creating WaitContext failed.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to create wait context: {0}&quot;</span>)]</span>
+    <span class="ident">CreateWaitContext</span>(<span class="ident">SysError</span>),
+    <span class="doccomment">/// Error while waiting for events.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to wait for events: {0}&quot;</span>)]</span>
+    <span class="ident">WaitError</span>(<span class="ident">SysError</span>),
+}
+
+<span class="kw">struct</span> <span class="ident">Pm1Resource</span> {
+    <span class="ident">status</span>: <span class="ident">u16</span>,
+    <span class="ident">enable</span>: <span class="ident">u16</span>,
+    <span class="ident">control</span>: <span class="ident">u16</span>,
+}
+
+<span class="kw">struct</span> <span class="ident">GpeResource</span> {
+    <span class="ident">status</span>: [<span class="ident">u8</span>; <span class="ident">ACPIPM_RESOURCE_GPE0_BLK_LEN</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">/</span> <span class="number">2</span>],
+    <span class="ident">enable</span>: [<span class="ident">u8</span>; <span class="ident">ACPIPM_RESOURCE_GPE0_BLK_LEN</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">/</span> <span class="number">2</span>],
+}
 
 <span class="doccomment">/// ACPI PM resource for handling OS suspend/resume request</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ACPIPMResource</span> {
     <span class="ident">sci_evt</span>: <span class="ident">Event</span>,
     <span class="ident">sci_evt_resample</span>: <span class="ident">Event</span>,
+    <span class="ident">kill_evt</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span>,
+    <span class="ident">worker_thread</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">thread::JoinHandle</span><span class="op">&lt;</span>()<span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">suspend_evt</span>: <span class="ident">Event</span>,
     <span class="ident">exit_evt</span>: <span class="ident">Event</span>,
-    <span class="ident">pm1_status</span>: <span class="ident">u16</span>,
-    <span class="ident">pm1_enable</span>: <span class="ident">u16</span>,
-    <span class="ident">pm1_control</span>: <span class="ident">u16</span>,
-    <span class="ident">gpe0_status</span>: [<span class="ident">u8</span>; <span class="ident">ACPIPM_RESOURCE_GPE0_BLK_LEN</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">/</span> <span class="number">2</span>],
-    <span class="ident">gpe0_enable</span>: [<span class="ident">u8</span>; <span class="ident">ACPIPM_RESOURCE_GPE0_BLK_LEN</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">/</span> <span class="number">2</span>],
+    <span class="ident">pm1</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Pm1Resource</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">gpe0</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">GpeResource</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">ACPIPMResource</span> {
@@ -371,41 +528,131 @@
         <span class="ident">suspend_evt</span>: <span class="ident">Event</span>,
         <span class="ident">exit_evt</span>: <span class="ident">Event</span>,
     ) -&gt; <span class="ident">ACPIPMResource</span> {
+        <span class="kw">let</span> <span class="ident">pm1</span> <span class="op">=</span> <span class="ident">Pm1Resource</span> {
+            <span class="ident">status</span>: <span class="number">0</span>,
+            <span class="ident">enable</span>: <span class="number">0</span>,
+            <span class="ident">control</span>: <span class="number">0</span>,
+        };
+        <span class="kw">let</span> <span class="ident">gpe0</span> <span class="op">=</span> <span class="ident">GpeResource</span> {
+            <span class="ident">status</span>: <span class="ident">Default::default</span>(),
+            <span class="ident">enable</span>: <span class="ident">Default::default</span>(),
+        };
+
         <span class="ident">ACPIPMResource</span> {
             <span class="ident">sci_evt</span>,
             <span class="ident">sci_evt_resample</span>,
+            <span class="ident">kill_evt</span>: <span class="prelude-val">None</span>,
+            <span class="ident">worker_thread</span>: <span class="prelude-val">None</span>,
             <span class="ident">suspend_evt</span>,
             <span class="ident">exit_evt</span>,
-            <span class="ident">pm1_status</span>: <span class="number">0</span>,
-            <span class="ident">pm1_enable</span>: <span class="number">0</span>,
-            <span class="ident">pm1_control</span>: <span class="number">0</span>,
-            <span class="ident">gpe0_status</span>: <span class="ident">Default::default</span>(),
-            <span class="ident">gpe0_enable</span>: <span class="ident">Default::default</span>(),
+            <span class="ident">pm1</span>: <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">pm1</span>)),
+            <span class="ident">gpe0</span>: <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">gpe0</span>)),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">pm_sci</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">pm1_status</span>
-            <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">pm1_enable</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">let</span> (<span class="ident">self_kill_evt</span>, <span class="ident">kill_evt</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">Event::new</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="prelude-val">Ok</span>((<span class="ident">e</span>.<span class="ident">try_clone</span>()<span class="question-mark">?</span>, <span class="ident">e</span>))) {
+            <span class="prelude-val">Ok</span>(<span class="ident">v</span>) =&gt; <span class="ident">v</span>,
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
+                <span class="macro">error!</span>(<span class="string">&quot;failed to create kill Event pair: {}&quot;</span>, <span class="ident">e</span>);
+                <span class="kw">return</span>;
+            }
+        };
+        <span class="self">self</span>.<span class="ident">kill_evt</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">self_kill_evt</span>);
+
+        <span class="kw">let</span> <span class="ident">sci_resample</span> <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">sci_evt_resample</span>
+            .<span class="ident">try_clone</span>()
+            .<span class="ident">expect</span>(<span class="string">&quot;failed to clone event&quot;</span>);
+        <span class="kw">let</span> <span class="ident">sci_evt</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sci_evt</span>.<span class="ident">try_clone</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to clone event&quot;</span>);
+        <span class="kw">let</span> <span class="ident">pm1</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">clone</span>();
+        <span class="kw">let</span> <span class="ident">gpe0</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">gpe0</span>.<span class="ident">clone</span>();
+
+        <span class="kw">let</span> <span class="ident">worker_result</span> <span class="op">=</span> <span class="ident">thread::Builder::new</span>()
+            .<span class="ident">name</span>(<span class="string">&quot;ACPI PM worker&quot;</span>.<span class="ident">to_string</span>())
+            .<span class="ident">spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">run_worker</span>(<span class="ident">sci_resample</span>, <span class="ident">kill_evt</span>, <span class="ident">sci_evt</span>, <span class="ident">pm1</span>, <span class="ident">gpe0</span>) {
+                    <span class="macro">error!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">e</span>);
+                }
+            });
+
+        <span class="kw">match</span> <span class="ident">worker_result</span> {
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="macro">error!</span>(<span class="string">&quot;failed to spawn ACPI PM worker thread: {}&quot;</span>, <span class="ident">e</span>),
+            <span class="prelude-val">Ok</span>(<span class="ident">join_handle</span>) =&gt; <span class="self">self</span>.<span class="ident">worker_thread</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">join_handle</span>),
+        }
+    }
+}
+
+<span class="kw">fn</span> <span class="ident">run_worker</span>(
+    <span class="ident">sci_resample</span>: <span class="ident">Event</span>,
+    <span class="ident">kill_evt</span>: <span class="ident">Event</span>,
+    <span class="ident">sci_evt</span>: <span class="ident">Event</span>,
+    <span class="ident">pm1</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Pm1Resource</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">gpe0</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">GpeResource</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">ACPIPMError</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PollToken</span>)]</span>
+    <span class="kw">enum</span> <span class="ident">Token</span> {
+        <span class="ident">InterruptResample</span>,
+        <span class="ident">Kill</span>,
+    }
+
+    <span class="kw">let</span> <span class="ident">wait_ctx</span>: <span class="ident">WaitContext</span><span class="op">&lt;</span><span class="ident">Token</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">WaitContext::build_with</span>(<span class="kw-2">&amp;</span>[
+        (<span class="kw-2">&amp;</span><span class="ident">sci_resample</span>, <span class="ident">Token::InterruptResample</span>),
+        (<span class="kw-2">&amp;</span><span class="ident">kill_evt</span>, <span class="ident">Token::Kill</span>),
+    ])
+    .<span class="ident">map_err</span>(<span class="ident">ACPIPMError::CreateWaitContext</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">loop</span> {
+        <span class="kw">let</span> <span class="ident">events</span> <span class="op">=</span> <span class="ident">wait_ctx</span>.<span class="ident">wait</span>().<span class="ident">map_err</span>(<span class="ident">ACPIPMError::WaitError</span>)<span class="question-mark">?</span>;
+        <span class="kw">for</span> <span class="ident">event</span> <span class="kw">in</span> <span class="ident">events</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">is_readable</span>) {
+            <span class="kw">match</span> <span class="ident">event</span>.<span class="ident">token</span> {
+                <span class="ident">Token::InterruptResample</span> =&gt; {
+                    <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">sci_resample</span>.<span class="ident">read</span>();
+
+                    <span class="comment">// Re-trigger SCI if PM1 or GPE status is still not cleared.</span>
+                    <span class="ident">pm1</span>.<span class="ident">lock</span>().<span class="ident">trigger_sci</span>(<span class="kw-2">&amp;</span><span class="ident">sci_evt</span>);
+                    <span class="ident">gpe0</span>.<span class="ident">lock</span>().<span class="ident">trigger_sci</span>(<span class="kw-2">&amp;</span><span class="ident">sci_evt</span>);
+                }
+                <span class="ident">Token::Kill</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(()),
+            }
+        }
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ACPIPMResource</span> {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">kill_evt</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">kill_evt</span>.<span class="ident">take</span>() {
+            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">kill_evt</span>.<span class="ident">write</span>(<span class="number">1</span>);
+        }
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">worker_thread</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">worker_thread</span>.<span class="ident">take</span>() {
+            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">worker_thread</span>.<span class="ident">join</span>();
+        }
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Pm1Resource</span> {
+    <span class="kw">fn</span> <span class="ident">trigger_sci</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">sci_evt</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">status</span>
+            <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">enable</span>
             <span class="op">&amp;</span> (<span class="ident">BITMASK_PM1EN_GBL_EN</span>
                 <span class="op">|</span> <span class="ident">BITMASK_PM1EN_PWRBTN_EN</span>
                 <span class="op">|</span> <span class="ident">BITMASK_PM1EN_SLPBTN_EN</span>
                 <span class="op">|</span> <span class="ident">BITMASK_PM1EN_RTC_EN</span>)
             <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
         {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">sci_evt</span>.<span class="ident">write</span>(<span class="number">1</span>) {
-                <span class="macro">error!</span>(<span class="string">&quot;ACPIPM: failed to trigger sci event: {}&quot;</span>, <span class="ident">e</span>);
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">sci_evt</span>.<span class="ident">write</span>(<span class="number">1</span>) {
+                <span class="macro">error!</span>(<span class="string">&quot;ACPIPM: failed to trigger sci event for pm1: {}&quot;</span>, <span class="ident">e</span>);
             }
         }
     }
+}
 
-    <span class="kw">fn</span> <span class="ident">gpe_sci</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">gpe0_status</span>.<span class="ident">len</span>() {
-            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">gpe0_status</span>[<span class="ident">i</span>] <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">gpe0_enable</span>[<span class="ident">i</span>] <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">sci_evt</span>.<span class="ident">write</span>(<span class="number">1</span>) {
-                    <span class="macro">error!</span>(<span class="string">&quot;ACPIPM: failed to trigger sci event: {}&quot;</span>, <span class="ident">e</span>);
-                }
-                <span class="kw">return</span>;
+<span class="kw">impl</span> <span class="ident">GpeResource</span> {
+    <span class="kw">fn</span> <span class="ident">trigger_sci</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">sci_evt</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) {
+        <span class="kw">if</span> (<span class="number">0</span>..<span class="self">self</span>.<span class="ident">status</span>.<span class="ident">len</span>()).<span class="ident">any</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">status</span>[<span class="ident">i</span>] <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">enable</span>[<span class="ident">i</span>] <span class="op">!</span><span class="op">=</span> <span class="number">0</span>) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">sci_evt</span>.<span class="ident">write</span>(<span class="number">1</span>) {
+                <span class="macro">error!</span>(<span class="string">&quot;ACPIPM: failed to trigger sci event for gpe: {}&quot;</span>, <span class="ident">e</span>);
             }
         }
     }
@@ -472,18 +719,22 @@
 
 <span class="kw">impl</span> <span class="ident">PmResource</span> <span class="kw">for</span> <span class="ident">ACPIPMResource</span> {
     <span class="kw">fn</span> <span class="ident">pwrbtn_evt</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">pm1_status</span> <span class="op">|</span><span class="op">=</span> <span class="ident">BITMASK_PM1STS_PWRBTN_STS</span>;
-        <span class="self">self</span>.<span class="ident">pm_sci</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pm1</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">lock</span>();
+
+        <span class="ident">pm1</span>.<span class="ident">status</span> <span class="op">|</span><span class="op">=</span> <span class="ident">BITMASK_PM1STS_PWRBTN_STS</span>;
+        <span class="ident">pm1</span>.<span class="ident">trigger_sci</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">sci_evt</span>);
     }
 
     <span class="kw">fn</span> <span class="ident">gpe_evt</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">gpe</span>: <span class="ident">u32</span>) {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">gpe0</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">gpe0</span>.<span class="ident">lock</span>();
+
         <span class="kw">let</span> <span class="ident">byte</span> <span class="op">=</span> <span class="ident">gpe</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">/</span> <span class="number">8</span>;
-        <span class="kw">if</span> <span class="ident">byte</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">gpe0_status</span>.<span class="ident">len</span>() {
+        <span class="kw">if</span> <span class="ident">byte</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">gpe0</span>.<span class="ident">status</span>.<span class="ident">len</span>() {
             <span class="macro">error!</span>(<span class="string">&quot;gpe_evt: GPE register {} does not exist&quot;</span>, <span class="ident">byte</span>);
             <span class="kw">return</span>;
         }
-        <span class="self">self</span>.<span class="ident">gpe0_status</span>[<span class="ident">byte</span>] <span class="op">|</span><span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="ident">gpe</span> <span class="op">%</span> <span class="number">8</span>);
-        <span class="self">self</span>.<span class="ident">gpe_sci</span>();
+        <span class="ident">gpe0</span>.<span class="ident">status</span>[<span class="ident">byte</span>] <span class="op">|</span><span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="ident">gpe</span> <span class="op">%</span> <span class="number">8</span>);
+        <span class="ident">gpe0</span>.<span class="ident">trigger_sci</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">sci_evt</span>);
     }
 }
 
@@ -509,7 +760,9 @@
                     <span class="kw">return</span>;
                 }
                 <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> (<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">PM1_STATUS</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-                <span class="ident">data</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pm1_status</span>.<span class="ident">to_ne_bytes</span>()[<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()]);
+                <span class="ident">data</span>.<span class="ident">copy_from_slice</span>(
+                    <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">lock</span>().<span class="ident">status</span>.<span class="ident">to_ne_bytes</span>()[<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()],
+                );
             }
             <span class="ident">PM1_ENABLE</span>..<span class="op">=</span><span class="ident">PM1_ENABLE_LAST</span> =&gt; {
                 <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>()
@@ -519,7 +772,9 @@
                     <span class="kw">return</span>;
                 }
                 <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> (<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">PM1_ENABLE</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-                <span class="ident">data</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pm1_enable</span>.<span class="ident">to_ne_bytes</span>()[<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()]);
+                <span class="ident">data</span>.<span class="ident">copy_from_slice</span>(
+                    <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">lock</span>().<span class="ident">enable</span>.<span class="ident">to_ne_bytes</span>()[<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()],
+                );
             }
             <span class="ident">PM1_CONTROL</span>..<span class="op">=</span><span class="ident">PM1_CONTROL_LAST</span> =&gt; {
                 <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>()
@@ -529,7 +784,9 @@
                     <span class="kw">return</span>;
                 }
                 <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> (<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">PM1_CONTROL</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-                <span class="ident">data</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pm1_control</span>.<span class="ident">to_ne_bytes</span>()[<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()]);
+                <span class="ident">data</span>.<span class="ident">copy_from_slice</span>(
+                    <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">lock</span>().<span class="ident">control</span>.<span class="ident">to_ne_bytes</span>()[<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()],
+                );
             }
             <span class="comment">// OSPM accesses GPE registers through byte accesses (regardless of their length)</span>
             <span class="ident">GPE0_STATUS</span>..<span class="op">=</span><span class="ident">GPE0_STATUS_LAST</span> =&gt; {
@@ -539,7 +796,7 @@
                     <span class="macro">warn!</span>(<span class="string">&quot;ACPIPM: bad read size: {}&quot;</span>, <span class="ident">data</span>.<span class="ident">len</span>());
                     <span class="kw">return</span>;
                 }
-                <span class="ident">data</span>[<span class="number">0</span>] <span class="op">=</span> <span class="self">self</span>.<span class="ident">gpe0_status</span>[(<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">GPE0_STATUS</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>];
+                <span class="ident">data</span>[<span class="number">0</span>] <span class="op">=</span> <span class="self">self</span>.<span class="ident">gpe0</span>.<span class="ident">lock</span>().<span class="ident">status</span>[(<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">GPE0_STATUS</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>];
             }
             <span class="ident">GPE0_ENABLE</span>..<span class="op">=</span><span class="ident">GPE0_ENABLE_LAST</span> =&gt; {
                 <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>()
@@ -548,7 +805,7 @@
                     <span class="macro">warn!</span>(<span class="string">&quot;ACPIPM: bad read size: {}&quot;</span>, <span class="ident">data</span>.<span class="ident">len</span>());
                     <span class="kw">return</span>;
                 }
-                <span class="ident">data</span>[<span class="number">0</span>] <span class="op">=</span> <span class="self">self</span>.<span class="ident">gpe0_enable</span>[(<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">GPE0_ENABLE</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>];
+                <span class="ident">data</span>[<span class="number">0</span>] <span class="op">=</span> <span class="self">self</span>.<span class="ident">gpe0</span>.<span class="ident">lock</span>().<span class="ident">enable</span>[(<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">GPE0_ENABLE</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>];
             }
             <span class="kw">_</span> =&gt; {
                 <span class="macro">warn!</span>(<span class="string">&quot;ACPIPM: Bad read from {}&quot;</span>, <span class="ident">info</span>);
@@ -567,11 +824,13 @@
                     <span class="kw">return</span>;
                 }
                 <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> (<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">PM1_STATUS</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pm1_status</span>.<span class="ident">to_ne_bytes</span>();
+
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pm1</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">lock</span>();
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">pm1</span>.<span class="ident">status</span>.<span class="ident">to_ne_bytes</span>();
                 <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">j</span>) <span class="kw">in</span> (<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()).<span class="ident">enumerate</span>() {
                     <span class="ident">v</span>[<span class="ident">j</span>] <span class="op">&amp;=</span> <span class="op">!</span><span class="ident">data</span>[<span class="ident">i</span>];
                 }
-                <span class="self">self</span>.<span class="ident">pm1_status</span> <span class="op">=</span> <span class="ident">u16::from_ne_bytes</span>(<span class="ident">v</span>);
+                <span class="ident">pm1</span>.<span class="ident">status</span> <span class="op">=</span> <span class="ident">u16::from_ne_bytes</span>(<span class="ident">v</span>);
             }
             <span class="ident">PM1_ENABLE</span>..<span class="op">=</span><span class="ident">PM1_ENABLE_LAST</span> =&gt; {
                 <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>()
@@ -581,12 +840,14 @@
                     <span class="kw">return</span>;
                 }
                 <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> (<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">PM1_ENABLE</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pm1_enable</span>.<span class="ident">to_ne_bytes</span>();
+
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pm1</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">lock</span>();
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">pm1</span>.<span class="ident">enable</span>.<span class="ident">to_ne_bytes</span>();
                 <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">j</span>) <span class="kw">in</span> (<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()).<span class="ident">enumerate</span>() {
                     <span class="ident">v</span>[<span class="ident">j</span>] <span class="op">=</span> <span class="ident">data</span>[<span class="ident">i</span>];
                 }
-                <span class="self">self</span>.<span class="ident">pm1_enable</span> <span class="op">=</span> <span class="ident">u16::from_ne_bytes</span>(<span class="ident">v</span>);
-                <span class="self">self</span>.<span class="ident">pm_sci</span>(); <span class="comment">// TODO take care of spurious interrupts</span>
+                <span class="ident">pm1</span>.<span class="ident">enable</span> <span class="op">=</span> <span class="ident">u16::from_ne_bytes</span>(<span class="ident">v</span>);
+                <span class="ident">pm1</span>.<span class="ident">trigger_sci</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">sci_evt</span>);
             }
             <span class="ident">PM1_CONTROL</span>..<span class="op">=</span><span class="ident">PM1_CONTROL_LAST</span> =&gt; {
                 <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>()
@@ -596,7 +857,10 @@
                     <span class="kw">return</span>;
                 }
                 <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> (<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">PM1_CONTROL</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>;
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pm1_control</span>.<span class="ident">to_ne_bytes</span>();
+
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pm1</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">lock</span>();
+
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">pm1</span>.<span class="ident">control</span>.<span class="ident">to_ne_bytes</span>();
                 <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">j</span>) <span class="kw">in</span> (<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">data</span>.<span class="ident">len</span>()).<span class="ident">enumerate</span>() {
                     <span class="ident">v</span>[<span class="ident">j</span>] <span class="op">=</span> <span class="ident">data</span>[<span class="ident">i</span>];
                 }
@@ -627,7 +891,7 @@
                         ),
                     }
                 }
-                <span class="self">self</span>.<span class="ident">pm1_control</span> <span class="op">=</span> <span class="ident">val</span> <span class="op">&amp;</span> <span class="op">!</span><span class="ident">BITMASK_PM1CNT_SLEEP_ENABLE</span>;
+                <span class="ident">pm1</span>.<span class="ident">control</span> <span class="op">=</span> <span class="ident">val</span> <span class="op">&amp;</span> <span class="op">!</span><span class="ident">BITMASK_PM1CNT_SLEEP_ENABLE</span>;
             }
             <span class="comment">// OSPM accesses GPE registers through byte accesses (regardless of their length)</span>
             <span class="ident">GPE0_STATUS</span>..<span class="op">=</span><span class="ident">GPE0_STATUS_LAST</span> =&gt; {
@@ -637,7 +901,7 @@
                     <span class="macro">warn!</span>(<span class="string">&quot;ACPIPM: bad write size: {}&quot;</span>, <span class="ident">data</span>.<span class="ident">len</span>());
                     <span class="kw">return</span>;
                 }
-                <span class="self">self</span>.<span class="ident">gpe0_status</span>[(<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">GPE0_STATUS</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>] <span class="op">&amp;=</span> <span class="op">!</span><span class="ident">data</span>[<span class="number">0</span>];
+                <span class="self">self</span>.<span class="ident">gpe0</span>.<span class="ident">lock</span>().<span class="ident">status</span>[(<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">GPE0_STATUS</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>] <span class="op">&amp;=</span> <span class="op">!</span><span class="ident">data</span>[<span class="number">0</span>];
             }
             <span class="ident">GPE0_ENABLE</span>..<span class="op">=</span><span class="ident">GPE0_ENABLE_LAST</span> =&gt; {
                 <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>()
@@ -646,8 +910,10 @@
                     <span class="macro">warn!</span>(<span class="string">&quot;ACPIPM: bad write size: {}&quot;</span>, <span class="ident">data</span>.<span class="ident">len</span>());
                     <span class="kw">return</span>;
                 }
-                <span class="self">self</span>.<span class="ident">gpe0_enable</span>[(<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">GPE0_ENABLE</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>] <span class="op">=</span> <span class="ident">data</span>[<span class="number">0</span>];
-                <span class="self">self</span>.<span class="ident">gpe_sci</span>();
+
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">gpe</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">gpe0</span>.<span class="ident">lock</span>();
+                <span class="ident">gpe</span>.<span class="ident">enable</span>[(<span class="ident">info</span>.<span class="ident">offset</span> <span class="op">-</span> <span class="ident">GPE0_ENABLE</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="kw">as</span> <span class="ident">usize</span>] <span class="op">=</span> <span class="ident">data</span>[<span class="number">0</span>];
+                <span class="ident">gpe</span>.<span class="ident">trigger_sci</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">sci_evt</span>);
             }
             <span class="kw">_</span> =&gt; {
                 <span class="macro">warn!</span>(<span class="string">&quot;ACPIPM: Bad write to {}&quot;</span>, <span class="ident">info</span>);
@@ -658,7 +924,7 @@
 
 <span class="kw">impl</span> <span class="ident">BusResumeDevice</span> <span class="kw">for</span> <span class="ident">ACPIPMResource</span> {
     <span class="kw">fn</span> <span class="ident">resume_imminent</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">pm1_status</span> <span class="op">|</span><span class="op">=</span> <span class="ident">BITMASK_PM1CNT_WAKE_STATUS</span>;
+        <span class="self">self</span>.<span class="ident">pm1</span>.<span class="ident">lock</span>().<span class="ident">status</span> <span class="op">|</span><span class="op">=</span> <span class="ident">BITMASK_PM1CNT_WAKE_STATUS</span>;
     }
 }
 
