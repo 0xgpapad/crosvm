@@ -836,9 +836,9 @@
     <span class="doccomment">/// Error while waiting for events.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to wait for events: {0}&quot;</span>)]</span>
     <span class="ident">WaitError</span>(<span class="ident">SysError</span>),
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Did not found group_id corresponding to acpi_mc_group&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Did not find group_id corresponding to acpi_mc_group&quot;</span>)]</span>
     <span class="ident">AcpiMcGroupError</span>,
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Failed to create and bind NETLINK_GENERIC socket, listening on acpi_mc_group: {0}&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Failed to create and bind NETLINK_GENERIC socket for acpi_mc_group: {0}&quot;</span>)]</span>
     <span class="ident">AcpiEventSockError</span>(<span class="ident">base::Error</span>),
 }
 
@@ -987,11 +987,11 @@
     <span class="comment">// Get group id corresponding to acpi_mc_group of acpi_event family</span>
     <span class="kw">let</span> <span class="ident">nl_groups</span>: <span class="ident">u32</span>;
     <span class="kw">match</span> <span class="ident">get_acpi_event_group</span>() {
-        <span class="prelude-val">Some</span>(<span class="ident">group</span>) =&gt; {
+        <span class="prelude-val">Some</span>(<span class="ident">group</span>) <span class="kw">if</span> <span class="ident">group</span> <span class="op">&gt;</span> <span class="number">0</span> =&gt; {
             <span class="ident">nl_groups</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="ident">group</span> <span class="op">-</span> <span class="number">1</span>);
             <span class="macro">info!</span>(<span class="string">&quot;Listening on acpi_mc_group of acpi_event family&quot;</span>);
         }
-        <span class="prelude-val">None</span> =&gt; {
+        <span class="kw">_</span> =&gt; {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ACPIPMError::AcpiMcGroupError</span>);
         }
     }
