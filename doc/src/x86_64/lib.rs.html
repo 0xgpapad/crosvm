@@ -1567,6 +1567,30 @@
 <span id="1566">1566</span>
 <span id="1567">1567</span>
 <span id="1568">1568</span>
+<span id="1569">1569</span>
+<span id="1570">1570</span>
+<span id="1571">1571</span>
+<span id="1572">1572</span>
+<span id="1573">1573</span>
+<span id="1574">1574</span>
+<span id="1575">1575</span>
+<span id="1576">1576</span>
+<span id="1577">1577</span>
+<span id="1578">1578</span>
+<span id="1579">1579</span>
+<span id="1580">1580</span>
+<span id="1581">1581</span>
+<span id="1582">1582</span>
+<span id="1583">1583</span>
+<span id="1584">1584</span>
+<span id="1585">1585</span>
+<span id="1586">1586</span>
+<span id="1587">1587</span>
+<span id="1588">1588</span>
+<span id="1589">1589</span>
+<span id="1590">1590</span>
+<span id="1591">1591</span>
+<span id="1592">1592</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1768,8 +1792,18 @@
 
 <span class="kw">const</span> <span class="ident">BOOT_STACK_POINTER</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0x8000</span>;
 <span class="comment">// Make sure it align to 256MB for MTRR convenient</span>
-<span class="kw">const</span> <span class="ident">MEM_32BIT_GAP_SIZE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1024</span> <span class="op">*</span> <span class="ident">MB</span>;
-<span class="kw">const</span> <span class="ident">START_OF_RAM_32BITS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
+<span class="kw">const</span> <span class="ident">MEM_32BIT_GAP_SIZE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>) {
+    <span class="comment">// Allow space for identity mapping coreboot memory regions on the host</span>
+    <span class="comment">// which is found at around 7a00_0000 (little bit before 2GB)</span>
+    <span class="comment">//</span>
+    <span class="comment">// TODO(b/188011323): stop hardcoding sizes and addresses here and instead</span>
+    <span class="comment">// determine the memory map from how the VM has been configured via the</span>
+    <span class="comment">// command line.</span>
+    <span class="number">2560</span> <span class="op">*</span> <span class="ident">MB</span>
+} <span class="kw">else</span> {
+    <span class="number">768</span> <span class="op">*</span> <span class="ident">MB</span>
+};
+<span class="kw">const</span> <span class="ident">START_OF_RAM_32BITS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>) { <span class="number">0x1000</span> } <span class="kw">else</span> { <span class="number">0</span> };
 <span class="kw">const</span> <span class="ident">FIRST_ADDR_PAST_32BITS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>;
 <span class="comment">// Reserved memory for nand_bios/LAPIC/IOAPIC/HPET/.....</span>
 <span class="kw">const</span> <span class="ident">RESERVED_MEM_SIZE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0x800_0000</span>;
@@ -3127,6 +3161,20 @@
             <span class="ident">regions</span>[<span class="number">1</span>].<span class="number">0</span>
         );
         <span class="macro">assert_eq!</span>(<span class="ident">bios_len</span>, <span class="ident">regions</span>[<span class="number">1</span>].<span class="number">1</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+    <span class="kw">fn</span> <span class="ident">end_addr_before_32bits</span>() {
+        <span class="comment">// On volteer, type16 (coreboot) region is at 0x00000000769f3000-0x0000000076ffffff.</span>
+        <span class="comment">// On brya, type16 region is at 0x0000000076876000-0x00000000803fffff</span>
+        <span class="kw">let</span> <span class="ident">brya_type16_address</span> <span class="op">=</span> <span class="number">0x7687_6000</span>;
+        <span class="macro">assert!</span>(
+            <span class="ident">END_ADDR_BEFORE_32BITS</span> <span class="op">&lt;</span> <span class="ident">brya_type16_address</span>,
+            <span class="string">&quot;{} &lt; {}&quot;</span>,
+            <span class="ident">END_ADDR_BEFORE_32BITS</span>,
+            <span class="ident">brya_type16_address</span>
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
