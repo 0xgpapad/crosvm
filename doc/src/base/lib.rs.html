@@ -103,6 +103,7 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
+<span id="105">105</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -148,6 +149,7 @@
     <span class="ident">ScmSocket</span>, <span class="ident">UnlinkUnixListener</span>,
 };
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">pagesize</span>, <span class="ident">round_up_to_page_size</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">AcpiNotifyEvent</span>, <span class="ident">NetlinkGenericSocket</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">Clock</span>, <span class="ident">FakeClock</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">EpollContext</span>, <span class="ident">EpollEvents</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">ExternalMapping</span>, <span class="ident">ExternalMappingError</span>, <span class="ident">ExternalMappingResult</span>};

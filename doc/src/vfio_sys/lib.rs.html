@@ -46,6 +46,12 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -92,6 +98,12 @@
     <span class="ident">PLAT_IRQ_FORWARD_SET</span>,
     <span class="ident">PLAT_IRQ_FORWARD_TYPE</span>,
     <span class="ident">PLAT_IRQ_FORWARD_BASE</span>
+);
+
+<span class="macro">ioctl_io_nr!</span>(
+    <span class="ident">ACPI_GPE_FORWARD_SET</span>,
+    <span class="ident">PLAT_IRQ_FORWARD_TYPE</span>,
+    <span class="ident">GPE_FORWARD_BASE</span>
 );
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="vfio_sys" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>

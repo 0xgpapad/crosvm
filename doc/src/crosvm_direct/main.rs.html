@@ -4308,6 +4308,19 @@
 <span id="4307">4307</span>
 <span id="4308">4308</span>
 <span id="4309">4309</span>
+<span id="4310">4310</span>
+<span id="4311">4311</span>
+<span id="4312">4312</span>
+<span id="4313">4313</span>
+<span id="4314">4314</span>
+<span id="4315">4315</span>
+<span id="4316">4316</span>
+<span id="4317">4317</span>
+<span id="4318">4318</span>
+<span id="4319">4319</span>
+<span id="4320">4320</span>
+<span id="4321">4321</span>
+<span id="4322">4322</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -6540,6 +6553,17 @@
                         })<span class="question-mark">?</span>,
                 );
         }
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+        <span class="string">&quot;direct-gpe&quot;</span> =&gt; {
+            <span class="ident">cfg</span>.<span class="ident">direct_gpe</span>.<span class="ident">push</span>(<span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">parse</span>().<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> {
+                <span class="ident">argument::Error::InvalidValue</span> {
+                    <span class="ident">value</span>: <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_owned</span>(),
+                    <span class="ident">expected</span>: <span class="ident">String::from</span>(
+                        <span class="string">&quot;this value for `direct-gpe` must be an unsigned integer&quot;</span>,
+                    ),
+                }
+            })<span class="question-mark">?</span>);
+        }
         <span class="string">&quot;dmi&quot;</span> =&gt; {
             <span class="kw">if</span> <span class="ident">cfg</span>.<span class="ident">dmi_path</span>.<span class="ident">is_some</span>() {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::TooManyArguments</span>(
@@ -7087,6 +7111,8 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
           <span class="ident">Argument::value</span>(<span class="string">&quot;direct-level-irq&quot;</span>, <span class="string">&quot;irq&quot;</span>, <span class="string">&quot;Enable interrupt passthrough&quot;</span>),
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
           <span class="ident">Argument::value</span>(<span class="string">&quot;direct-edge-irq&quot;</span>, <span class="string">&quot;irq&quot;</span>, <span class="string">&quot;Enable interrupt passthrough&quot;</span>),
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+          <span class="ident">Argument::value</span>(<span class="string">&quot;direct-gpe&quot;</span>, <span class="string">&quot;gpe&quot;</span>, <span class="string">&quot;Enable GPE interrupt and register access passthrough&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;dmi&quot;</span>, <span class="string">&quot;DIR&quot;</span>, <span class="string">&quot;Directory with smbios_entry_point/DMI files&quot;</span>),
           <span class="ident">Argument::flag</span>(<span class="string">&quot;no-legacy&quot;</span>, <span class="string">&quot;Don&#39;t use legacy KBD/RTC devices emulation&quot;</span>),
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>

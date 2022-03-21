@@ -1524,6 +1524,49 @@
 <span id="1523">1523</span>
 <span id="1524">1524</span>
 <span id="1525">1525</span>
+<span id="1526">1526</span>
+<span id="1527">1527</span>
+<span id="1528">1528</span>
+<span id="1529">1529</span>
+<span id="1530">1530</span>
+<span id="1531">1531</span>
+<span id="1532">1532</span>
+<span id="1533">1533</span>
+<span id="1534">1534</span>
+<span id="1535">1535</span>
+<span id="1536">1536</span>
+<span id="1537">1537</span>
+<span id="1538">1538</span>
+<span id="1539">1539</span>
+<span id="1540">1540</span>
+<span id="1541">1541</span>
+<span id="1542">1542</span>
+<span id="1543">1543</span>
+<span id="1544">1544</span>
+<span id="1545">1545</span>
+<span id="1546">1546</span>
+<span id="1547">1547</span>
+<span id="1548">1548</span>
+<span id="1549">1549</span>
+<span id="1550">1550</span>
+<span id="1551">1551</span>
+<span id="1552">1552</span>
+<span id="1553">1553</span>
+<span id="1554">1554</span>
+<span id="1555">1555</span>
+<span id="1556">1556</span>
+<span id="1557">1557</span>
+<span id="1558">1558</span>
+<span id="1559">1559</span>
+<span id="1560">1560</span>
+<span id="1561">1561</span>
+<span id="1562">1562</span>
+<span id="1563">1563</span>
+<span id="1564">1564</span>
+<span id="1565">1565</span>
+<span id="1566">1566</span>
+<span id="1567">1567</span>
+<span id="1568">1568</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1628,6 +1671,9 @@
     <span class="ident">CreateEvent</span>(<span class="ident">base::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to create fdt: {0}&quot;</span>)]</span>
     <span class="ident">CreateFdt</span>(<span class="ident">arch::fdt::Error</span>),
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to enable GPE forwarding: {0}&quot;</span>)]</span>
+    <span class="ident">CreateGpe</span>(<span class="ident">devices::DirectIrqError</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to create IOAPIC device: {0}&quot;</span>)]</span>
     <span class="ident">CreateIoapicDevice</span>(<span class="ident">base::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to create a PCI root hub: {0}&quot;</span>)]</span>
@@ -2062,6 +2108,8 @@
             <span class="ident">suspend_evt</span>.<span class="ident">try_clone</span>().<span class="ident">map_err</span>(<span class="ident">Error::CloneEvent</span>)<span class="question-mark">?</span>,
             <span class="ident">exit_evt</span>.<span class="ident">try_clone</span>().<span class="ident">map_err</span>(<span class="ident">Error::CloneEvent</span>)<span class="question-mark">?</span>,
             <span class="ident">components</span>.<span class="ident">acpi_sdts</span>,
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+            <span class="ident">components</span>.<span class="ident">direct_gpe</span>,
             <span class="ident">irq_chip</span>.<span class="ident">as_irq_chip_mut</span>(),
             <span class="ident">sci_irq</span>,
             <span class="ident">battery</span>,
@@ -2794,6 +2842,7 @@
         <span class="ident">suspend_evt</span>: <span class="ident">Event</span>,
         <span class="ident">exit_evt</span>: <span class="ident">Event</span>,
         <span class="ident">sdts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SDT</span><span class="op">&gt;</span>,
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span> <span class="ident">direct_gpe</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
         <span class="ident">irq_chip</span>: <span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">IrqChip</span>,
         <span class="ident">sci_irq</span>: <span class="ident">u32</span>,
         <span class="ident">battery</span>: (<span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BatteryType</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span>),
@@ -2825,8 +2874,45 @@
         <span class="ident">irq_chip</span>
             .<span class="ident">register_irq_event</span>(<span class="ident">sci_irq</span>, <span class="kw-2">&amp;</span><span class="ident">pm_sci_evt</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">pm_sci_evt_resample</span>))
             .<span class="ident">map_err</span>(<span class="ident">Error::RegisterIrqfd</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pmresource</span> <span class="op">=</span>
-            <span class="ident">devices::ACPIPMResource::new</span>(<span class="ident">pm_sci_evt</span>, <span class="ident">pm_sci_evt_resample</span>, <span class="ident">suspend_evt</span>, <span class="ident">exit_evt</span>);
+
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+        <span class="kw">let</span> <span class="ident">sci_direct</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">direct_gpe</span>.<span class="ident">is_empty</span>() {
+            <span class="prelude-val">None</span>
+        } <span class="kw">else</span> {
+            <span class="kw">let</span> <span class="ident">direct_sci_evt</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateEvent</span>)<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">direct_sci_evt_resample</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateEvent</span>)<span class="question-mark">?</span>;
+
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sci_devirq</span> <span class="op">=</span> <span class="ident">devices::DirectIrq::new</span>(
+                <span class="ident">direct_sci_evt</span>.<span class="ident">try_clone</span>().<span class="ident">map_err</span>(<span class="ident">Error::CloneEvent</span>)<span class="question-mark">?</span>,
+                <span class="prelude-val">Some</span>(
+                    <span class="ident">direct_sci_evt_resample</span>
+                        .<span class="ident">try_clone</span>()
+                        .<span class="ident">map_err</span>(<span class="ident">Error::CloneEvent</span>)<span class="question-mark">?</span>,
+                ),
+            )
+            .<span class="ident">map_err</span>(<span class="ident">Error::CreateGpe</span>)<span class="question-mark">?</span>;
+
+            <span class="ident">sci_devirq</span>.<span class="ident">sci_irq_prepare</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateGpe</span>)<span class="question-mark">?</span>;
+
+            <span class="kw">for</span> <span class="ident">gpe</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">direct_gpe</span> {
+                <span class="ident">sci_devirq</span>
+                    .<span class="ident">gpe_enable_forwarding</span>(<span class="kw-2">*</span><span class="ident">gpe</span>)
+                    .<span class="ident">map_err</span>(<span class="ident">Error::CreateGpe</span>)<span class="question-mark">?</span>;
+            }
+
+            <span class="prelude-val">Some</span>((<span class="ident">direct_sci_evt</span>, <span class="ident">direct_sci_evt_resample</span>))
+        };
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pmresource</span> <span class="op">=</span> <span class="ident">devices::ACPIPMResource::new</span>(
+            <span class="ident">pm_sci_evt</span>,
+            <span class="ident">pm_sci_evt_resample</span>,
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+            <span class="ident">sci_direct</span>,
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+            <span class="ident">direct_gpe</span>,
+            <span class="ident">suspend_evt</span>,
+            <span class="ident">exit_evt</span>,
+        );
         <span class="ident">pmresource</span>.<span class="ident">to_aml_bytes</span>(<span class="kw-2">&amp;mut</span> <span class="ident">amls</span>);
         <span class="ident">pmresource</span>.<span class="ident">start</span>();
 

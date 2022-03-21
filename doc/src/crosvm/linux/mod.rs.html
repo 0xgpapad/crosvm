@@ -2262,6 +2262,8 @@
 <span id="2261">2261</span>
 <span id="2262">2262</span>
 <span id="2263">2263</span>
+<span id="2264">2264</span>
+<span id="2265">2265</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3099,6 +3101,8 @@
         <span class="ident">vcpu_affinity</span>: <span class="ident">cfg</span>.<span class="ident">vcpu_affinity</span>.<span class="ident">clone</span>(),
         <span class="ident">cpu_clusters</span>: <span class="ident">cfg</span>.<span class="ident">cpu_clusters</span>.<span class="ident">clone</span>(),
         <span class="ident">cpu_capacity</span>: <span class="ident">cfg</span>.<span class="ident">cpu_capacity</span>.<span class="ident">clone</span>(),
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+        <span class="ident">direct_gpe</span>: <span class="ident">cfg</span>.<span class="ident">direct_gpe</span>.<span class="ident">clone</span>(),
         <span class="ident">no_smt</span>: <span class="ident">cfg</span>.<span class="ident">no_smt</span>,
         <span class="ident">hugepages</span>: <span class="ident">cfg</span>.<span class="ident">hugepages</span>,
         <span class="ident">vm_image</span>,
