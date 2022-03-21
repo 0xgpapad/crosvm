@@ -493,6 +493,7 @@
 <span id="492">492</span>
 <span id="493">493</span>
 <span id="494">494</span>
+<span id="495">495</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -506,7 +507,7 @@
     <span class="ident">clone_descriptor</span>, <span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">Event</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">SafeDescriptor</span>,
     <span class="ident">TimerFd</span>, <span class="ident">Tube</span>, <span class="ident">UnixSeqpacketListener</span>, <span class="ident">UnlinkUnixSeqpacketListener</span>,
 };
-<span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">AsyncWrapper</span>, <span class="ident">EventAsync</span>, <span class="ident">Executor</span>, <span class="ident">IoSourceExt</span>, <span class="ident">TimerAsync</span>};
+<span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">AsyncTube</span>, <span class="ident">AsyncWrapper</span>, <span class="ident">EventAsync</span>, <span class="ident">Executor</span>, <span class="ident">IoSourceExt</span>, <span class="ident">TimerAsync</span>};
 <span class="kw">use</span> <span class="ident">futures</span>::{
     <span class="ident">future</span>::{<span class="ident">select</span>, <span class="ident">Either</span>},
     <span class="ident">pin_mut</span>,
@@ -689,9 +690,10 @@
     }
 
     <span class="kw">fn</span> <span class="ident">set_device_request_channel</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">channel</span>: <span class="ident">File</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tube</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Tube::from_raw_descriptor</span>(<span class="ident">channel</span>.<span class="ident">into_raw_descriptor</span>()) }
-            .<span class="ident">into_async_tube</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ex</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;failed to create AsyncTube&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">tube</span> <span class="op">=</span> <span class="ident">AsyncTube::new</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ex</span>, <span class="kw">unsafe</span> {
+            <span class="ident">Tube::from_raw_descriptor</span>(<span class="ident">channel</span>.<span class="ident">into_raw_descriptor</span>())
+        })
+        .<span class="ident">context</span>(<span class="string">&quot;failed to create AsyncTube&quot;</span>)<span class="question-mark">?</span>;
 
         <span class="comment">// We need a PciAddress in order to initialize the pci bar but this isn&#39;t part of the</span>
         <span class="comment">// vhost-user protocol. Instead we expect this to be the first message the crosvm main</span>

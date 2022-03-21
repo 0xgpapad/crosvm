@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `common&#x2F;io_uring&#x2F;src&#x2F;uring.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>uring.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `io_uring&#x2F;src&#x2F;uring.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>uring.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
     <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../io_uring/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
@@ -1563,6 +1563,9 @@
 <span id="1562">1562</span>
 <span id="1563">1563</span>
 <span id="1564">1564</span>
+<span id="1565">1565</span>
+<span id="1566">1566</span>
+<span id="1567">1567</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1578,10 +1581,10 @@
 <span class="kw">use</span> <span class="ident">std::pin::Pin</span>;
 <span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicPtr</span>, <span class="ident">AtomicU32</span>, <span class="ident">AtomicU64</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
 
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">MappedRegion</span>, <span class="ident">MemoryMapping</span>, <span class="ident">MemoryMappingBuilder</span>, <span class="ident">Protection</span>, <span class="ident">WatchingEvents</span>};
 <span class="kw">use</span> <span class="ident">data_model::IoBufMut</span>;
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
-<span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">MappedRegion</span>, <span class="ident">MemoryMapping</span>, <span class="ident">Protection</span>, <span class="ident">WatchingEvents</span>};
 <span class="kw">use</span> <span class="ident">thiserror::Error</span> <span class="kw">as</span> <span class="ident">ThisError</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::bindings</span>::<span class="kw-2">*</span>;
@@ -1596,13 +1599,13 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
     <span class="doccomment">/// Failed to map the completion ring.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Failed to mmap completion ring {0}&quot;</span>)]</span>
-    <span class="ident">MappingCompleteRing</span>(<span class="ident">sys_util::MmapError</span>),
+    <span class="ident">MappingCompleteRing</span>(<span class="ident">base::MmapError</span>),
     <span class="doccomment">/// Failed to map submit entries.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Failed to mmap submit entries {0}&quot;</span>)]</span>
-    <span class="ident">MappingSubmitEntries</span>(<span class="ident">sys_util::MmapError</span>),
+    <span class="ident">MappingSubmitEntries</span>(<span class="ident">base::MmapError</span>),
     <span class="doccomment">/// Failed to map the submit ring.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Failed to mmap submit ring {0}&quot;</span>)]</span>
-    <span class="ident">MappingSubmitRing</span>(<span class="ident">sys_util::MmapError</span>),
+    <span class="ident">MappingSubmitRing</span>(<span class="ident">base::MmapError</span>),
     <span class="doccomment">/// Too many ops are already queued.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;No space for more ring entries, try increasing the size passed to `new`&quot;</span>)]</span>
     <span class="ident">NoSpace</span>,
@@ -1767,7 +1770,7 @@
 <span class="doccomment">/// # use std::fs::File;</span>
 <span class="doccomment">/// # use std::os::unix::io::AsRawFd;</span>
 <span class="doccomment">/// # use std::path::Path;</span>
-<span class="doccomment">/// # use sys_util::WatchingEvents;</span>
+<span class="doccomment">/// # use base::WatchingEvents;</span>
 <span class="doccomment">/// # use io_uring::URingContext;</span>
 <span class="doccomment">/// let f = File::open(Path::new(&quot;/dev/zero&quot;)).unwrap();</span>
 <span class="doccomment">/// let uring = URingContext::new(16).unwrap();</span>
@@ -1806,40 +1809,43 @@
             <span class="comment">// Safe because we trust the kernel to set valid sizes in `io_uring_setup` and any error</span>
             <span class="comment">// is checked.</span>
             <span class="kw">let</span> <span class="ident">submit_ring</span> <span class="op">=</span> <span class="ident">SubmitQueueState::new</span>(
-                <span class="ident">MemoryMapping::from_fd_offset_protection_populate</span>(
-                    <span class="kw-2">&amp;</span><span class="ident">ring_file</span>,
+                <span class="ident">MemoryMappingBuilder::new</span>(
                     <span class="ident">ring_params</span>.<span class="ident">sq_off</span>.<span class="ident">array</span> <span class="kw">as</span> <span class="ident">usize</span>
                         <span class="op">+</span> <span class="ident">ring_params</span>.<span class="ident">sq_entries</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">*</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(),
-                    <span class="ident">u64::from</span>(<span class="ident">IORING_OFF_SQ_RING</span>),
-                    <span class="ident">Protection::read_write</span>(),
-                    <span class="bool-val">true</span>,
                 )
+                .<span class="ident">from_file</span>(<span class="kw-2">&amp;</span><span class="ident">ring_file</span>)
+                .<span class="ident">offset</span>(<span class="ident">u64::from</span>(<span class="ident">IORING_OFF_SQ_RING</span>))
+                .<span class="ident">protection</span>(<span class="ident">Protection::read_write</span>())
+                .<span class="ident">populate</span>()
+                .<span class="ident">build</span>()
                 .<span class="ident">map_err</span>(<span class="ident">Error::MappingSubmitRing</span>)<span class="question-mark">?</span>,
                 <span class="kw-2">&amp;</span><span class="ident">ring_params</span>,
             );
 
             <span class="kw">let</span> <span class="ident">num_sqe</span> <span class="op">=</span> <span class="ident">ring_params</span>.<span class="ident">sq_entries</span> <span class="kw">as</span> <span class="ident">usize</span>;
             <span class="kw">let</span> <span class="ident">submit_queue_entries</span> <span class="op">=</span> <span class="ident">SubmitQueueEntries</span> {
-                <span class="ident">mmap</span>: <span class="ident">MemoryMapping::from_fd_offset_protection_populate</span>(
-                    <span class="kw-2">&amp;</span><span class="ident">ring_file</span>,
+                <span class="ident">mmap</span>: <span class="ident">MemoryMappingBuilder::new</span>(
                     <span class="ident">ring_params</span>.<span class="ident">sq_entries</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">*</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">io_uring_sqe</span><span class="op">&gt;</span>(),
-                    <span class="ident">u64::from</span>(<span class="ident">IORING_OFF_SQES</span>),
-                    <span class="ident">Protection::read_write</span>(),
-                    <span class="bool-val">true</span>,
                 )
+                .<span class="ident">from_file</span>(<span class="kw-2">&amp;</span><span class="ident">ring_file</span>)
+                .<span class="ident">offset</span>(<span class="ident">u64::from</span>(<span class="ident">IORING_OFF_SQES</span>))
+                .<span class="ident">protection</span>(<span class="ident">Protection::read_write</span>())
+                .<span class="ident">populate</span>()
+                .<span class="ident">build</span>()
                 .<span class="ident">map_err</span>(<span class="ident">Error::MappingSubmitEntries</span>)<span class="question-mark">?</span>,
                 <span class="ident">len</span>: <span class="ident">num_sqe</span>,
             };
 
             <span class="kw">let</span> <span class="ident">complete_ring</span> <span class="op">=</span> <span class="ident">CompleteQueueState::new</span>(
-                <span class="ident">MemoryMapping::from_fd_offset_protection_populate</span>(
-                    <span class="kw-2">&amp;</span><span class="ident">ring_file</span>,
+                <span class="ident">MemoryMappingBuilder::new</span>(
                     <span class="ident">ring_params</span>.<span class="ident">cq_off</span>.<span class="ident">cqes</span> <span class="kw">as</span> <span class="ident">usize</span>
                         <span class="op">+</span> <span class="ident">ring_params</span>.<span class="ident">cq_entries</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">*</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">io_uring_cqe</span><span class="op">&gt;</span>(),
-                    <span class="ident">u64::from</span>(<span class="ident">IORING_OFF_CQ_RING</span>),
-                    <span class="ident">Protection::read_write</span>(),
-                    <span class="bool-val">true</span>,
                 )
+                .<span class="ident">from_file</span>(<span class="kw-2">&amp;</span><span class="ident">ring_file</span>)
+                .<span class="ident">offset</span>(<span class="ident">u64::from</span>(<span class="ident">IORING_OFF_CQ_RING</span>))
+                .<span class="ident">protection</span>(<span class="ident">Protection::read_write</span>())
+                .<span class="ident">populate</span>()
+                .<span class="ident">build</span>()
                 .<span class="ident">map_err</span>(<span class="ident">Error::MappingCompleteRing</span>)<span class="question-mark">?</span>,
                 <span class="kw-2">&amp;</span><span class="ident">ring_params</span>,
             );
@@ -2445,8 +2451,8 @@
     <span class="kw">use</span> <span class="ident">std::thread</span>;
     <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
+    <span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">pipe</span>, <span class="ident">PollContext</span>};
     <span class="kw">use</span> <span class="ident">sync</span>::{<span class="ident">Condvar</span>, <span class="ident">Mutex</span>};
-    <span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">pipe</span>, <span class="ident">PollContext</span>};
     <span class="kw">use</span> <span class="ident">tempfile</span>::{<span class="ident">tempfile</span>, <span class="ident">TempDir</span>};
 
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;

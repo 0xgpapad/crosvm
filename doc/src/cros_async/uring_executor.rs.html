@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `common&#x2F;cros_async&#x2F;src&#x2F;uring_executor.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>uring_executor.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `cros_async&#x2F;src&#x2F;uring_executor.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>uring_executor.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
     <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../cros_async/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
@@ -1225,6 +1225,7 @@
 };
 
 <span class="kw">use</span> <span class="ident">async_task::Task</span>;
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">warn</span>, <span class="ident">WatchingEvents</span>};
 <span class="kw">use</span> <span class="ident">futures::task::noop_waker</span>;
 <span class="kw">use</span> <span class="ident">io_uring::URingContext</span>;
 <span class="kw">use</span> <span class="ident">once_cell::sync::Lazy</span>;
@@ -1232,7 +1233,6 @@
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
 <span class="kw">use</span> <span class="ident">slab::Slab</span>;
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
-<span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">warn</span>, <span class="ident">WatchingEvents</span>};
 <span class="kw">use</span> <span class="ident">thiserror::Error</span> <span class="kw">as</span> <span class="ident">ThisError</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::{
@@ -1250,7 +1250,7 @@
     <span class="ident">CreatingContext</span>(<span class="ident">io_uring::Error</span>),
     <span class="doccomment">/// Failed to copy the FD for the polling context.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Failed to copy the FD for the polling context: {0}&quot;</span>)]</span>
-    <span class="ident">DuplicatingFd</span>(<span class="ident">sys_util::Error</span>),
+    <span class="ident">DuplicatingFd</span>(<span class="ident">base::Error</span>),
     <span class="doccomment">/// The Executor is gone.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;The URingExecutor is gone&quot;</span>)]</span>
     <span class="ident">ExecutorGone</span>,
@@ -1681,7 +1681,7 @@
     <span class="kw">fn</span> <span class="ident">submit_poll</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="ident">RegisteredSource</span>,
-        <span class="ident">events</span>: <span class="kw-2">&amp;</span><span class="ident">sys_util::WatchingEvents</span>,
+        <span class="ident">events</span>: <span class="kw-2">&amp;</span><span class="ident">base::WatchingEvents</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">WakerToken</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ring</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ring</span>.<span class="ident">lock</span>();
         <span class="kw">let</span> <span class="ident">src</span> <span class="op">=</span> <span class="ident">ring</span>
@@ -1988,7 +1988,7 @@
 <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">dup_fd</span>(<span class="ident">fd</span>: <span class="ident">RawFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">RawFd</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">libc::fcntl</span>(<span class="ident">fd</span>, <span class="ident">libc::F_DUPFD_CLOEXEC</span>, <span class="number">0</span>);
     <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&lt;</span> <span class="number">0</span> {
-        <span class="prelude-val">Err</span>(<span class="ident">Error::DuplicatingFd</span>(<span class="ident">sys_util::Error::last</span>()))
+        <span class="prelude-val">Err</span>(<span class="ident">Error::DuplicatingFd</span>(<span class="ident">base::Error::last</span>()))
     } <span class="kw">else</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">ret</span>)
     }
@@ -2096,7 +2096,7 @@
             <span class="ident">Arc::new</span>(<span class="ident">VecIoWrapper::from</span>(<span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">4096</span>])) <span class="kw">as</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BackingMemory</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span>;
 
         <span class="comment">// Use pipes to create a future that will block forever.</span>
-        <span class="kw">let</span> (<span class="ident">rx</span>, <span class="kw-2">mut</span> <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">sys_util::pipe</span>(<span class="bool-val">true</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> (<span class="ident">rx</span>, <span class="kw-2">mut</span> <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">base::pipe</span>(<span class="bool-val">true</span>).<span class="ident">unwrap</span>();
 
         <span class="comment">// Set up the TLS for the uring_executor by creating one.</span>
         <span class="kw">let</span> <span class="ident">ex</span> <span class="op">=</span> <span class="ident">URingExecutor::new</span>().<span class="ident">unwrap</span>();
@@ -2140,7 +2140,7 @@
             <span class="ident">Arc::new</span>(<span class="ident">VecIoWrapper::from</span>(<span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">4096</span>])) <span class="kw">as</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BackingMemory</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span>;
 
         <span class="comment">// Use pipes to create a future that will block forever.</span>
-        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">rx</span>, <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">sys_util::new_pipe_full</span>().<span class="ident">expect</span>(<span class="string">&quot;Pipe failed&quot;</span>);
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">rx</span>, <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">base::new_pipe_full</span>().<span class="ident">expect</span>(<span class="string">&quot;Pipe failed&quot;</span>);
 
         <span class="comment">// Set up the TLS for the uring_executor by creating one.</span>
         <span class="kw">let</span> <span class="ident">ex</span> <span class="op">=</span> <span class="ident">URingExecutor::new</span>().<span class="ident">unwrap</span>();
@@ -2166,7 +2166,7 @@
         <span class="comment">// Finishing the operation should put the Arc count back to 1.</span>
         <span class="comment">// write to the pipe to wake the read pipe and then wait for the uring result in the</span>
         <span class="comment">// executor.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="ident">sys_util::round_up_to_page_size</span>(<span class="number">1</span>)];
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="ident">base::round_up_to_page_size</span>(<span class="number">1</span>)];
         <span class="ident">rx</span>.<span class="ident">read_exact</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>).<span class="ident">expect</span>(<span class="string">&quot;read to empty failed&quot;</span>);
         <span class="ident">ex</span>.<span class="ident">run_until</span>(<span class="ident">UringQueueEmpty</span> { <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">ex</span> })
             .<span class="ident">expect</span>(<span class="string">&quot;Failed to wait for write pipe ready&quot;</span>);
@@ -2191,7 +2191,7 @@
         <span class="kw">let</span> <span class="ident">bm</span> <span class="op">=</span>
             <span class="ident">Arc::new</span>(<span class="ident">VecIoWrapper::from</span>(<span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">16</span>])) <span class="kw">as</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BackingMemory</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span>;
 
-        <span class="kw">let</span> (<span class="ident">rx</span>, <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">sys_util::pipe</span>(<span class="bool-val">true</span>).<span class="ident">expect</span>(<span class="string">&quot;Pipe failed&quot;</span>);
+        <span class="kw">let</span> (<span class="ident">rx</span>, <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">base::pipe</span>(<span class="bool-val">true</span>).<span class="ident">expect</span>(<span class="string">&quot;Pipe failed&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">ex</span> <span class="op">=</span> <span class="ident">URingExecutor::new</span>().<span class="ident">unwrap</span>();
 
@@ -2231,7 +2231,7 @@
             }
         }
 
-        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">rx</span>, <span class="kw-2">mut</span> <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">sys_util::pipe</span>(<span class="bool-val">true</span>).<span class="ident">expect</span>(<span class="string">&quot;Pipe failed&quot;</span>);
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">rx</span>, <span class="kw-2">mut</span> <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">base::pipe</span>(<span class="bool-val">true</span>).<span class="ident">expect</span>(<span class="string">&quot;Pipe failed&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">ex</span> <span class="op">=</span> <span class="ident">URingExecutor::new</span>().<span class="ident">unwrap</span>();
 
@@ -2279,7 +2279,7 @@
 
         <span class="comment">// Leave an uncompleted operation in the queue so that the drop impl will try to drive it to</span>
         <span class="comment">// completion.</span>
-        <span class="kw">let</span> (<span class="ident">_rx</span>, <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">sys_util::pipe</span>(<span class="bool-val">true</span>).<span class="ident">expect</span>(<span class="string">&quot;Pipe failed&quot;</span>);
+        <span class="kw">let</span> (<span class="ident">_rx</span>, <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">base::pipe</span>(<span class="bool-val">true</span>).<span class="ident">expect</span>(<span class="string">&quot;Pipe failed&quot;</span>);
         <span class="kw">let</span> <span class="ident">tx</span> <span class="op">=</span> <span class="ident">ex</span>.<span class="ident">register_source</span>(<span class="kw-2">&amp;</span><span class="ident">tx</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed to register source&quot;</span>);
         <span class="kw">let</span> <span class="ident">bm</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">VecIoWrapper::from</span>(<span class="number">0xf2e96u64</span>.<span class="ident">to_ne_bytes</span>().<span class="ident">to_vec</span>()));
         <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">tx</span>

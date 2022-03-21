@@ -56,7 +56,7 @@ create a new reference, not a new executor.</p>
 
     <span class="kw">let</span> <span class="ident">ex</span> <span class="op">=</span> <span class="ident">Executor::new</span>()<span class="question-mark">?</span>;
 
-    <span class="kw">let</span> (<span class="ident">rx</span>, <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">sys_util::pipe</span>(<span class="bool-val">true</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">rx</span>, <span class="ident">tx</span>) <span class="op">=</span> <span class="ident">base::pipe</span>(<span class="bool-val">true</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">zero</span> <span class="op">=</span> <span class="ident">File::open</span>(<span class="string">&quot;/dev/zero&quot;</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">zero_bytes</span> <span class="op">=</span> <span class="ident">CHUNK_SIZE</span> <span class="op">*</span> <span class="number">7</span>;
     <span class="kw">let</span> <span class="ident">zero_to_pipe</span> <span class="op">=</span> <span class="ident">transfer_data</span>(

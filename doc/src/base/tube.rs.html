@@ -216,57 +216,26 @@
 <span id="215">215</span>
 <span id="216">216</span>
 <span id="217">217</span>
-<span id="218">218</span>
-<span id="219">219</span>
-<span id="220">220</span>
-<span id="221">221</span>
-<span id="222">222</span>
-<span id="223">223</span>
-<span id="224">224</span>
-<span id="225">225</span>
-<span id="226">226</span>
-<span id="227">227</span>
-<span id="228">228</span>
-<span id="229">229</span>
-<span id="230">230</span>
-<span id="231">231</span>
-<span id="232">232</span>
-<span id="233">233</span>
-<span id="234">234</span>
-<span id="235">235</span>
-<span id="236">236</span>
-<span id="237">237</span>
-<span id="238">238</span>
-<span id="239">239</span>
-<span id="240">240</span>
-<span id="241">241</span>
-<span id="242">242</span>
-<span id="243">243</span>
-<span id="244">244</span>
-<span id="245">245</span>
-<span id="246">246</span>
-<span id="247">247</span>
-<span id="248">248</span>
-<span id="249">249</span>
-<span id="250">250</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">IoSlice</span>};
-<span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
-<span class="kw">use</span> <span class="ident">std::ops::Deref</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::prelude</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">io</span>::{
+        <span class="ident">IoSlice</span>, {<span class="self">self</span>},
+    },
+    <span class="ident">marker::PhantomData</span>,
+    <span class="ident">os::unix::prelude</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>},
+    <span class="ident">time::Duration</span>,
+};
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">FromRawDescriptor</span>, <span class="ident">SafeDescriptor</span>, <span class="ident">ScmSocket</span>, <span class="ident">UnixSeqpacket</span>, <span class="ident">UnsyncMarker</span>};
 
-<span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">Executor</span>, <span class="ident">IntoAsync</span>, <span class="ident">IoSourceExt</span>};
-<span class="kw">use</span> <span class="ident">remain::sorted</span>;
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::DeserializeOwned</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident">sys_util</span>::{
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unix</span>::{
     <span class="ident">deserialize_with_descriptors</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="ident">SerializeDescriptors</span>,
 };
+<span class="kw">use</span> <span class="ident">remain::sorted</span>;
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::DeserializeOwned</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">thiserror::Error</span> <span class="kw">as</span> <span class="ident">ThisError</span>;
 
 <span class="attribute">#[<span class="ident">sorted</span>]</span>
@@ -274,8 +243,6 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to clone UnixSeqpacket: {0}&quot;</span>)]</span>
     <span class="ident">Clone</span>(<span class="ident">io::Error</span>),
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to create async tube: {0}&quot;</span>)]</span>
-    <span class="ident">CreateAsync</span>(<span class="ident">cros_async::AsyncError</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;tube was disconnected&quot;</span>)]</span>
     <span class="ident">Disconnected</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to serialize/deserialize json from packet: {0}&quot;</span>)]</span>
@@ -285,7 +252,7 @@
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to receive packet: {0}&quot;</span>)]</span>
     <span class="ident">Recv</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to send packet: {0}&quot;</span>)]</span>
-    <span class="ident">Send</span>(<span class="ident">sys_util::Error</span>),
+    <span class="ident">Send</span>(<span class="ident"><span class="kw">crate</span>::unix::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to set recv timeout: {0}&quot;</span>)]</span>
     <span class="ident">SetRecvTimeout</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to set send timeout: {0}&quot;</span>)]</span>
@@ -317,11 +284,6 @@
             <span class="ident">socket</span>,
             <span class="ident">_unsync_marker</span>: <span class="ident">PhantomData</span>,
         }
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_async_tube</span>(<span class="self">self</span>, <span class="ident">ex</span>: <span class="kw-2">&amp;</span><span class="ident">Executor</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">AsyncTube</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">ex</span>.<span class="ident">async_from</span>(<span class="self">self</span>).<span class="ident">map_err</span>(<span class="ident">Error::CreateAsync</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">AsyncTube</span> { <span class="ident">inner</span> })
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
@@ -398,40 +360,12 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">IntoAsync</span> <span class="kw">for</span> <span class="ident">Tube</span> {}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AsyncTube</span> {
-    <span class="ident">inner</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">IoSourceExt</span><span class="op">&lt;</span><span class="ident">Tube</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">AsyncTube</span> {
-    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">next</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">wait_readable</span>().<span class="kw">await</span>.<span class="ident">unwrap</span>();
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">as_source</span>().<span class="ident">recv</span>()
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">AsyncTube</span> {
-    <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Tube</span>;
-
-    <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident"><span class="self">Self</span>::Target</span> {
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">as_source</span>()
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">AsyncTube</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Tube</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">at</span>: <span class="ident">AsyncTube</span>) -&gt; <span class="ident">Tube</span> {
-        <span class="ident">at</span>.<span class="ident">inner</span>.<span class="ident">into_source</span>()
-    }
-}
-
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Event</span>;
 
-    <span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
-    <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::HashMap</span>, <span class="ident">time::Duration</span>};
 
     <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 

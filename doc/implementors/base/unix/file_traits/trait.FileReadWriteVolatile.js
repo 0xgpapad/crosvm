@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["base"] = [];
+implementors["net_util"] = [{"text":"impl <a class=\"trait\" href=\"base/unix/file_traits/trait.FileReadWriteVolatile.html\" title=\"trait base::unix::file_traits::FileReadWriteVolatile\">FileReadWriteVolatile</a> for <a class=\"struct\" href=\"net_util/struct.Tap.html\" title=\"struct net_util::Tap\">Tap</a>","synthetic":false,"types":["net_util::Tap"]},{"text":"impl <a class=\"trait\" href=\"base/unix/file_traits/trait.FileReadWriteVolatile.html\" title=\"trait base::unix::file_traits::FileReadWriteVolatile\">FileReadWriteVolatile</a> for <a class=\"struct\" href=\"net_util/fakes/struct.FakeTap.html\" title=\"struct net_util::fakes::FakeTap\">FakeTap</a>","synthetic":false,"types":["net_util::fakes::FakeTap"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

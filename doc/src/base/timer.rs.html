@@ -77,6 +77,8 @@
 <span id="76">76</span>
 <span id="77">77</span>
 <span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -85,13 +87,15 @@
     <span class="ident">AsRawDescriptor</span>, <span class="ident">FakeClock</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>,
 };
 
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>};
-<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unix</span>::{<span class="ident">FakeTimerFd</span>, <span class="ident">TimerFd</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>},
+    <span class="ident">sync::Arc</span>,
+    <span class="ident">time::Duration</span>,
+};
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
-<span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">FakeTimerFd</span>, <span class="ident">TimerFd</span>};
 
-<span class="doccomment">/// See [TimerFd](sys_util::TimerFd) for struct- and method-level</span>
+<span class="doccomment">/// See [TimerFd](crate::unix::TimerFd) for struct- and method-level</span>
 <span class="doccomment">/// documentation.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Timer</span>(<span class="kw">pub</span> <span class="ident">TimerFd</span>);
 <span class="kw">impl</span> <span class="ident">Timer</span> {
@@ -100,7 +104,7 @@
     }
 }
 
-<span class="doccomment">/// See [FakeTimerFd](sys_util::FakeTimerFd) for struct- and method-level</span>
+<span class="doccomment">/// See [FakeTimerFd](crate::unix::FakeTimerFd) for struct- and method-level</span>
 <span class="doccomment">/// documentation.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FakeTimer</span>(<span class="ident">FakeTimerFd</span>);
 <span class="kw">impl</span> <span class="ident">FakeTimer</span> {

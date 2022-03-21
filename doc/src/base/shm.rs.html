@@ -106,6 +106,8 @@
 <span id="105">105</span>
 <span id="106">106</span>
 <span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -114,16 +116,18 @@
     <span class="ident">AsRawDescriptor</span>, <span class="ident">Error</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">MemfdSeals</span>, <span class="ident">RawDescriptor</span>,
     <span class="prelude-ty">Result</span>, <span class="ident">SafeDescriptor</span>,
 };
-<span class="kw">use</span> <span class="ident">std::ffi::CStr</span>;
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">use</span> <span class="ident">std::os::unix::io::RawFd</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">IntoRawFd</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">ffi::CStr</span>,
+    <span class="ident">fs::File</span>,
+    <span class="ident">os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">IntoRawFd</span>},
+};
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unix::SharedMemory</span> <span class="kw">as</span> <span class="ident">SysUtilSharedMemory</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident">sys_util::SharedMemory</span> <span class="kw">as</span> <span class="ident">SysUtilSharedMemory</span>;
 
-<span class="doccomment">/// See [SharedMemory](sys_util::SharedMemory) for struct- and method-level</span>
+<span class="doccomment">/// See [SharedMemory](crate::unix::SharedMemory) for struct- and method-level</span>
 <span class="doccomment">/// documentation.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>

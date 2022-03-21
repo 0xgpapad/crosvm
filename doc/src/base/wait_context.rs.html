@@ -159,16 +159,18 @@
 <span id="158">158</span>
 <span id="159">159</span>
 <span id="160">160</span>
+<span id="161">161</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::os::unix::io::AsRawFd</span>;
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">os::unix::io::AsRawFd</span>, <span class="ident">time::Duration</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">wrap_descriptor</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{
+    <span class="ident">unix</span>::{<span class="ident">PollContext</span>, <span class="ident">PollToken</span>, <span class="ident">WatchingEvents</span>},
+    <span class="ident">wrap_descriptor</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>,
+};
 <span class="kw">use</span> <span class="ident">smallvec::SmallVec</span>;
-<span class="kw">use</span> <span class="ident">sys_util</span>::{<span class="ident">PollContext</span>, <span class="ident">PollToken</span>, <span class="ident">WatchingEvents</span>};
 
 <span class="comment">// Typedef PollToken as EventToken for better adherance to base naming.</span>
 <span class="comment">// As actual typdefing is experimental, define a new trait with the mirrored</span>
