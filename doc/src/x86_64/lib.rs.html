@@ -1589,8 +1589,6 @@
 <span id="1588">1588</span>
 <span id="1589">1589</span>
 <span id="1590">1590</span>
-<span id="1591">1591</span>
-<span id="1592">1592</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2910,7 +2908,7 @@
             .<span class="ident">map_err</span>(<span class="ident">Error::RegisterIrqfd</span>)<span class="question-mark">?</span>;
 
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-        <span class="kw">let</span> <span class="ident">sci_direct</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">direct_gpe</span>.<span class="ident">is_empty</span>() {
+        <span class="kw">let</span> <span class="ident">direct_gpe_info</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">direct_gpe</span>.<span class="ident">is_empty</span>() {
             <span class="prelude-val">None</span>
         } <span class="kw">else</span> {
             <span class="kw">let</span> <span class="ident">direct_sci_evt</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateEvent</span>)<span class="question-mark">?</span>;
@@ -2934,16 +2932,14 @@
                     .<span class="ident">map_err</span>(<span class="ident">Error::CreateGpe</span>)<span class="question-mark">?</span>;
             }
 
-            <span class="prelude-val">Some</span>((<span class="ident">direct_sci_evt</span>, <span class="ident">direct_sci_evt_resample</span>))
+            <span class="prelude-val">Some</span>((<span class="ident">direct_sci_evt</span>, <span class="ident">direct_sci_evt_resample</span>, <span class="ident">direct_gpe</span>))
         };
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pmresource</span> <span class="op">=</span> <span class="ident">devices::ACPIPMResource::new</span>(
             <span class="ident">pm_sci_evt</span>,
             <span class="ident">pm_sci_evt_resample</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-            <span class="ident">sci_direct</span>,
-            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-            <span class="ident">direct_gpe</span>,
+            <span class="ident">direct_gpe_info</span>,
             <span class="ident">suspend_evt</span>,
             <span class="ident">exit_evt</span>,
         );

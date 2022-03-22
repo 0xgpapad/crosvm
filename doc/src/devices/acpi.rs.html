@@ -811,6 +811,16 @@
 <span id="810">810</span>
 <span id="811">811</span>
 <span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -880,12 +890,13 @@
 
 <span class="kw">impl</span> <span class="ident">ACPIPMResource</span> {
     <span class="doccomment">/// Constructs ACPI Power Management Resouce.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// `direct_gpe_info` - tuple of host SCI trigger and resample events, and list of direct GPEs</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
         <span class="ident">sci_evt</span>: <span class="ident">Event</span>,
         <span class="ident">sci_evt_resample</span>: <span class="ident">Event</span>,
-        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span> <span class="ident">sci_direct_evt</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Event</span>, <span class="ident">Event</span>)<span class="op">&gt;</span>,
-        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span> <span class="ident">direct_gpe</span>: <span class="kw-2">&amp;</span>[<span class="ident">u32</span>],
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span> <span class="ident">direct_gpe_info</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Event</span>, <span class="ident">Event</span>, <span class="kw-2">&amp;</span>[<span class="ident">u32</span>])<span class="op">&gt;</span>,
         <span class="ident">suspend_evt</span>: <span class="ident">Event</span>,
         <span class="ident">exit_evt</span>: <span class="ident">Event</span>,
     ) -&gt; <span class="ident">ACPIPMResource</span> {
@@ -899,13 +910,22 @@
             <span class="ident">enable</span>: <span class="ident">Default::default</span>(),
         };
 
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
+        <span class="kw">let</span> (<span class="ident">sci_direct_evt</span>, <span class="ident">direct_gpe</span>) <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">info</span>) <span class="op">=</span> <span class="ident">direct_gpe_info</span> {
+            <span class="kw">let</span> (<span class="ident">trigger_evt</span>, <span class="ident">resample_evt</span>, <span class="ident">gpes</span>) <span class="op">=</span> <span class="ident">info</span>;
+            <span class="kw">let</span> <span class="ident">gpe_vec</span> <span class="op">=</span> <span class="ident">gpes</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">gpe</span><span class="op">|</span> <span class="ident">DirectGpe::new</span>(<span class="kw-2">*</span><span class="ident">gpe</span>)).<span class="ident">collect</span>();
+            (<span class="prelude-val">Some</span>((<span class="ident">trigger_evt</span>, <span class="ident">resample_evt</span>)), <span class="ident">gpe_vec</span>)
+        } <span class="kw">else</span> {
+            (<span class="prelude-val">None</span>, <span class="ident">Vec::new</span>())
+        };
+
         <span class="ident">ACPIPMResource</span> {
             <span class="ident">sci_evt</span>,
             <span class="ident">sci_evt_resample</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
             <span class="ident">sci_direct_evt</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-            <span class="ident">direct_gpe</span>: <span class="ident">direct_gpe</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">gpe</span><span class="op">|</span> <span class="ident">DirectGpe::new</span>(<span class="kw-2">*</span><span class="ident">gpe</span>)).<span class="ident">collect</span>(),
+            <span class="ident">direct_gpe</span>,
             <span class="ident">kill_evt</span>: <span class="prelude-val">None</span>,
             <span class="ident">worker_thread</span>: <span class="prelude-val">None</span>,
             <span class="ident">suspend_evt</span>,
