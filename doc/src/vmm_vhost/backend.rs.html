@@ -525,7 +525,6 @@
 <span id="524">524</span>
 <span id="525">525</span>
 <span id="526">526</span>
-<span id="527">527</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (C) 2019-2021 Alibaba Cloud. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0 or BSD-3-Clause</span>
 <span class="comment">//</span>
@@ -541,8 +540,7 @@
 <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
 <span class="kw">use</span> <span class="ident">std::sync::RwLock</span>;
 
-<span class="comment">// TODO(b/219522861): Remove this alias and use Event in the code.</span>
-<span class="kw">use</span> <span class="ident">base::Event</span> <span class="kw">as</span> <span class="ident">EventFd</span>;
+<span class="kw">use</span> <span class="ident">base::Event</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Result</span>;
 
@@ -651,7 +649,7 @@
     <span class="doccomment">/// Set base address for page modification logging.</span>
     <span class="kw">fn</span> <span class="ident">set_log_base</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">base</span>: <span class="ident">u64</span>, <span class="ident">fd</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RawDescriptor</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Specify an eventfd file descriptor to signal on log write.</span>
+    <span class="doccomment">/// Specify an event file descriptor to signal on log write.</span>
     <span class="kw">fn</span> <span class="ident">set_log_fd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fd</span>: <span class="ident">RawDescriptor</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
     <span class="doccomment">/// Set the number of descriptors in the vring.</span>
@@ -678,27 +676,27 @@
     <span class="doccomment">/// Get the available vring base offset.</span>
     <span class="kw">fn</span> <span class="ident">get_vring_base</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Set the eventfd to trigger when buffers have been used by the host.</span>
+    <span class="doccomment">/// Set the event to trigger when buffers have been used by the host.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">/// * `queue_index` - Index of the queue to modify.</span>
-    <span class="doccomment">/// * `fd` - EventFd to trigger.</span>
-    <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="doccomment">/// * `event` - Event to trigger.</span>
+    <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Set the eventfd that will be signaled by the guest when buffers are</span>
+    <span class="doccomment">/// Set the event that will be signaled by the guest when buffers are</span>
     <span class="doccomment">/// available for the host to process.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">/// * `queue_index` - Index of the queue to modify.</span>
-    <span class="doccomment">/// * `fd` - EventFd that will be signaled from guest.</span>
-    <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="doccomment">/// * `event` - Event that will be signaled from guest.</span>
+    <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Set the eventfd that will be signaled by the guest when error happens.</span>
+    <span class="doccomment">/// Set the event that will be signaled by the guest when error happens.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">/// * `queue_index` - Index of the queue to modify.</span>
-    <span class="doccomment">/// * `fd` - EventFd that will be signaled from guest.</span>
-    <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="doccomment">/// * `event` - Event that will be signaled from guest.</span>
+    <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 }
 
 <span class="doccomment">/// An interface for setting up vhost-based backend drivers.</span>
@@ -737,7 +735,7 @@
     <span class="doccomment">/// Set base address for page modification logging.</span>
     <span class="kw">fn</span> <span class="ident">set_log_base</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">base</span>: <span class="ident">u64</span>, <span class="ident">fd</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RawDescriptor</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Specify an eventfd file descriptor to signal on log write.</span>
+    <span class="doccomment">/// Specify an event file descriptor to signal on log write.</span>
     <span class="kw">fn</span> <span class="ident">set_log_fd</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">fd</span>: <span class="ident">RawDescriptor</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
     <span class="doccomment">/// Set the number of descriptors in the vring.</span>
@@ -764,27 +762,27 @@
     <span class="doccomment">/// Get the available vring base offset.</span>
     <span class="kw">fn</span> <span class="ident">get_vring_base</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Set the eventfd to trigger when buffers have been used by the host.</span>
+    <span class="doccomment">/// Set the event to trigger when buffers have been used by the host.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">/// * `queue_index` - Index of the queue to modify.</span>
-    <span class="doccomment">/// * `fd` - EventFd to trigger.</span>
-    <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="doccomment">/// * `event` - Event to trigger.</span>
+    <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Set the eventfd that will be signaled by the guest when buffers are</span>
+    <span class="doccomment">/// Set the event that will be signaled by the guest when buffers are</span>
     <span class="doccomment">/// available for the host to process.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">/// * `queue_index` - Index of the queue to modify.</span>
-    <span class="doccomment">/// * `fd` - EventFd that will be signaled from guest.</span>
-    <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="doccomment">/// * `event` - Event that will be signaled from guest.</span>
+    <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
-    <span class="doccomment">/// Set the eventfd that will be signaled by the guest when error happens.</span>
+    <span class="doccomment">/// Set the event that will be signaled by the guest when error happens.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
     <span class="doccomment">/// * `queue_index` - Index of the queue to modify.</span>
-    <span class="doccomment">/// * `fd` - EventFd that will be signaled from guest.</span>
-    <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="doccomment">/// * `event` - Event that will be signaled from guest.</span>
+    <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">VhostBackendMut</span><span class="op">&gt;</span> <span class="ident">VhostBackend</span> <span class="kw">for</span> <span class="ident">RwLock</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
@@ -834,16 +832,16 @@
         <span class="self">self</span>.<span class="ident">write</span>().<span class="ident">unwrap</span>().<span class="ident">get_vring_base</span>(<span class="ident">queue_index</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">write</span>().<span class="ident">unwrap</span>().<span class="ident">set_vring_call</span>(<span class="ident">queue_index</span>, <span class="ident">fd</span>)
+    <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">write</span>().<span class="ident">unwrap</span>().<span class="ident">set_vring_call</span>(<span class="ident">queue_index</span>, <span class="ident">event</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">write</span>().<span class="ident">unwrap</span>().<span class="ident">set_vring_kick</span>(<span class="ident">queue_index</span>, <span class="ident">fd</span>)
+    <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">write</span>().<span class="ident">unwrap</span>().<span class="ident">set_vring_kick</span>(<span class="ident">queue_index</span>, <span class="ident">event</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">write</span>().<span class="ident">unwrap</span>().<span class="ident">set_vring_err</span>(<span class="ident">queue_index</span>, <span class="ident">fd</span>)
+    <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">write</span>().<span class="ident">unwrap</span>().<span class="ident">set_vring_err</span>(<span class="ident">queue_index</span>, <span class="ident">event</span>)
     }
 }
 
@@ -892,16 +890,16 @@
         <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">get_vring_base</span>(<span class="ident">queue_index</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">set_vring_call</span>(<span class="ident">queue_index</span>, <span class="ident">fd</span>)
+    <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">set_vring_call</span>(<span class="ident">queue_index</span>, <span class="ident">event</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">set_vring_kick</span>(<span class="ident">queue_index</span>, <span class="ident">fd</span>)
+    <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">set_vring_kick</span>(<span class="ident">queue_index</span>, <span class="ident">event</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">set_vring_err</span>(<span class="ident">queue_index</span>, <span class="ident">fd</span>)
+    <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">borrow_mut</span>().<span class="ident">set_vring_err</span>(<span class="ident">queue_index</span>, <span class="ident">event</span>)
     }
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -973,17 +971,17 @@
             <span class="prelude-val">Ok</span>(<span class="number">2</span>)
         }
 
-        <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">_fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">set_vring_call</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
             <span class="macro">assert_eq!</span>(<span class="ident">queue_index</span>, <span class="number">1</span>);
             <span class="prelude-val">Ok</span>(())
         }
 
-        <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">_fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">set_vring_kick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
             <span class="macro">assert_eq!</span>(<span class="ident">queue_index</span>, <span class="number">1</span>);
             <span class="prelude-val">Ok</span>(())
         }
 
-        <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">_fd</span>: <span class="kw-2">&amp;</span><span class="ident">EventFd</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">set_vring_err</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">queue_index</span>: <span class="ident">usize</span>, <span class="ident">_event</span>: <span class="kw-2">&amp;</span><span class="ident">Event</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
             <span class="macro">assert_eq!</span>(<span class="ident">queue_index</span>, <span class="number">1</span>);
             <span class="prelude-val">Ok</span>(())
         }
@@ -1019,10 +1017,10 @@
         <span class="ident">b</span>.<span class="ident">set_vring_base</span>(<span class="number">1</span>, <span class="number">2</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">b</span>.<span class="ident">get_vring_base</span>(<span class="number">1</span>).<span class="ident">unwrap</span>(), <span class="number">2</span>);
 
-        <span class="kw">let</span> <span class="ident">eventfd</span> <span class="op">=</span> <span class="ident">EventFd::new</span>().<span class="ident">unwrap</span>();
-        <span class="ident">b</span>.<span class="ident">set_vring_call</span>(<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">eventfd</span>).<span class="ident">unwrap</span>();
-        <span class="ident">b</span>.<span class="ident">set_vring_kick</span>(<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">eventfd</span>).<span class="ident">unwrap</span>();
-        <span class="ident">b</span>.<span class="ident">set_vring_err</span>(<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">eventfd</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">event</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">unwrap</span>();
+        <span class="ident">b</span>.<span class="ident">set_vring_call</span>(<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">event</span>).<span class="ident">unwrap</span>();
+        <span class="ident">b</span>.<span class="ident">set_vring_kick</span>(<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">event</span>).<span class="ident">unwrap</span>();
+        <span class="ident">b</span>.<span class="ident">set_vring_err</span>(<span class="number">1</span>, <span class="kw-2">&amp;</span><span class="ident">event</span>).<span class="ident">unwrap</span>();
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

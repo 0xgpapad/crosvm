@@ -34,10 +34,6 @@
 <span id="33">33</span>
 <span id="34">34</span>
 <span id="35">35</span>
-<span id="36">36</span>
-<span id="37">37</span>
-<span id="38">38</span>
-<span id="39">39</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2022 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// SPDX-License-Identifier: Apache-2.0</span>
 
@@ -73,10 +69,6 @@
         <span class="self">self</span>.<span class="ident">accept</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">socket</span>, <span class="ident">_address</span>)<span class="op">|</span> <span class="ident">socket</span>)
     }
 }
-
-<span class="comment">// TODO(b/221882601): Once base has Event/EventFd, we can drop this type.</span>
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;vfio-device&quot;</span>)]</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type</span> <span class="ident">EventFd</span> <span class="op">=</span> <span class="ident">base::EventFd</span>;
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="vmm_vhost" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
 </body></html>

@@ -371,8 +371,8 @@
 }
 
 <span class="kw">impl</span> <span class="ident">VfioDeviceTrait</span> <span class="kw">for</span> <span class="ident">VvuDevice</span> {
-    <span class="kw">fn</span> <span class="ident">event</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">base::EventFd</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">rxq_evt</span>.<span class="number">0</span>
+    <span class="kw">fn</span> <span class="ident">event</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Event</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">rxq_evt</span>
     }
 
     <span class="kw">fn</span> <span class="ident">start</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
