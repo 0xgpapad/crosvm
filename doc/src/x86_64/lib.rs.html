@@ -2143,7 +2143,7 @@
             <span class="ident">exit_evt</span>.<span class="ident">try_clone</span>().<span class="ident">map_err</span>(<span class="ident">Error::CloneEvent</span>)<span class="question-mark">?</span>,
             <span class="ident">components</span>.<span class="ident">acpi_sdts</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-            <span class="ident">components</span>.<span class="ident">direct_gpe</span>,
+            <span class="kw-2">&amp;</span><span class="ident">components</span>.<span class="ident">direct_gpe</span>,
             <span class="ident">irq_chip</span>.<span class="ident">as_irq_chip_mut</span>(),
             <span class="ident">sci_irq</span>,
             <span class="ident">battery</span>,
@@ -2876,7 +2876,7 @@
         <span class="ident">suspend_evt</span>: <span class="ident">Event</span>,
         <span class="ident">exit_evt</span>: <span class="ident">Event</span>,
         <span class="ident">sdts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SDT</span><span class="op">&gt;</span>,
-        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span> <span class="ident">direct_gpe</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span> <span class="ident">direct_gpe</span>: <span class="kw-2">&amp;</span>[<span class="ident">u32</span>],
         <span class="ident">irq_chip</span>: <span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">IrqChip</span>,
         <span class="ident">sci_irq</span>: <span class="ident">u32</span>,
         <span class="ident">battery</span>: (<span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BatteryType</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span>),
@@ -2928,7 +2928,7 @@
 
             <span class="ident">sci_devirq</span>.<span class="ident">sci_irq_prepare</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateGpe</span>)<span class="question-mark">?</span>;
 
-            <span class="kw">for</span> <span class="ident">gpe</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">direct_gpe</span> {
+            <span class="kw">for</span> <span class="ident">gpe</span> <span class="kw">in</span> <span class="ident">direct_gpe</span> {
                 <span class="ident">sci_devirq</span>
                     .<span class="ident">gpe_enable_forwarding</span>(<span class="kw-2">*</span><span class="ident">gpe</span>)
                     .<span class="ident">map_err</span>(<span class="ident">Error::CreateGpe</span>)<span class="question-mark">?</span>;
