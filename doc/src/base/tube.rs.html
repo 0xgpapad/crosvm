@@ -216,43 +216,173 @@
 <span id="215">215</span>
 <span id="216">216</span>
 <span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std</span>::{
-    <span class="ident">io</span>::{
-        <span class="ident">IoSlice</span>, {<span class="self">self</span>},
-    },
-    <span class="ident">marker::PhantomData</span>,
-    <span class="ident">os::unix::prelude</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>},
-    <span class="ident">time::Duration</span>,
-};
-
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">FromRawDescriptor</span>, <span class="ident">SafeDescriptor</span>, <span class="ident">ScmSocket</span>, <span class="ident">UnixSeqpacket</span>, <span class="ident">UnsyncMarker</span>};
-
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unix</span>::{
-    <span class="ident">deserialize_with_descriptors</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="ident">SerializeDescriptors</span>,
-};
 <span class="kw">use</span> <span class="ident">remain::sorted</span>;
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::DeserializeOwned</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+<span class="kw">use</span> <span class="ident">std::io</span>;
+
 <span class="kw">use</span> <span class="ident">thiserror::Error</span> <span class="kw">as</span> <span class="ident">ThisError</span>;
+
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">windows</span>, <span class="ident">path</span> <span class="op">=</span> <span class="string">&quot;win/tube.rs&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">path</span> <span class="op">=</span> <span class="string">&quot;unix/tube.rs&quot;</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tube</span>;
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::DeserializeOwned</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tube</span>::<span class="kw-2">*</span>;
+
+<span class="kw">impl</span> <span class="ident">Tube</span> {
+    <span class="doccomment">/// Creates a Send/Recv pair of Tubes.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">directional_pair</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">SendTube</span>, <span class="ident">RecvTube</span>)<span class="op">&gt;</span> {
+        <span class="kw">let</span> (<span class="ident">t1</span>, <span class="ident">t2</span>) <span class="op">=</span> <span class="ident"><span class="self">Self</span>::pair</span>()<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>((<span class="ident">SendTube</span>(<span class="ident">t1</span>), <span class="ident">RecvTube</span>(<span class="ident">t2</span>)))
+    }
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
+<span class="doccomment">/// A Tube end which can only send messages. Cloneable.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SendTube</span>(<span class="ident">Tube</span>);
+
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
+<span class="kw">impl</span> <span class="ident">SendTube</span> {
+    <span class="doccomment">/// TODO(b/145998747, b/184398671): this method should be removed.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_send_timeout</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="macro">unimplemented!</span>(<span class="string">&quot;To be removed/refactored upstream.&quot;</span>);
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">send</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Serialize</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">msg</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">send</span>(<span class="ident">msg</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">SendTube</span>(
+            <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
+            <span class="self">self</span>.<span class="number">0</span>.<span class="ident">try_clone</span>()<span class="question-mark">?</span>,
+        ))
+    }
+
+    <span class="doccomment">/// Never call this function, it is for use by cros_async to provide</span>
+    <span class="doccomment">/// directional wrapper types only. Using it in any other context may</span>
+    <span class="doccomment">/// violate concurrency assumptions. (Type splitting across crates has put</span>
+    <span class="doccomment">/// us in a situation where we can&#39;t use Rust privacy to enforce this.)</span>
+    <span class="attribute">#[<span class="ident">deprecated</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_tube</span>(<span class="self">self</span>) -&gt; <span class="ident">Tube</span> {
+        <span class="self">self</span>.<span class="number">0</span>
+    }
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
+<span class="doccomment">/// A Tube end which can only recv messages.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RecvTube</span>(<span class="ident">Tube</span>);
+
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
+<span class="kw">impl</span> <span class="ident">RecvTube</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">recv</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">recv</span>()
+    }
+
+    <span class="doccomment">/// TODO(b/145998747, b/184398671): this method should be removed.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_recv_timeout</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="macro">unimplemented!</span>(<span class="string">&quot;To be removed/refactored upstream.&quot;</span>);
+    }
+
+    <span class="doccomment">/// Never call this function, it is for use by cros_async to provide</span>
+    <span class="doccomment">/// directional wrapper types only. Using it in any other context may</span>
+    <span class="doccomment">/// violate concurrency assumptions. (Type splitting across crates has put</span>
+    <span class="doccomment">/// us in a situation where we can&#39;t use Rust privacy to enforce this.)</span>
+    <span class="attribute">#[<span class="ident">deprecated</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_tube</span>(<span class="self">self</span>) -&gt; <span class="ident">Tube</span> {
+        <span class="self">self</span>.<span class="number">0</span>
+    }
+}
 
 <span class="attribute">#[<span class="ident">sorted</span>]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">ThisError</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to clone UnixSeqpacket: {0}&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;attempt to duplicate descriptor via broker failed&quot;</span>)]</span>
+    <span class="ident">BrokerDupDescriptor</span>,
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to clone transport: {0}&quot;</span>)]</span>
     <span class="ident">Clone</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;tube was disconnected&quot;</span>)]</span>
     <span class="ident">Disconnected</span>,
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to duplicate descriptor: {0}&quot;</span>)]</span>
+    <span class="ident">DupDescriptor</span>(<span class="ident">io::Error</span>),
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to flush named pipe: {0}&quot;</span>)]</span>
+    <span class="ident">Flush</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to serialize/deserialize json from packet: {0}&quot;</span>)]</span>
     <span class="ident">Json</span>(<span class="ident">serde_json::Error</span>),
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;cancelled a queued async operation&quot;</span>)]</span>
+    <span class="ident">OperationCancelled</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to crate tube pair: {0}&quot;</span>)]</span>
     <span class="ident">Pair</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to receive packet: {0}&quot;</span>)]</span>
     <span class="ident">Recv</span>(<span class="ident">io::Error</span>),
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Received a message with a zero sized body. This should not happen.&quot;</span>)]</span>
+    <span class="ident">RecvUnexpectedEmptyBody</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to send packet: {0}&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
     <span class="ident">Send</span>(<span class="ident"><span class="kw">crate</span>::unix::Error</span>),
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
+    <span class="ident">Send</span>(<span class="ident"><span class="kw">crate</span>::windows::Error</span>),
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to send packet: {0}&quot;</span>)]</span>
+    <span class="ident">SendIo</span>(<span class="ident">io::Error</span>),
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to write packet to intermediate buffer: {0}&quot;</span>)]</span>
+    <span class="ident">SendIoBuf</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to set recv timeout: {0}&quot;</span>)]</span>
     <span class="ident">SetRecvTimeout</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to set send timeout: {0}&quot;</span>)]</span>
@@ -260,105 +390,6 @@
 }
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
-
-<span class="doccomment">/// Bidirectional tube that support both send and recv.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Tube</span> {
-    <span class="ident">socket</span>: <span class="ident">UnixSeqpacket</span>,
-    <span class="ident">_unsync_marker</span>: <span class="ident">UnsyncMarker</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">Tube</span> {
-    <span class="doccomment">/// Create a pair of connected tubes. Request is send in one direction while response is in the</span>
-    <span class="doccomment">/// other direction.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pair</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Tube</span>, <span class="ident">Tube</span>)<span class="op">&gt;</span> {
-        <span class="kw">let</span> (<span class="ident">socket1</span>, <span class="ident">socket2</span>) <span class="op">=</span> <span class="ident">UnixSeqpacket::pair</span>().<span class="ident">map_err</span>(<span class="ident">Error::Pair</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">tube1</span> <span class="op">=</span> <span class="ident">Tube::new</span>(<span class="ident">socket1</span>);
-        <span class="kw">let</span> <span class="ident">tube2</span> <span class="op">=</span> <span class="ident">Tube::new</span>(<span class="ident">socket2</span>);
-        <span class="prelude-val">Ok</span>((<span class="ident">tube1</span>, <span class="ident">tube2</span>))
-    }
-
-    <span class="comment">// Create a new `Tube`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">socket</span>: <span class="ident">UnixSeqpacket</span>) -&gt; <span class="ident">Tube</span> {
-        <span class="ident">Tube</span> {
-            <span class="ident">socket</span>,
-            <span class="ident">_unsync_marker</span>: <span class="ident">PhantomData</span>,
-        }
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">socket</span>.<span class="ident">try_clone</span>().<span class="ident">map</span>(<span class="ident">Tube::new</span>).<span class="ident">map_err</span>(<span class="ident">Error::Clone</span>)
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">send</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Serialize</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">msg</span>: <span class="kw-2">&amp;</span><span class="ident">T</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">msg_serialize</span> <span class="op">=</span> <span class="ident">SerializeDescriptors::new</span>(<span class="kw-2">&amp;</span><span class="ident">msg</span>);
-        <span class="kw">let</span> <span class="ident">msg_json</span> <span class="op">=</span> <span class="ident">serde_json::to_vec</span>(<span class="kw-2">&amp;</span><span class="ident">msg_serialize</span>).<span class="ident">map_err</span>(<span class="ident">Error::Json</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">msg_descriptors</span> <span class="op">=</span> <span class="ident">msg_serialize</span>.<span class="ident">into_descriptors</span>();
-
-        <span class="self">self</span>.<span class="ident">socket</span>
-            .<span class="ident">send_with_fds</span>(<span class="kw-2">&amp;</span>[<span class="ident">IoSlice::new</span>(<span class="kw-2">&amp;</span><span class="ident">msg_json</span>)], <span class="kw-2">&amp;</span><span class="ident">msg_descriptors</span>)
-            .<span class="ident">map_err</span>(<span class="ident">Error::Send</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(())
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">recv</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> (<span class="ident">msg_json</span>, <span class="ident">msg_descriptors</span>) <span class="op">=</span>
-            <span class="self">self</span>.<span class="ident">socket</span>.<span class="ident">recv_as_vec_with_fds</span>().<span class="ident">map_err</span>(<span class="ident">Error::Recv</span>)<span class="question-mark">?</span>;
-
-        <span class="kw">if</span> <span class="ident">msg_json</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::Disconnected</span>);
-        }
-
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">msg_descriptors_safe</span> <span class="op">=</span> <span class="ident">msg_descriptors</span>
-            .<span class="ident">into_iter</span>()
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> {
-                <span class="prelude-val">Some</span>(<span class="kw">unsafe</span> {
-                    <span class="comment">// Safe because the socket returns new fds that are owned locally by this scope.</span>
-                    <span class="ident">SafeDescriptor::from_raw_descriptor</span>(<span class="ident">v</span>)
-                })
-            })
-            .<span class="ident">collect</span>();
-
-        <span class="ident">deserialize_with_descriptors</span>(
-            <span class="op">|</span><span class="op">|</span> <span class="ident">serde_json::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">msg_json</span>),
-            <span class="kw-2">&amp;mut</span> <span class="ident">msg_descriptors_safe</span>,
-        )
-        .<span class="ident">map_err</span>(<span class="ident">Error::Json</span>)
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_send_timeout</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">socket</span>
-            .<span class="ident">set_write_timeout</span>(<span class="ident">timeout</span>)
-            .<span class="ident">map_err</span>(<span class="ident">Error::SetSendTimeout</span>)
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_recv_timeout</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">socket</span>
-            .<span class="ident">set_read_timeout</span>(<span class="ident">timeout</span>)
-            .<span class="ident">map_err</span>(<span class="ident">Error::SetRecvTimeout</span>)
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">FromRawDescriptor</span> <span class="kw">for</span> <span class="ident">Tube</span> {
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_raw_descriptor</span>(<span class="ident">descriptor</span>: <span class="ident">RawDescriptor</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">Tube</span> {
-            <span class="ident">socket</span>: <span class="ident">UnixSeqpacket::from_raw_descriptor</span>(<span class="ident">descriptor</span>),
-            <span class="ident">_unsync_marker</span>: <span class="ident">PhantomData</span>,
-        }
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">AsRawDescriptor</span> <span class="kw">for</span> <span class="ident">Tube</span> {
-    <span class="kw">fn</span> <span class="ident">as_raw_descriptor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawDescriptor</span> {
-        <span class="self">self</span>.<span class="ident">socket</span>.<span class="ident">as_raw_descriptor</span>()
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">AsRawFd</span> <span class="kw">for</span> <span class="ident">Tube</span> {
-    <span class="kw">fn</span> <span class="ident">as_raw_fd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawFd</span> {
-        <span class="self">self</span>.<span class="ident">socket</span>.<span class="ident">as_raw_fd</span>()
-    }
-}
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
@@ -368,9 +399,20 @@
     <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::HashMap</span>, <span class="ident">time::Duration</span>};
 
     <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+    <span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Barrier</span>};
+    <span class="kw">use</span> <span class="ident">std::thread</span>;
+
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+    <span class="kw">struct</span> <span class="ident">DataStruct</span> {
+        <span class="ident">x</span>: <span class="ident">u32</span>,
+    }
+
+    <span class="comment">// Magics to identify which producer sent a message (&amp; detect corruption).</span>
+    <span class="kw">const</span> <span class="ident">PRODUCER_ID_1</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">801279273</span>;
+    <span class="kw">const</span> <span class="ident">PRODUCER_ID_2</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">345234861</span>;
 
     <span class="attribute">#[<span class="ident">track_caller</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_event_pair</span>(<span class="ident">send</span>: <span class="ident">Event</span>, <span class="kw-2">mut</span> <span class="ident">recv</span>: <span class="ident">Event</span>) {
+    <span class="kw">fn</span> <span class="ident">test_event_pair</span>(<span class="ident">send</span>: <span class="ident">Event</span>, <span class="ident">recv</span>: <span class="ident">Event</span>) {
         <span class="ident">send</span>.<span class="ident">write</span>(<span class="number">1</span>).<span class="ident">unwrap</span>();
         <span class="ident">recv</span>.<span class="ident">read_timeout</span>(<span class="ident">Duration::from_secs</span>(<span class="number">1</span>)).<span class="ident">unwrap</span>();
     }
@@ -406,6 +448,64 @@
         <span class="macro">assert_eq!</span>(<span class="ident">test_msg</span>.<span class="ident">x</span>, <span class="ident">recv_msg</span>.<span class="ident">x</span>);
 
         <span class="ident">test_event_pair</span>(<span class="ident">test_msg</span>.<span class="ident">b</span>, <span class="ident">recv_msg</span>.<span class="ident">b</span>);
+    }
+
+    <span class="doccomment">/// Send messages to a Tube with the given identifier (see `consume_messages`; we use this to</span>
+    <span class="doccomment">/// track different message producers).</span>
+    <span class="attribute">#[<span class="ident">track_caller</span>]</span>
+    <span class="kw">fn</span> <span class="ident">produce_messages</span>(<span class="ident">tube</span>: <span class="ident">SendTube</span>, <span class="ident">data</span>: <span class="ident">u32</span>, <span class="ident">barrier</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Barrier</span><span class="op">&gt;</span>) -&gt; <span class="ident">SendTube</span> {
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">DataStruct</span> { <span class="ident">x</span>: <span class="ident">data</span> };
+        <span class="ident">barrier</span>.<span class="ident">wait</span>();
+        <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">100</span> {
+            <span class="ident">tube</span>.<span class="ident">send</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>).<span class="ident">unwrap</span>();
+        }
+        <span class="ident">tube</span>
+    }
+
+    <span class="doccomment">/// Consumes the given number of messages from a Tube, returning the number messages read with</span>
+    <span class="doccomment">/// each producer ID.</span>
+    <span class="attribute">#[<span class="ident">track_caller</span>]</span>
+    <span class="kw">fn</span> <span class="ident">consume_messages</span>(
+        <span class="ident">tube</span>: <span class="ident">RecvTube</span>,
+        <span class="ident">count</span>: <span class="ident">usize</span>,
+        <span class="ident">barrier</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Barrier</span><span class="op">&gt;</span>,
+    ) -&gt; (<span class="ident">RecvTube</span>, <span class="ident">usize</span>, <span class="ident">usize</span>) {
+        <span class="ident">barrier</span>.<span class="ident">wait</span>();
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">id1_count</span> <span class="op">=</span> <span class="number">0usize</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">id2_count</span> <span class="op">=</span> <span class="number">0usize</span>;
+
+        <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">count</span> {
+            <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="ident">tube</span>.<span class="ident">recv</span>::<span class="op">&lt;</span><span class="ident">DataStruct</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>();
+            <span class="kw">match</span> <span class="ident">msg</span>.<span class="ident">x</span> {
+                <span class="ident">PRODUCER_ID_1</span> =&gt; <span class="ident">id1_count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+                <span class="ident">PRODUCER_ID_2</span> =&gt; <span class="ident">id2_count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+                <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(
+                    <span class="string">&quot;want message with ID {} or {}; got message w/ ID {}.&quot;</span>,
+                    <span class="ident">PRODUCER_ID_1</span>, <span class="ident">PRODUCER_ID_2</span>, <span class="ident">msg</span>.<span class="ident">x</span>
+                ),
+            }
+        }
+        (<span class="ident">tube</span>, <span class="ident">id1_count</span>, <span class="ident">id2_count</span>)
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">send_recv_mpsc</span>() {
+        <span class="kw">let</span> (<span class="ident">p1</span>, <span class="ident">consumer</span>) <span class="op">=</span> <span class="ident">Tube::directional_pair</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">p1</span>.<span class="ident">try_clone</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">start_block_p1</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">Barrier::new</span>(<span class="number">3</span>));
+        <span class="kw">let</span> <span class="ident">start_block_p2</span> <span class="op">=</span> <span class="ident">start_block_p1</span>.<span class="ident">clone</span>();
+        <span class="kw">let</span> <span class="ident">start_block_consumer</span> <span class="op">=</span> <span class="ident">start_block_p1</span>.<span class="ident">clone</span>();
+
+        <span class="kw">let</span> <span class="ident">p1_thread</span> <span class="op">=</span> <span class="ident">thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="ident">produce_messages</span>(<span class="ident">p1</span>, <span class="ident">PRODUCER_ID_1</span>, <span class="ident">start_block_p1</span>));
+        <span class="kw">let</span> <span class="ident">p2_thread</span> <span class="op">=</span> <span class="ident">thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="ident">produce_messages</span>(<span class="ident">p2</span>, <span class="ident">PRODUCER_ID_2</span>, <span class="ident">start_block_p2</span>));
+
+        <span class="kw">let</span> (<span class="ident">_tube</span>, <span class="ident">id1_count</span>, <span class="ident">id2_count</span>) <span class="op">=</span> <span class="ident">consume_messages</span>(<span class="ident">consumer</span>, <span class="number">200</span>, <span class="ident">start_block_consumer</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">id1_count</span>, <span class="number">100</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">id2_count</span>, <span class="number">100</span>);
+
+        <span class="ident">p1_thread</span>.<span class="ident">join</span>().<span class="ident">unwrap</span>();
+        <span class="ident">p2_thread</span>.<span class="ident">join</span>().<span class="ident">unwrap</span>();
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

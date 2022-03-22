@@ -809,6 +809,7 @@
 <span id="808">808</span>
 <span id="809">809</span>
 <span id="810">810</span>
+<span id="811">811</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1518,6 +1519,7 @@
         <span class="self">self</span>.<span class="ident">kill_evt</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">self_kill_evt</span>);
 
         <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">clone</span>();
+        <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
         <span class="kw">let</span> <span class="ident">command_tube</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">command_tube</span>.<span class="ident">try_clone</span>() {
             <span class="prelude-val">Ok</span>(<span class="ident">tube</span>) =&gt; <span class="ident">tube</span>,
             <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {

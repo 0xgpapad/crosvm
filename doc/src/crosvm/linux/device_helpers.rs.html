@@ -1217,6 +1217,10 @@
 <span id="1216">1216</span>
 <span id="1217">1217</span>
 <span id="1218">1218</span>
+<span id="1219">1219</span>
+<span id="1220">1220</span>
+<span id="1221">1221</span>
+<span id="1222">1222</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2420,7 +2424,11 @@
                 <span class="kw">let</span> <span class="ident">CreateIpcMapperRet</span> {
                     <span class="ident">mapper</span>: <span class="ident">ipc_mapper</span>,
                     <span class="ident">response_tx</span>,
-                } <span class="op">=</span> <span class="ident">create_ipc_mapper</span>(<span class="ident">endpoint_id</span>, <span class="ident">request_tx</span>.<span class="ident">try_clone</span>()<span class="question-mark">?</span>);
+                } <span class="op">=</span> <span class="ident">create_ipc_mapper</span>(
+                    <span class="ident">endpoint_id</span>,
+                    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
+                    <span class="ident">request_tx</span>.<span class="ident">try_clone</span>()<span class="question-mark">?</span>,
+                );
                 <span class="ident">translate_response_senders</span>
                     .<span class="ident">get_or_insert_with</span>(<span class="ident">BTreeMap::new</span>)
                     .<span class="ident">insert</span>(<span class="ident">endpoint_id</span>, <span class="ident">response_tx</span>);

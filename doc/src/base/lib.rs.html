@@ -71,6 +71,8 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -96,6 +98,7 @@
 <span class="kw">mod</span> <span class="ident">event</span>;
 <span class="kw">mod</span> <span class="ident">ioctl</span>;
 <span class="kw">mod</span> <span class="ident">mmap</span>;
+<span class="kw">mod</span> <span class="ident">notifiers</span>;
 <span class="kw">mod</span> <span class="ident">shm</span>;
 <span class="kw">mod</span> <span class="ident">timer</span>;
 <span class="kw">mod</span> <span class="ident">tube</span>;
@@ -113,9 +116,10 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">mmap</span>::{
     <span class="ident">MemoryMapping</span>, <span class="ident">MemoryMappingBuilder</span>, <span class="ident">MemoryMappingBuilderUnix</span>, <span class="ident">Unix</span> <span class="kw">as</span> <span class="ident">MemoryMappingUnix</span>,
 };
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">notifiers</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">shm</span>::{<span class="ident">SharedMemory</span>, <span class="ident">Unix</span> <span class="kw">as</span> <span class="ident">SharedMemoryUnix</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">timer</span>::{<span class="ident">FakeTimer</span>, <span class="ident">Timer</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tube</span>::{<span class="ident">Error</span> <span class="kw">as</span> <span class="ident">TubeError</span>, <span class="prelude-ty">Result</span> <span class="kw">as</span> <span class="ident">TubeResult</span>, <span class="ident">Tube</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">tube</span>::{<span class="ident">Error</span> <span class="kw">as</span> <span class="ident">TubeError</span>, <span class="ident">RecvTube</span>, <span class="prelude-ty">Result</span> <span class="kw">as</span> <span class="ident">TubeResult</span>, <span class="ident">SendTube</span>, <span class="ident">Tube</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">wait_context</span>::{<span class="ident">EventToken</span>, <span class="ident">EventType</span>, <span class="ident">TriggeredEvent</span>, <span class="ident">WaitContext</span>};
 
 <span class="doccomment">/// Wraps an AsRawDescriptor in the simple Descriptor struct, which</span>

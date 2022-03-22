@@ -322,7 +322,7 @@
     <span class="doccomment">/// a timeout does not occur then the count is returned as a EventReadResult::Count(count),</span>
     <span class="doccomment">/// and the count is reset to 0. If a timeout does occur then this function will return</span>
     <span class="doccomment">/// EventReadResult::Timeout.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_timeout</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">timeout</span>: <span class="ident">Duration</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">EventReadResult</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_timeout</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">timeout</span>: <span class="ident">Duration</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">EventReadResult</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pfd</span> <span class="op">=</span> <span class="ident">libc::pollfd</span> {
             <span class="ident">fd</span>: <span class="self">self</span>.<span class="ident">as_raw_descriptor</span>(),
             <span class="ident">events</span>: <span class="ident">POLLIN</span>,
@@ -447,7 +447,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">timeout</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">evt</span> <span class="op">=</span> <span class="ident">EventFd::new</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to create eventfd&quot;</span>);
+        <span class="kw">let</span> <span class="ident">evt</span> <span class="op">=</span> <span class="ident">EventFd::new</span>().<span class="ident">expect</span>(<span class="string">&quot;failed to create eventfd&quot;</span>);
         <span class="macro">assert_eq!</span>(
             <span class="ident">evt</span>.<span class="ident">read_timeout</span>(<span class="ident">Duration::from_millis</span>(<span class="number">1</span>))
                 .<span class="ident">expect</span>(<span class="string">&quot;failed to read from eventfd with timeout&quot;</span>),
