@@ -815,7 +815,7 @@
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) =&gt; {{
         <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>;
         <span class="kw">if</span> <span class="ident">res</span> <span class="op">&lt;</span> <span class="number">0</span> {
-            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::errno_result</span>()
+            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::errno_result</span>()
         } <span class="kw">else</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">res</span>)
         }
@@ -1045,7 +1045,7 @@
 <span class="doccomment">/// ```</span>
 <span class="doccomment">/// fn reap_children() {</span>
 <span class="doccomment">///     loop {</span>
-<span class="doccomment">///         match crate::unix::reap_child() {</span>
+<span class="doccomment">///         match crate::platform::reap_child() {</span>
 <span class="doccomment">///             Ok(0) =&gt; println!(&quot;no children ready to reap&quot;),</span>
 <span class="doccomment">///             Ok(pid) =&gt; {</span>
 <span class="doccomment">///                 println!(&quot;reaped {}&quot;, pid);</span>

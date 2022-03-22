@@ -3,11 +3,11 @@
 attribute. It only works with fields with <code>RawDescriptor</code> type.</p>
 <h2 id="examples" class="section-header"><a href="#examples">Examples</a></h2>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unix::RawDescriptor</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::platform::RawDescriptor</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">struct</span> <span class="ident">RawContainer</span> {
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::unix::with_raw_descriptor&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;crate::platform::with_raw_descriptor&quot;</span>)]</span>
     <span class="ident">rd</span>: <span class="ident">RawDescriptor</span>,
 }</code></pre></div>
 </div></details><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2>

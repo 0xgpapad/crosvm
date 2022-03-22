@@ -595,7 +595,7 @@
 <span class="doccomment">//! # Examples</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```</span>
-<span class="doccomment">//! use crate::unix::{error, syslog, warn};</span>
+<span class="doccomment">//! use crate::platform::{error, syslog, warn};</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! if let Err(e) = syslog::init() {</span>
 <span class="doccomment">//!     println!(&quot;failed to initiailize syslog: {}&quot;, e);</span>
@@ -910,7 +910,7 @@
 <span class="doccomment">/// # Examples</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
-<span class="doccomment">/// # use crate::unix::syslog;</span>
+<span class="doccomment">/// # use crate::platform::syslog;</span>
 <span class="doccomment">/// # if let Err(e) = syslog::init() {</span>
 <span class="doccomment">/// #     println!(&quot;failed to initiailize syslog: {}&quot;, e);</span>
 <span class="doccomment">/// #     return;</span>
@@ -958,7 +958,7 @@
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules!</span> <span class="ident">log</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pri</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; ({
-        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::syslog::log</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pri</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::syslog::Facility::User</span>, <span class="prelude-val">Some</span>((<span class="macro">file!</span>(), <span class="macro">line!</span>())), <span class="macro">format_args!</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="op">+</span>))
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::syslog::log</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pri</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::syslog::Facility::User</span>, <span class="prelude-val">Some</span>((<span class="macro">file!</span>(), <span class="macro">line!</span>())), <span class="macro">format_args!</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="op">+</span>))
     })
 }
 
@@ -967,7 +967,7 @@
 <span class="doccomment">/// Note that this will fail silently if syslog was not initialized.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules!</span> <span class="ident">error</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; (<span class="macro-nonterminal">$</span><span class="macro">crate::log!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::syslog::Priority::Error</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="kw-2">*</span>))
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; (<span class="macro-nonterminal">$</span><span class="macro">crate::log!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::syslog::Priority::Error</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="kw-2">*</span>))
 }
 
 <span class="doccomment">/// A macro for logging a warning.</span>
@@ -975,7 +975,7 @@
 <span class="doccomment">/// Note that this will fail silently if syslog was not initialized.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules!</span> <span class="ident">warn</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; (<span class="macro-nonterminal">$</span><span class="macro">crate::log!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::syslog::Priority::Warning</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="kw-2">*</span>))
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; (<span class="macro-nonterminal">$</span><span class="macro">crate::log!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::syslog::Priority::Warning</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="kw-2">*</span>))
 }
 
 <span class="doccomment">/// A macro for logging info.</span>
@@ -983,7 +983,7 @@
 <span class="doccomment">/// Note that this will fail silently if syslog was not initialized.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules!</span> <span class="ident">info</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; (<span class="macro-nonterminal">$</span><span class="macro">crate::log!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::syslog::Priority::Info</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="kw-2">*</span>))
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; (<span class="macro-nonterminal">$</span><span class="macro">crate::log!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::syslog::Priority::Info</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="kw-2">*</span>))
 }
 
 <span class="doccomment">/// A macro for logging debug information.</span>
@@ -991,7 +991,7 @@
 <span class="doccomment">/// Note that this will fail silently if syslog was not initialized.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules!</span> <span class="ident">debug</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; (<span class="macro-nonterminal">$</span><span class="macro">crate::log!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::syslog::Priority::Debug</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="kw-2">*</span>))
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>:<span class="ident">tt</span>)<span class="op">+</span>) =&gt; (<span class="macro-nonterminal">$</span><span class="macro">crate::log!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::syslog::Priority::Debug</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">args</span>)<span class="kw-2">*</span>))
 }
 
 <span class="comment">// Struct that implements io::Write to be used for writing directly to the syslog</span>

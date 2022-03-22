@@ -293,7 +293,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// The given expression `$x` can return</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// * `crate::unix::Result` in which case the expression is retried if the `Error::errno()` is `EINTR`.</span>
+<span class="doccomment">/// * `crate::platform::Result` in which case the expression is retried if the `Error::errno()` is `EINTR`.</span>
 <span class="doccomment">/// * `std::io::Result` in which case the expression is retried if the `ErrorKind` is `ErrorKind::Interrupted`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Note that if expression returns i32 (i.e. either -1 or error code), then handle_eintr_errno()</span>
@@ -365,7 +365,7 @@
 <span class="doccomment">/// # Examples</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
-<span class="doccomment">/// # use crate::unix::handle_eintr;</span>
+<span class="doccomment">/// # use crate::platform::handle_eintr;</span>
 <span class="doccomment">/// # use std::io::stdin;</span>
 <span class="doccomment">/// # fn main() {</span>
 <span class="doccomment">/// let mut line = String::new();</span>
@@ -375,7 +375,7 @@
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules!</span> <span class="ident">handle_eintr</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">expr</span>) =&gt; {{
-        <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::handle_eintr::InterruptibleResult</span>;
+        <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::handle_eintr::InterruptibleResult</span>;
         <span class="kw">let</span> <span class="ident">res</span>;
         <span class="kw">loop</span> {
             <span class="kw">match</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> {
@@ -417,7 +417,7 @@
 <span class="macro">macro_rules!</span> <span class="ident">handle_eintr_errno</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">expr</span>) =&gt; {{
         <span class="kw">use</span> <span class="ident">libc::EINTR</span>;
-        <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::Error</span>;
+        <span class="kw">use</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::Error</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span>;
         <span class="kw">loop</span> {
             <span class="ident">res</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>;

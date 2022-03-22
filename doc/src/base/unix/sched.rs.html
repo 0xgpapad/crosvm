@@ -203,7 +203,7 @@
 <span class="doccomment">/// 0, 1, 5, and 6.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
-<span class="doccomment">/// # use crate::unix::set_cpu_affinity;</span>
+<span class="doccomment">/// # use crate::platform::set_cpu_affinity;</span>
 <span class="doccomment">///   set_cpu_affinity(vec![0, 1, 5, 6]).unwrap();</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_cpu_affinity</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">cpus</span>: <span class="ident">I</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {

@@ -1607,7 +1607,7 @@
     <span class="doccomment">/// * Write a slice at offset 256.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// #   use crate::unix::MemoryMapping;</span>
+    <span class="doccomment">/// #   use crate::platform::MemoryMapping;</span>
     <span class="doccomment">/// #   let mut mem_map = MemoryMapping::new(1024).unwrap();</span>
     <span class="doccomment">///     let res = mem_map.write_slice(&amp;[1,2,3,4,5], 256);</span>
     <span class="doccomment">///     assert!(res.is_ok());</span>
@@ -1638,7 +1638,7 @@
     <span class="doccomment">/// * Read a slice of size 16 at offset 256.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// #   use crate::unix::MemoryMapping;</span>
+    <span class="doccomment">/// #   use crate::platform::MemoryMapping;</span>
     <span class="doccomment">/// #   let mut mem_map = MemoryMapping::new(1024).unwrap();</span>
     <span class="doccomment">///     let buf = &amp;mut [0u8; 16];</span>
     <span class="doccomment">///     let res = mem_map.read_slice(buf, 256);</span>
@@ -1672,7 +1672,7 @@
     <span class="doccomment">/// * Write a u64 at offset 16.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// #   use crate::unix::MemoryMapping;</span>
+    <span class="doccomment">/// #   use crate::platform::MemoryMapping;</span>
     <span class="doccomment">/// #   let mut mem_map = MemoryMapping::new(1024).unwrap();</span>
     <span class="doccomment">///     let res = mem_map.write_obj(55u64, 16);</span>
     <span class="doccomment">///     assert!(res.is_ok());</span>
@@ -1695,7 +1695,7 @@
     <span class="doccomment">/// * Read a u64 written to offset 32.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// #   use crate::unix::MemoryMapping;</span>
+    <span class="doccomment">/// #   use crate::platform::MemoryMapping;</span>
     <span class="doccomment">/// #   let mut mem_map = MemoryMapping::new(1024).unwrap();</span>
     <span class="doccomment">///     let res = mem_map.write_obj(55u64, 32);</span>
     <span class="doccomment">///     assert!(res.is_ok());</span>
@@ -1725,7 +1725,7 @@
     <span class="doccomment">/// * Read bytes from /dev/urandom</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use crate::unix::MemoryMapping;</span>
+    <span class="doccomment">/// # use crate::platform::MemoryMapping;</span>
     <span class="doccomment">/// # use std::fs::File;</span>
     <span class="doccomment">/// # use std::path::Path;</span>
     <span class="doccomment">/// # fn test_read_random() -&gt; Result&lt;u32, ()&gt; {</span>
@@ -1785,7 +1785,7 @@
     <span class="doccomment">/// * Write 128 bytes to /dev/null</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # use crate::unix::MemoryMapping;</span>
+    <span class="doccomment">/// # use crate::platform::MemoryMapping;</span>
     <span class="doccomment">/// # use std::fs::File;</span>
     <span class="doccomment">/// # use std::path::Path;</span>
     <span class="doccomment">/// # fn test_write_null() -&gt; Result&lt;(), ()&gt; {</span>

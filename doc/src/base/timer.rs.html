@@ -87,7 +87,7 @@
     <span class="ident">AsRawDescriptor</span>, <span class="ident">FakeClock</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>,
 };
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unix</span>::{<span class="ident">FakeTimerFd</span>, <span class="ident">TimerFd</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::platform</span>::{<span class="ident">FakeTimerFd</span>, <span class="ident">TimerFd</span>};
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">os::unix::io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">IntoRawFd</span>},
     <span class="ident">sync::Arc</span>,
@@ -95,7 +95,7 @@
 };
 <span class="kw">use</span> <span class="ident">sync::Mutex</span>;
 
-<span class="doccomment">/// See [TimerFd](crate::unix::TimerFd) for struct- and method-level</span>
+<span class="doccomment">/// See [TimerFd](crate::platform::TimerFd) for struct- and method-level</span>
 <span class="doccomment">/// documentation.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Timer</span>(<span class="kw">pub</span> <span class="ident">TimerFd</span>);
 <span class="kw">impl</span> <span class="ident">Timer</span> {
@@ -104,7 +104,7 @@
     }
 }
 
-<span class="doccomment">/// See [FakeTimerFd](crate::unix::FakeTimerFd) for struct- and method-level</span>
+<span class="doccomment">/// See [FakeTimerFd](crate::platform::FakeTimerFd) for struct- and method-level</span>
 <span class="doccomment">/// documentation.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FakeTimer</span>(<span class="ident">FakeTimerFd</span>);
 <span class="kw">impl</span> <span class="ident">FakeTimer</span> {

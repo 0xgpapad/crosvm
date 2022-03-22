@@ -266,6 +266,8 @@
 <span id="265">265</span>
 <span id="266">266</span>
 <span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -376,7 +378,7 @@
     <span class="ident">RecvUnexpectedEmptyBody</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to send packet: {0}&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
-    <span class="ident">Send</span>(<span class="ident"><span class="kw">crate</span>::unix::Error</span>),
+    <span class="ident">Send</span>(<span class="ident"><span class="kw">crate</span>::platform::Error</span>),
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
     <span class="ident">Send</span>(<span class="ident"><span class="kw">crate</span>::windows::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to send packet: {0}&quot;</span>)]</span>
@@ -399,8 +401,10 @@
     <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::HashMap</span>, <span class="ident">time::Duration</span>};
 
     <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-    <span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Barrier</span>};
-    <span class="kw">use</span> <span class="ident">std::thread</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::{
+        <span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Barrier</span>},
+        <span class="ident">thread</span>,
+    };
 
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
     <span class="kw">struct</span> <span class="ident">DataStruct</span> {

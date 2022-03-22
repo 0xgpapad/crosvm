@@ -7,7 +7,7 @@ have terminated. An <code>Error</code> is with <code>errno == ECHILD</code> if t
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn</span> <span class="ident">reap_children</span>() {
     <span class="kw">loop</span> {
-        <span class="kw">match</span> <span class="ident"><span class="kw">crate</span>::unix::reap_child</span>() {
+        <span class="kw">match</span> <span class="ident"><span class="kw">crate</span>::platform::reap_child</span>() {
             <span class="prelude-val">Ok</span>(<span class="number">0</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;no children ready to reap&quot;</span>),
             <span class="prelude-val">Ok</span>(<span class="ident">pid</span>) =&gt; {
                 <span class="macro">println!</span>(<span class="string">&quot;reaped {}&quot;</span>, <span class="ident">pid</span>);

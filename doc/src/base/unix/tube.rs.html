@@ -144,19 +144,21 @@
 <span id="143">143</span>
 <span id="144">144</span>
 <span id="145">145</span>
+<span id="146">146</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::io::IoSlice</span>;
-<span class="kw">use</span> <span class="ident">std::marker::PhantomData</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix::prelude</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>};
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">io::IoSlice</span>,
+    <span class="ident">marker::PhantomData</span>,
+    <span class="ident">os::unix::prelude</span>::{<span class="ident">AsRawFd</span>, <span class="ident">RawFd</span>},
+    <span class="ident">time::Duration</span>,
+};
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
+    <span class="ident">platform</span>::{<span class="ident">deserialize_with_descriptors</span>, <span class="ident">SerializeDescriptors</span>},
     <span class="ident">tube</span>::{<span class="ident">Error</span>, <span class="ident">RecvTube</span>, <span class="prelude-ty">Result</span>, <span class="ident">SendTube</span>},
-    <span class="ident">unix::deserialize_with_descriptors</span>,
-    <span class="ident">unix::SerializeDescriptors</span>,
     <span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="ident">ReadNotifier</span>, <span class="ident">SafeDescriptor</span>, <span class="ident">ScmSocket</span>,
     <span class="ident">UnixSeqpacket</span>, <span class="ident">UnsyncMarker</span>,
 };

@@ -79,13 +79,13 @@
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unix::EventReadResult</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::platform::EventReadResult</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">generate_scoped_event</span>, <span class="ident">unix::EventFd</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>,
-    <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>,
+    <span class="ident">generate_scoped_event</span>, <span class="ident">platform::EventFd</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>,
+    <span class="ident">IntoRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>,
 };
 
-<span class="doccomment">/// See [EventFd](crate::unix::EventFd) for struct- and method-level</span>
+<span class="doccomment">/// See [EventFd](crate::platform::EventFd) for struct- and method-level</span>
 <span class="doccomment">/// documentation.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>

@@ -245,7 +245,7 @@
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">unix::MemoryMapping</span> <span class="kw">as</span> <span class="ident">SysUtilMmap</span>, <span class="ident">wrap_descriptor</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">MappedRegion</span>,
+    <span class="ident">platform::MemoryMapping</span> <span class="kw">as</span> <span class="ident">SysUtilMmap</span>, <span class="ident">wrap_descriptor</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">MappedRegion</span>,
     <span class="ident">MemoryMappingArena</span>, <span class="ident">MmapError</span>, <span class="ident">Protection</span>, <span class="ident">SharedMemory</span>,
 };
 <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">volatile_memory</span>::<span class="kw-2">*</span>, <span class="ident">DataInit</span>};
@@ -253,7 +253,7 @@
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">MmapError</span><span class="op">&gt;</span>;
 
-<span class="doccomment">/// See [MemoryMapping](crate::unix::MemoryMapping) for struct- and method-level</span>
+<span class="doccomment">/// See [MemoryMapping](crate::platform::MemoryMapping) for struct- and method-level</span>
 <span class="doccomment">/// documentation.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MemoryMapping</span> {

@@ -3,7 +3,7 @@
 <p>Every function exported by this module is thread-safe. Each function will silently fail until
 <code>syslog::init()</code> is called and returns <code>Ok</code>.</p>
 <h2 id="examples" class="section-header"><a href="#examples">Examples</a></h2>
-<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unix</span>::{<span class="ident">error</span>, <span class="ident">syslog</span>, <span class="ident">warn</span>};
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::platform</span>::{<span class="ident">error</span>, <span class="ident">syslog</span>, <span class="ident">warn</span>};
 
 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">syslog::init</span>() {
     <span class="macro">println!</span>(<span class="string">&quot;failed to initiailize syslog: {}&quot;</span>, <span class="ident">e</span>);

@@ -769,7 +769,7 @@
     }
 }
 
-<span class="comment">// This module allows the below macros to refer to $crate::unix::file_traits::lib::X and ensures other</span>
+<span class="comment">// This module allows the below macros to refer to $crate::platform::file_traits::lib::X and ensures other</span>
 <span class="comment">// crates don&#39;t need to add additional crates to their Cargo.toml.</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">lib</span> {
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">libc</span>::{
@@ -786,12 +786,12 @@
         <span class="kw">impl</span> <span class="ident">FileReadWriteVolatile</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span> {
             <span class="kw">fn</span> <span class="ident">read_volatile</span>(
                 <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-                <span class="ident">slice</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice</span>,
+                <span class="ident">slice</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice</span>,
             ) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
                 <span class="comment">// Safe because only bytes inside the slice are accessed and the kernel is expected</span>
                 <span class="comment">// to handle arbitrary memory for I/O.</span>
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::read</span>(
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::read</span>(
                         <span class="self">self</span>.<span class="ident">as_raw_fd</span>(),
                         <span class="ident">slice</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">std::ffi::c_void</span>,
                         <span class="ident">slice</span>.<span class="ident">size</span>() <span class="kw">as</span> <span class="ident">usize</span>,
@@ -806,10 +806,10 @@
 
             <span class="kw">fn</span> <span class="ident">read_vectored_volatile</span>(
                 <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-                <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice</span>],
+                <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice</span>],
             ) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-                <span class="kw">let</span> <span class="ident">iobufs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice::as_iobufs</span>(<span class="ident">bufs</span>);
-                <span class="kw">let</span> <span class="ident">iovecs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::IoBufMut::as_iobufs</span>(<span class="ident">iobufs</span>);
+                <span class="kw">let</span> <span class="ident">iobufs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice::as_iobufs</span>(<span class="ident">bufs</span>);
+                <span class="kw">let</span> <span class="ident">iovecs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::IoBufMut::as_iobufs</span>(<span class="ident">iobufs</span>);
 
                 <span class="kw">if</span> <span class="ident">iovecs</span>.<span class="ident">is_empty</span>() {
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="number">0</span>);
@@ -818,7 +818,7 @@
                 <span class="comment">// Safe because only bytes inside the buffers are accessed and the kernel is</span>
                 <span class="comment">// expected to handle arbitrary memory for I/O.</span>
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::readv</span>(
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::readv</span>(
                         <span class="self">self</span>.<span class="ident">as_raw_fd</span>(),
                         <span class="ident">iovecs</span>.<span class="ident">as_ptr</span>(),
                         <span class="ident">iovecs</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">std::os::raw::c_int</span>,
@@ -833,12 +833,12 @@
 
             <span class="kw">fn</span> <span class="ident">write_volatile</span>(
                 <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-                <span class="ident">slice</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice</span>,
+                <span class="ident">slice</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice</span>,
             ) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
                 <span class="comment">// Safe because only bytes inside the slice are accessed and the kernel is expected</span>
                 <span class="comment">// to handle arbitrary memory for I/O.</span>
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::write</span>(
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::write</span>(
                         <span class="self">self</span>.<span class="ident">as_raw_fd</span>(),
                         <span class="ident">slice</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">std::ffi::c_void</span>,
                         <span class="ident">slice</span>.<span class="ident">size</span>() <span class="kw">as</span> <span class="ident">usize</span>,
@@ -853,10 +853,10 @@
 
             <span class="kw">fn</span> <span class="ident">write_vectored_volatile</span>(
                 <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-                <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice</span>],
+                <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice</span>],
             ) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-                <span class="kw">let</span> <span class="ident">iobufs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice::as_iobufs</span>(<span class="ident">bufs</span>);
-                <span class="kw">let</span> <span class="ident">iovecs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::IoBufMut::as_iobufs</span>(<span class="ident">iobufs</span>);
+                <span class="kw">let</span> <span class="ident">iobufs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice::as_iobufs</span>(<span class="ident">bufs</span>);
+                <span class="kw">let</span> <span class="ident">iovecs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::IoBufMut::as_iobufs</span>(<span class="ident">iobufs</span>);
 
                 <span class="kw">if</span> <span class="ident">iovecs</span>.<span class="ident">is_empty</span>() {
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="number">0</span>);
@@ -865,7 +865,7 @@
                 <span class="comment">// Safe because only bytes inside the buffers are accessed and the kernel is</span>
                 <span class="comment">// expected to handle arbitrary memory for I/O.</span>
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::writev</span>(
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::writev</span>(
                         <span class="self">self</span>.<span class="ident">as_raw_fd</span>(),
                         <span class="ident">iovecs</span>.<span class="ident">as_ptr</span>(),
                         <span class="ident">iovecs</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">std::os::raw::c_int</span>,
@@ -887,17 +887,17 @@
         <span class="kw">impl</span> <span class="ident">FileReadWriteAtVolatile</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span> {
             <span class="kw">fn</span> <span class="ident">read_at_volatile</span>(
                 <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-                <span class="ident">slice</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice</span>,
+                <span class="ident">slice</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice</span>,
                 <span class="ident">offset</span>: <span class="ident">u64</span>,
             ) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
                 <span class="comment">// Safe because only bytes inside the slice are accessed and the kernel is expected</span>
                 <span class="comment">// to handle arbitrary memory for I/O.</span>
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::pread64</span>(
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::pread64</span>(
                         <span class="self">self</span>.<span class="ident">as_raw_fd</span>(),
                         <span class="ident">slice</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">std::ffi::c_void</span>,
                         <span class="ident">slice</span>.<span class="ident">size</span>() <span class="kw">as</span> <span class="ident">usize</span>,
-                        <span class="ident">offset</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::off64_t</span>,
+                        <span class="ident">offset</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::off64_t</span>,
                     )
                 };
 
@@ -910,11 +910,11 @@
 
             <span class="kw">fn</span> <span class="ident">read_vectored_at_volatile</span>(
                 <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-                <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice</span>],
+                <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice</span>],
                 <span class="ident">offset</span>: <span class="ident">u64</span>,
             ) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-                <span class="kw">let</span> <span class="ident">iobufs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice::as_iobufs</span>(<span class="ident">bufs</span>);
-                <span class="kw">let</span> <span class="ident">iovecs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::IoBufMut::as_iobufs</span>(<span class="ident">iobufs</span>);
+                <span class="kw">let</span> <span class="ident">iobufs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice::as_iobufs</span>(<span class="ident">bufs</span>);
+                <span class="kw">let</span> <span class="ident">iovecs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::IoBufMut::as_iobufs</span>(<span class="ident">iobufs</span>);
 
                 <span class="kw">if</span> <span class="ident">iovecs</span>.<span class="ident">is_empty</span>() {
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="number">0</span>);
@@ -923,11 +923,11 @@
                 <span class="comment">// Safe because only bytes inside the buffers are accessed and the kernel is</span>
                 <span class="comment">// expected to handle arbitrary memory for I/O.</span>
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::preadv64</span>(
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::preadv64</span>(
                         <span class="self">self</span>.<span class="ident">as_raw_fd</span>(),
                         <span class="ident">iovecs</span>.<span class="ident">as_ptr</span>(),
                         <span class="ident">iovecs</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">std::os::raw::c_int</span>,
-                        <span class="ident">offset</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::off64_t</span>,
+                        <span class="ident">offset</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::off64_t</span>,
                     )
                 };
                 <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span> {
@@ -939,17 +939,17 @@
 
             <span class="kw">fn</span> <span class="ident">write_at_volatile</span>(
                 <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-                <span class="ident">slice</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice</span>,
+                <span class="ident">slice</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice</span>,
                 <span class="ident">offset</span>: <span class="ident">u64</span>,
             ) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
                 <span class="comment">// Safe because only bytes inside the slice are accessed and the kernel is expected</span>
                 <span class="comment">// to handle arbitrary memory for I/O.</span>
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::pwrite64</span>(
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::pwrite64</span>(
                         <span class="self">self</span>.<span class="ident">as_raw_fd</span>(),
                         <span class="ident">slice</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">std::ffi::c_void</span>,
                         <span class="ident">slice</span>.<span class="ident">size</span>() <span class="kw">as</span> <span class="ident">usize</span>,
-                        <span class="ident">offset</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::off64_t</span>,
+                        <span class="ident">offset</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::off64_t</span>,
                     )
                 };
 
@@ -962,11 +962,11 @@
 
             <span class="kw">fn</span> <span class="ident">write_vectored_at_volatile</span>(
                 <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-                <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice</span>],
+                <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice</span>],
                 <span class="ident">offset</span>: <span class="ident">u64</span>,
             ) -&gt; <span class="ident">std::io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-                <span class="kw">let</span> <span class="ident">iobufs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::VolatileSlice::as_iobufs</span>(<span class="ident">bufs</span>);
-                <span class="kw">let</span> <span class="ident">iovecs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::IoBufMut::as_iobufs</span>(<span class="ident">iobufs</span>);
+                <span class="kw">let</span> <span class="ident">iobufs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::VolatileSlice::as_iobufs</span>(<span class="ident">bufs</span>);
+                <span class="kw">let</span> <span class="ident">iovecs</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::IoBufMut::as_iobufs</span>(<span class="ident">iobufs</span>);
 
                 <span class="kw">if</span> <span class="ident">iovecs</span>.<span class="ident">is_empty</span>() {
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="number">0</span>);
@@ -975,11 +975,11 @@
                 <span class="comment">// Safe because only bytes inside the buffers are accessed and the kernel is</span>
                 <span class="comment">// expected to handle arbitrary memory for I/O.</span>
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::pwritev64</span>(
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::pwritev64</span>(
                         <span class="self">self</span>.<span class="ident">as_raw_fd</span>(),
                         <span class="ident">iovecs</span>.<span class="ident">as_ptr</span>(),
                         <span class="ident">iovecs</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">std::os::raw::c_int</span>,
-                        <span class="ident">offset</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::unix::file_traits::lib::off64_t</span>,
+                        <span class="ident">offset</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::platform::file_traits::lib::off64_t</span>,
                     )
                 };
                 <span class="kw">if</span> <span class="ident">ret</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span> {
