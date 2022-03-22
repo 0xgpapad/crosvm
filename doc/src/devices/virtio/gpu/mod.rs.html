@@ -1374,6 +1374,10 @@
 <span id="1373">1373</span>
 <span id="1374">1374</span>
 <span id="1375">1375</span>
+<span id="1376">1376</span>
+<span id="1377">1377</span>
+<span id="1378">1378</span>
+<span id="1379">1379</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1495,7 +1499,11 @@
             <span class="ident">gfxstream_use_guest_angle</span>: <span class="bool-val">false</span>,
             <span class="ident">gfxstream_use_syncfd</span>: <span class="bool-val">true</span>,
             <span class="ident">use_vulkan</span>: <span class="bool-val">false</span>,
-            <span class="ident">mode</span>: <span class="ident">GpuMode::ModeVirglRenderer</span>,
+            <span class="ident">mode</span>: <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;virgl_renderer&quot;</span>) {
+                <span class="ident">GpuMode::ModeVirglRenderer</span>
+            } <span class="kw">else</span> {
+                <span class="ident">GpuMode::Mode2D</span>
+            },
             <span class="ident">cache_path</span>: <span class="prelude-val">None</span>,
             <span class="ident">cache_size</span>: <span class="prelude-val">None</span>,
             <span class="ident">udmabuf</span>: <span class="bool-val">false</span>,
