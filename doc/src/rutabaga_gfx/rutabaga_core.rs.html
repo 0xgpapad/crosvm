@@ -816,6 +816,28 @@
 <span id="815">815</span>
 <span id="816">816</span>
 <span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1551,9 +1573,25 @@
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rutabaga_capsets</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RutabagaCapsetInfo</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 
+        <span class="comment">// Make sure that disabled components are not used as default.</span>
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;virgl_renderer&quot;</span>))]</span>
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">default_component</span> <span class="op">==</span> <span class="ident">RutabagaComponentType::VirglRenderer</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>(
+                <span class="string">&quot;virgl renderer feature not enabled&quot;</span>,
+            ));
+        }
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gfxstream&quot;</span>))]</span>
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">default_component</span> <span class="op">==</span> <span class="ident">RutabagaComponentType::Gfxstream</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>(
+                <span class="string">&quot;gfxstream feature not enabled&quot;</span>,
+            ));
+        }
+
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;virgl_renderer_next&quot;</span>))]</span>
         <span class="kw">if</span> <span class="ident">render_server_fd</span>.<span class="ident">is_some</span>() {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>);
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>(
+                <span class="string">&quot;render server FD is not supported with virgl_renderer_next feature&quot;</span>,
+            ));
         }
 
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">default_component</span> <span class="op">==</span> <span class="ident">RutabagaComponentType::Rutabaga2D</span> {
@@ -1562,9 +1600,11 @@
         } <span class="kw">else</span> {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;virgl_renderer&quot;</span>)]</span>
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">default_component</span> <span class="op">==</span> <span class="ident">RutabagaComponentType::VirglRenderer</span> {
-                <span class="kw">let</span> <span class="ident">virglrenderer_flags</span> <span class="op">=</span> <span class="self">self</span>
-                    .<span class="ident">virglrenderer_flags</span>
-                    .<span class="ident">ok_or</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>)<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">virglrenderer_flags</span> <span class="op">=</span>
+                    <span class="self">self</span>.<span class="ident">virglrenderer_flags</span>
+                        .<span class="ident">ok_or</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>(
+                            <span class="string">&quot;missing virgl renderer flags&quot;</span>,
+                        ))<span class="question-mark">?</span>;
 
                 <span class="kw">let</span> <span class="ident">virgl</span> <span class="op">=</span> <span class="ident">VirglRenderer::init</span>(
                     <span class="ident">virglrenderer_flags</span>,
@@ -1591,14 +1631,18 @@
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">default_component</span> <span class="op">==</span> <span class="ident">RutabagaComponentType::Gfxstream</span> {
                 <span class="kw">let</span> <span class="ident">display_width</span> <span class="op">=</span> <span class="self">self</span>
                     .<span class="ident">display_width</span>
-                    .<span class="ident">ok_or</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>)<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="ident">display_height</span> <span class="op">=</span> <span class="self">self</span>
-                    .<span class="ident">display_height</span>
-                    .<span class="ident">ok_or</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>)<span class="question-mark">?</span>;
+                    .<span class="ident">ok_or</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>(<span class="string">&quot;missing display width&quot;</span>))<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">display_height</span> <span class="op">=</span>
+                    <span class="self">self</span>.<span class="ident">display_height</span>
+                        .<span class="ident">ok_or</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>(
+                            <span class="string">&quot;missing display height&quot;</span>,
+                        ))<span class="question-mark">?</span>;
 
-                <span class="kw">let</span> <span class="ident">gfxstream_flags</span> <span class="op">=</span> <span class="self">self</span>
-                    .<span class="ident">gfxstream_flags</span>
-                    .<span class="ident">ok_or</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>)<span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">gfxstream_flags</span> <span class="op">=</span>
+                    <span class="self">self</span>.<span class="ident">gfxstream_flags</span>
+                        .<span class="ident">ok_or</span>(<span class="ident">RutabagaError::InvalidRutabagaBuild</span>(
+                            <span class="string">&quot;missing gfxstream flags&quot;</span>,
+                        ))<span class="question-mark">?</span>;
 
                 <span class="kw">let</span> <span class="ident">gfxstream</span> <span class="op">=</span> <span class="ident">Gfxstream::init</span>(
                     <span class="ident">display_width</span>,
