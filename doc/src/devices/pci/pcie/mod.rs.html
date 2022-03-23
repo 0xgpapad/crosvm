@@ -76,6 +76,14 @@
 <span id="75">75</span>
 <span id="76">76</span>
 <span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -152,7 +160,15 @@
 <span class="kw">const</span> <span class="ident">PMC_PME_STATUS</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x8000</span>;
 <span class="kw">const</span> <span class="ident">PMC_PME_ENABLE</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x100</span>;
 <span class="kw">const</span> <span class="ident">PMC_POWER_STATE_MASK</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x3</span>;
+<span class="kw">const</span> <span class="ident">PMC_POWER_STATE_D0</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0</span>;
 <span class="kw">const</span> <span class="ident">PMC_POWER_STATE_D3</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x3</span>;
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PciDevicePower</span> {
+    <span class="ident">D0</span> <span class="op">=</span> <span class="number">0</span>,
+    <span class="ident">D3</span> <span class="op">=</span> <span class="number">3</span>,
+    <span class="ident">Unsupported</span> <span class="op">=</span> <span class="number">0xFF</span>,
+}
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="devices" data-search-index-js="../../../../search-index.js" data-search-js="../../../../search.js"></div>
 </body></html>

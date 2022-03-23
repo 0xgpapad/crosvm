@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["devices"] = [{"text":"impl <a class=\"trait\" href=\"vm_control/trait.GpeNotify.html\" title=\"trait vm_control::GpeNotify\">GpeNotify</a> for <a class=\"struct\" href=\"devices/struct.PcieRootPort.html\" title=\"struct devices::PcieRootPort\">PcieRootPort</a>","synthetic":false,"types":["devices::pci::pcie::pcie_rp::PcieRootPort"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
