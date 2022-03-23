@@ -538,12 +538,61 @@ any OS resources that might have stuck around if crosvm were terminated early.</
 will run in a jailed child process of crosvm. The appropriate minijail seccomp policy files must be
 present either in <code>/usr/share/policy/crosvm</code> or in the path specified by the <code>--seccomp-policy-dir</code>
 argument. The sandbox can be disabled for testing with the <code>--disable-sandbox</code> option.</p>
-<h2 id="virtio-wayland"><a class="header" href="#virtio-wayland">Virtio Wayland</a></h2>
-<p>Virtio Wayland support requires special support on the part of the guest and as such is unlikely to
-work out of the box unless you are using a Chrome OS kernel along with a <code>termina</code> rootfs.</p>
-<p>To use it, ensure that the <code>XDG_RUNTIME_DIR</code> enviroment variable is set and that the path
-<code>$XDG_RUNTIME_DIR/wayland-0</code> points to the socket of the Wayland compositor you would like the guest
-to use.</p>
+<h2 id="wayland-forwarding-to-host"><a class="header" href="#wayland-forwarding-to-host">Wayland forwarding to host</a></h2>
+<p>If you have a Wayland compositor running on your host, it is possible to display and control guest
+applications from it. This requires:</p>
+<ul>
+<li>A guest kernel version 5.16 or above with <code>CONFIG_DRM_VIRTIO_GPU</code> enabled,</li>
+<li>The <code>sommelier</code> Wayland proxy in your guest image.</li>
+</ul>
+<p>This section will walk you through the steps needed to get this to work.</p>
+<h3 id="guest-kernel-requirements"><a class="header" href="#guest-kernel-requirements">Guest kernel requirements</a></h3>
+<p>Wayland support on crosvm relies on virtio-gpu contexts, which have been introduced in Linux 5.16.
+Make sure your guest kernel is either this version or a more recent one, and that
+<code>CONFIG_DRM_VIRTIO_GPU</code> is enabled in your kernel configuration.</p>
+<h3 id="crosvm-requirements"><a class="header" href="#crosvm-requirements">Crosvm requirements</a></h3>
+<p>Wayland forwarding requires the GPU feature and any non-2d virtio-gpu mode to be enabled, so pass
+them to your <code>cargo build</code> or <code>cargo run</code> command, e.g:</p>
+<pre><code class="language-sh">cargo build --features &quot;gpu,virgl_renderer,virgl_renderer_next&quot;
+</code></pre>
+<h3 id="building-sommelier"><a class="header" href="#building-sommelier">Building sommelier</a></h3>
+<p><a href="https://chromium.googlesource.com/chromiumos/platform2/+/master/vm_tools/sommelier">Sommelier</a> is a proxy Wayland compositor that forwards the Wayland protocol from a guest to a
+compositor running on the host through the guest GPU device. As it is not a standard tool, we will
+have to build it by ourselves. It is recommended to do this from the guest
+<a href="running_crosvm/./example_usage.html#add-networking-support">with networking enabled</a>.</p>
+<p>Clone Chrome OS' <code>platform2</code> repository, which contains the source for sommelier:</p>
+<pre><code class="language-sh">git clone https://chromium.googlesource.com/chromiumos/platform2
+</code></pre>
+<p>Go into the sommelier directory and prepare for building:</p>
+<pre><code class="language-sh">cd platform2/vm_tools/sommelier/
+meson setup build -Dwith_tests=false
+</code></pre>
+<p>This setup step will check for all libraries required to build sommelier. If some are missing,
+install them using your guest's distro package manager and re-run <code>meson setup</code> until it passes.</p>
+<p>Finally, build sommelier and install it:</p>
+<pre><code class="language-sh">meson compile -C build
+sudo meson install -C build
+</code></pre>
+<p>This last step will put the <code>sommelier</code> binary into <code>/usr/local/bin</code>.</p>
+<h3 id="running-guest-wayland-apps"><a class="header" href="#running-guest-wayland-apps">Running guest Wayland apps</a></h3>
+<p>Crosvm can connect to a running Wayland server (e.g. <a href="https://github.com/wayland-project/weston">weston</a>) on the host and forward the protocol
+from all Wayland guest applications to it. To enable this you need to know the socket of the Wayland
+server running on your host - typically it would be <code>$XDG_RUNTIME_DIR/wayland-0</code>.</p>
+<p>Once you have confirmed the socket, create a GPU device and enable forwarding by adding the
+<code>--gpu --wayland-sock $XDG_RUNTIME_DIR/wayland-0</code> arguments to your crosvm command-line.</p>
+<p>You can now run Wayland clients through sommelier, e.g:</p>
+<pre><code class="language-sh">sommelier --virtgpu-channel weston-terminal
+</code></pre>
+<p>Or</p>
+<pre><code class="language-sh">sommelier --virtgpu-channel gedit
+</code></pre>
+<p>Applications started that way should appear on and be controllable from the Wayland server running
+on your host.</p>
+<p>The <code>--virtgpu-channel</code> option is currently necessary for sommelier to work with the setup of this
+document, but will likely not be required in the future.</p>
+<p>If you have <code>Xwayland</code> installed in the guest you can also run X applications:</p>
+<pre><code class="language-sh">sommelier -X --xwayland-path=/usr/bin/Xwayland xeyes
+</code></pre>
 <h2 id="gdb-support"><a class="header" href="#gdb-support">GDB Support</a></h2>
 <p>crosvm supports <a href="https://sourceware.org/gdb/onlinedocs/gdb/Remote-Protocol.html">GDB Remote Serial Protocol</a> to allow developers to debug guest kernel via GDB.</p>
 <p>You can enable the feature by <code>--gdb</code> flag:</p>
@@ -565,7 +614,6 @@ crosvm run --gdb &lt;port&gt; ${USUAL_CROSVM_ARGS} vmlinux
 <li>1 virtual CPU (set with <code>-c</code>)</li>
 <li>no block devices (set with <code>-r</code>, <code>-d</code>, or <code>--rwdisk</code>)</li>
 <li>no network (set with <code>--host_ip</code>, <code>--netmask</code>, and <code>--mac</code>)</li>
-<li>virtio wayland support if <code>XDG_RUNTIME_DIR</code> enviroment variable is set (disable with <code>--no-wl</code>)</li>
 <li>only the kernel arguments necessary to run with the supported devices (add more with <code>-p</code>)</li>
 <li>run in multiprocess mode (run in single process mode with <code>--disable-sandbox</code>)</li>
 <li>no control socket (set with <code>-s</code>)</li>
