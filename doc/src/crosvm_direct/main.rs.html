@@ -4321,6 +4321,32 @@
 <span id="4320">4320</span>
 <span id="4321">4321</span>
 <span id="4322">4322</span>
+<span id="4323">4323</span>
+<span id="4324">4324</span>
+<span id="4325">4325</span>
+<span id="4326">4326</span>
+<span id="4327">4327</span>
+<span id="4328">4328</span>
+<span id="4329">4329</span>
+<span id="4330">4330</span>
+<span id="4331">4331</span>
+<span id="4332">4332</span>
+<span id="4333">4333</span>
+<span id="4334">4334</span>
+<span id="4335">4335</span>
+<span id="4336">4336</span>
+<span id="4337">4337</span>
+<span id="4338">4338</span>
+<span id="4339">4339</span>
+<span id="4340">4340</span>
+<span id="4341">4341</span>
+<span id="4342">4342</span>
+<span id="4343">4343</span>
+<span id="4344">4344</span>
+<span id="4345">4345</span>
+<span id="4346">4346</span>
+<span id="4347">4347</span>
+<span id="4348">4348</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -4384,6 +4410,7 @@
     <span class="ident">create_composite_disk</span>, <span class="ident">create_disk_file</span>, <span class="ident">create_zero_filler</span>, <span class="ident">ImagePartitionType</span>, <span class="ident">PartitionInfo</span>,
 };
 <span class="kw">use</span> <span class="ident">hypervisor::ProtectionType</span>;
+<span class="kw">use</span> <span class="ident">uuid::Uuid</span>;
 <span class="kw">use</span> <span class="ident">vm_control</span>::{
     <span class="ident">client</span>::{
         <span class="ident">do_modify_battery</span>, <span class="ident">do_usb_attach</span>, <span class="ident">do_usb_detach</span>, <span class="ident">do_usb_list</span>, <span class="ident">handle_request</span>, <span class="ident">vms_request</span>,
@@ -6599,32 +6626,56 @@
             <span class="ident">cfg</span>.<span class="ident">stub_pci_devices</span>.<span class="ident">push</span>(<span class="ident">parse_stub_pci_parameters</span>(<span class="ident">value</span>)<span class="question-mark">?</span>);
         }
         <span class="string">&quot;vvu-proxy&quot;</span> =&gt; {
-            <span class="kw">let</span> <span class="ident">opts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">split</span>(<span class="string">&#39;,&#39;</span>).<span class="ident">collect</span>();
+            <span class="kw">let</span> <span class="ident">opts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&#39;,&#39;</span>).<span class="ident">collect</span>();
             <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="ident">opts</span>[<span class="number">0</span>]);
-            <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">opts</span>.<span class="ident">get</span>(<span class="number">1</span>) {
-                <span class="prelude-val">Some</span>(<span class="ident">opt</span>) =&gt; {
-                    <span class="kw">let</span> <span class="ident">kvs</span> <span class="op">=</span> <span class="ident">argument::parse_key_value_options</span>(<span class="string">&quot;vvu-proxy&quot;</span>, <span class="ident">opt</span>, <span class="string">&#39;,&#39;</span>)
-                        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
-                    <span class="kw">if</span> <span class="ident">kvs</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="number">1</span> <span class="op">|</span><span class="op">|</span> <span class="ident">kvs</span>[<span class="number">0</span>].<span class="ident">key</span>() <span class="op">!</span><span class="op">=</span> <span class="string">&quot;addr&quot;</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
-                            <span class="ident">value</span>: <span class="ident">opt</span>.<span class="ident">to_string</span>(),
-                            <span class="ident">expected</span>: <span class="ident">String::from</span>(
-                                <span class="string">&quot;Please specify PCI address for VVU: addr=BUS:DEVICE.FUNCTION&quot;</span>,
-                            ),
-                        });
-                    }
-                    <span class="kw">let</span> <span class="ident">pci_address</span> <span class="op">=</span> <span class="ident">kvs</span>[<span class="number">0</span>].<span class="ident">value</span>()<span class="question-mark">?</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">PciAddress::from_string</span>(<span class="ident">pci_address</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-                        <span class="ident">argument::Error::InvalidValue</span> {
-                            <span class="ident">value</span>: <span class="ident">pci_address</span>.<span class="ident">to_string</span>(),
-                            <span class="ident">expected</span>: <span class="macro">format!</span>(<span class="string">&quot;vvu-proxy PCI address: {}&quot;</span>, <span class="ident">e</span>),
-                        }
-                    })<span class="question-mark">?</span>)
-                }
-                <span class="prelude-val">None</span> =&gt; <span class="prelude-val">None</span>,
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vvu_opt</span> <span class="op">=</span> <span class="ident">VvuOption</span> {
+                <span class="ident">socket</span>,
+                <span class="ident">addr</span>: <span class="prelude-val">None</span>,
+                <span class="ident">uuid</span>: <span class="ident">Default::default</span>(),
             };
 
-            <span class="ident">cfg</span>.<span class="ident">vvu_proxy</span>.<span class="ident">push</span>(<span class="ident">VvuOption</span> { <span class="ident">socket</span>, <span class="ident">addr</span> });
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">kvs</span>) <span class="op">=</span> <span class="ident">opts</span>.<span class="ident">get</span>(<span class="number">1</span>) {
+                <span class="kw">for</span> <span class="ident">kv</span> <span class="kw">in</span> <span class="ident">argument::parse_key_value_options</span>(<span class="string">&quot;vvu-proxy&quot;</span>, <span class="ident">kvs</span>, <span class="string">&#39;,&#39;</span>) {
+                    <span class="kw">match</span> <span class="ident">kv</span>.<span class="ident">key</span>() {
+                        <span class="string">&quot;addr&quot;</span> =&gt; {
+                            <span class="kw">let</span> <span class="ident">pci_address</span> <span class="op">=</span> <span class="ident">kv</span>.<span class="ident">value</span>()<span class="question-mark">?</span>;
+                            <span class="kw">if</span> <span class="ident">vvu_opt</span>.<span class="ident">addr</span>.<span class="ident">is_some</span>() {
+                                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::TooManyArguments</span>(
+                                    <span class="string">&quot;`addr` already given&quot;</span>.<span class="ident">to_owned</span>(),
+                                ));
+                            }
+
+                            <span class="ident">vvu_opt</span>.<span class="ident">addr</span> <span class="op">=</span>
+                                <span class="prelude-val">Some</span>(<span class="ident">PciAddress::from_string</span>(<span class="ident">pci_address</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+                                    <span class="ident">argument::Error::InvalidValue</span> {
+                                        <span class="ident">value</span>: <span class="ident">pci_address</span>.<span class="ident">to_string</span>(),
+                                        <span class="ident">expected</span>: <span class="macro">format!</span>(<span class="string">&quot;vvu-proxy PCI address: {}&quot;</span>, <span class="ident">e</span>),
+                                    }
+                                })<span class="question-mark">?</span>);
+                        }
+                        <span class="string">&quot;uuid&quot;</span> =&gt; {
+                            <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">kv</span>.<span class="ident">value</span>()<span class="question-mark">?</span>;
+                            <span class="kw">if</span> <span class="ident">vvu_opt</span>.<span class="ident">uuid</span>.<span class="ident">is_some</span>() {
+                                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::TooManyArguments</span>(
+                                    <span class="string">&quot;`uuid` already given&quot;</span>.<span class="ident">to_owned</span>(),
+                                ));
+                            }
+                            <span class="kw">let</span> <span class="ident">uuid</span> <span class="op">=</span> <span class="ident">Uuid::parse_str</span>(<span class="ident">value</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+                                <span class="ident">argument::Error::InvalidValue</span> {
+                                    <span class="ident">value</span>: <span class="ident">value</span>.<span class="ident">to_string</span>(),
+                                    <span class="ident">expected</span>: <span class="macro">format!</span>(<span class="string">&quot;invalid UUID is given for vvu-proxy: {}&quot;</span>, <span class="ident">e</span>),
+                                }
+                            })<span class="question-mark">?</span>;
+                            <span class="ident">vvu_opt</span>.<span class="ident">uuid</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">uuid</span>);
+                        }
+                        <span class="kw">_</span> =&gt; {
+                            <span class="ident">kv</span>.<span class="ident">invalid_key_err</span>();
+                        }
+                    }
+                }
+            }
+
+            <span class="ident">cfg</span>.<span class="ident">vvu_proxy</span>.<span class="ident">push</span>(<span class="ident">vvu_opt</span>);
         }
         <span class="string">&quot;coiommu&quot;</span> =&gt; {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">params</span>: <span class="ident">devices::CoIommuParameters</span> <span class="op">=</span> <span class="ident">Default::default</span>();
@@ -7100,9 +7151,10 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
           <span class="ident">Argument::value</span>(<span class="string">&quot;vhost-user-wl&quot;</span>, <span class="string">&quot;SOCKET_PATH:TUBE_PATH&quot;</span>, <span class="string">&quot;Paths to a vhost-user socket for wayland and a Tube socket for additional wayland-specific messages&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;vhost-user-fs&quot;</span>, <span class="string">&quot;SOCKET_PATH:TAG&quot;</span>,
                           <span class="string">&quot;Path to a socket path for vhost-user fs, and tag for the shared dir&quot;</span>),
-          <span class="ident">Argument::value</span>(<span class="string">&quot;vvu-proxy&quot;</span>, <span class="string">&quot;SOCKET_PATH[,addr=DOMAIN:BUS:DEVICE.FUNCTION]&quot;</span>, <span class="string">&quot;Socket path for the Virtio Vhost User proxy device.
+          <span class="ident">Argument::value</span>(<span class="string">&quot;vvu-proxy&quot;</span>, <span class="string">&quot;SOCKET_PATH[,addr=DOMAIN:BUS:DEVICE.FUNCTION,uuid=UUID]&quot;</span>, <span class="string">&quot;Socket path for the Virtio Vhost User proxy device.
                               Parameters
-                              addr=BUS:DEVICE.FUNCTION - PCI address that the proxy device will be allocated&quot;</span>),
+                              addr=BUS:DEVICE.FUNCTION - PCI address that the proxy device will be allocated (default: automatically allocated)
+                              uuid=UUID - UUID which will be stored in VVU PCI config space that is readable from guest userspace&quot;</span>),
           <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
           <span class="ident">Argument::value</span>(<span class="string">&quot;direct-pmio&quot;</span>, <span class="string">&quot;PATH@RANGE[,RANGE[,...]]&quot;</span>, <span class="string">&quot;Path and ranges for direct port mapped I/O access. RANGE may be decimal or hex (starting with 0x).&quot;</span>),
           <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>

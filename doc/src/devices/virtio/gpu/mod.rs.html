@@ -2314,10 +2314,10 @@
             {
                 <span class="kw">if</span> <span class="ident">should_process</span> {
                     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">process_resource_bridge</span>(<span class="ident">bridge</span>) {
-                        <span class="macro">error!</span>(<span class="string">&quot;Failed to process resource bridge: {}&quot;</span>, <span class="ident">e</span>);
+                        <span class="macro">error!</span>(<span class="string">&quot;Failed to process resource bridge: {:#}&quot;</span>, <span class="ident">e</span>);
                         <span class="macro">error!</span>(<span class="string">&quot;Removing that resource bridge from the wait context.&quot;</span>);
                         <span class="ident">wait_ctx</span>.<span class="ident">delete</span>(<span class="ident">bridge</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-                            <span class="macro">error!</span>(<span class="string">&quot;Failed to remove faulty resource bridge: {}&quot;</span>, <span class="ident">e</span>)
+                            <span class="macro">error!</span>(<span class="string">&quot;Failed to remove faulty resource bridge: {:#}&quot;</span>, <span class="ident">e</span>)
                         });
                     }
                 }

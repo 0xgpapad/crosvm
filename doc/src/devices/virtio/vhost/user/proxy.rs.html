@@ -1414,6 +1414,8 @@
 <span id="1413">1413</span>
 <span id="1414">1414</span>
 <span id="1415">1415</span>
+<span id="1416">1416</span>
+<span id="1417">1417</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1438,6 +1440,7 @@
 <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">DataInit</span>, <span class="ident">Le32</span>};
 <span class="kw">use</span> <span class="ident">libc</span>::{<span class="ident">recv</span>, <span class="ident">MSG_DONTWAIT</span>, <span class="ident">MSG_PEEK</span>};
 <span class="kw">use</span> <span class="ident">resources::Alloc</span>;
+<span class="kw">use</span> <span class="ident">uuid::Uuid</span>;
 <span class="kw">use</span> <span class="ident">vm_control</span>::{<span class="ident">VmMemoryRequest</span>, <span class="ident">VmMemoryResponse</span>};
 <span class="kw">use</span> <span class="ident">vm_memory::GuestMemory</span>;
 <span class="kw">use</span> <span class="ident">vmm_vhost</span>::{
@@ -2409,6 +2412,7 @@
         <span class="ident">listener</span>: <span class="ident">UnixListener</span>,
         <span class="ident">main_process_tube</span>: <span class="ident">Tube</span>,
         <span class="ident">pci_address</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PciAddress</span><span class="op">&gt;</span>,
+        <span class="ident">uuid</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">VirtioVhostUser</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">VirtioVhostUser</span> {
             <span class="ident">base_features</span>,
@@ -2416,7 +2420,7 @@
             <span class="ident">config</span>: <span class="ident">VirtioVhostUserConfig</span> {
                 <span class="ident">status</span>: <span class="ident">Le32::from</span>(<span class="number">0</span>),
                 <span class="ident">max_vhost_queues</span>: <span class="ident">Le32::from</span>(<span class="ident">MAX_VHOST_DEVICE_QUEUES</span> <span class="kw">as</span> <span class="ident">u32</span>),
-                <span class="ident">uuid</span>: [<span class="number">0</span>; <span class="ident">CONFIG_UUID_SIZE</span>],
+                <span class="ident">uuid</span>: <span class="kw-2">*</span><span class="ident">uuid</span>.<span class="ident">unwrap_or_default</span>().<span class="ident">as_bytes</span>(),
             },
             <span class="ident">kill_evt</span>: <span class="prelude-val">None</span>,
             <span class="ident">worker_thread</span>: <span class="prelude-val">None</span>,
