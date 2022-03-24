@@ -1480,6 +1480,8 @@
 <span id="1479">1479</span>
 <span id="1480">1480</span>
 <span id="1481">1481</span>
+<span id="1482">1482</span>
+<span id="1483">1483</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2311,10 +2313,12 @@
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">EINVAL</span>));
                 }
                 <span class="kw">let</span> <span class="ident">hcall</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="ident">hyperv</span>.<span class="ident">u</span>.<span class="ident">hcall</span> };
-                <span class="kw">if</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="ident">std::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>() {
-                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">EINVAL</span>));
+                <span class="kw">match</span> <span class="ident">data</span>.<span class="ident">try_into</span>() {
+                    <span class="prelude-val">Ok</span>(<span class="ident">data</span>) =&gt; {
+                        <span class="ident">hcall</span>.<span class="ident">result</span> <span class="op">=</span> <span class="ident">u64::from_ne_bytes</span>(<span class="ident">data</span>);
+                    }
+                    <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">EINVAL</span>)),
                 }
-                <span class="ident">hcall</span>.<span class="ident">result</span>.<span class="ident">to_ne_bytes</span>().<span class="ident">copy_from_slice</span>(<span class="ident">data</span>);
                 <span class="prelude-val">Ok</span>(())
             }
             <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">Error::new</span>(<span class="ident">EINVAL</span>)),
