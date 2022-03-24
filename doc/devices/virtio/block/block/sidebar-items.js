@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Block","Virtio device for exposing block level read/write operations on a host file."]]});
+initSidebarItems({"constant":[["DISK_ID_LEN","Maximum length of a `DiskOption` identifier."]],"struct":[["Block","Virtio device for exposing block level read/write operations on a host file."],["DiskOption",""]]});

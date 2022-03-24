@@ -564,19 +564,6 @@
 <span id="563">563</span>
 <span id="564">564</span>
 <span id="565">565</span>
-<span id="566">566</span>
-<span id="567">567</span>
-<span id="568">568</span>
-<span id="569">569</span>
-<span id="570">570</span>
-<span id="571">571</span>
-<span id="572">572</span>
-<span id="573">573</span>
-<span id="574">574</span>
-<span id="575">575</span>
-<span id="576">576</span>
-<span id="577">577</span>
-<span id="578">578</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -602,6 +589,7 @@
 <span class="kw">use</span> <span class="ident">arch</span>::{<span class="ident">Pstore</span>, <span class="ident">VcpuAffinity</span>};
 <span class="kw">use</span> <span class="ident">base::RawDescriptor</span>;
 <span class="kw">use</span> <span class="ident">devices::serial_device</span>::{<span class="ident">SerialHardware</span>, <span class="ident">SerialParameters</span>};
+<span class="kw">use</span> <span class="ident">devices::virtio::block::block::DiskOption</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio_cras&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">devices::virtio::cras_backend::Parameters</span> <span class="kw">as</span> <span class="ident">CrasSndParameters</span>;
 <span class="kw">use</span> <span class="ident">devices::virtio::fs::passthrough</span>;
@@ -635,20 +623,6 @@
     <span class="ident">Kernel</span>(<span class="ident">PathBuf</span>),
     <span class="doccomment">/// Path to a plugin executable that is forked by crosvm.</span>
     <span class="ident">Plugin</span>(<span class="ident">PathBuf</span>),
-}
-
-<span class="doccomment">/// Maximum length of a `DiskOption` identifier.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// This is based on the virtio-block ID length limit.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DISK_ID_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">20</span>;
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DiskOption</span> {
-    <span class="kw">pub</span> <span class="ident">path</span>: <span class="ident">PathBuf</span>,
-    <span class="kw">pub</span> <span class="ident">read_only</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">sparse</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">o_direct</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">block_size</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>[<span class="ident">u8</span>; <span class="ident">DISK_ID_LEN</span>]<span class="op">&gt;</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">VhostUserOption</span> {

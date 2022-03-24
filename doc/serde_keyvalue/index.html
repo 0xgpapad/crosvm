@@ -1,0 +1,228 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A lightweight serde deserializer for strings containing key-value pairs separated by commas, as commonly found in command-line parameters."><meta name="keywords" content="rust, rustlang, rust-lang, serde_keyvalue"><title>serde_keyvalue - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script id="default-settings" ></script><script src="../storage.js"></script><script src="../crates.js"></script><script defer src="../main.js"></script>
+    <noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../favicon.svg"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../serde_keyvalue/index.html'><div class='logo-container rust-logo'><img src='../rust-logo.png' alt='logo'></div></a><h2 class="location">Crate serde_keyvalue</h2><div class="block version"><div class="narrow-helper"></div><p>Version 0.1.0</p></div><div class="sidebar-elems"><a id="all-types" href="all.html"><p>See all serde_keyvalue's items</p></a><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#functions">Functions</a></li></ul></div><div id="sidebar-vars" data-name="serde_keyvalue" data-ty="mod" data-relpath=""></div><script defer src="sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../wheel.svg"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Crate <a class="mod" href="#">serde_keyvalue</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../src/serde_keyvalue/lib.rs.html#5-295" title="goto source code">[src]</a></span></h1><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A lightweight serde deserializer for strings containing key-value pairs separated by commas, as
+commonly found in command-line parameters.</p>
+<p>Say your program takes a command-line option of the form:</p>
+<div class="example-wrap"><pre class="language-text"><code>--foo type=bar,active,nb_threads=8</code></pre></div>
+<p>This crate provides a <a href="fn.from_key_values.html" title="from_key_values">from_key_values</a> function that deserializes these key-values into a
+configuration structure. Since it uses serde, the same configuration structure can also be
+created from any other supported source (such as a TOML or YAML configuration file) that uses
+the same keys.</p>
+<p>Integration with the <a href="https://github.com/google/argh">argh</a> command-line parser is also
+provided via the <code>argh_derive</code> feature.</p>
+<p>The deserializer supports parsing signed and unsigned integers, booleans, strings (quoted or
+not), paths, and enums inside a top-level struct. The order in which the fields appear in the
+string is not important.</p>
+<p>Simple example:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">serde_keyvalue::from_key_values</span>;
+<span class="kw">use</span> <span class="ident">serde::Deserialize</span>;
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="ident">path</span>: <span class="ident">String</span>,
+    <span class="ident">threads</span>: <span class="ident">u8</span>,
+    <span class="ident">active</span>: <span class="ident">bool</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;path=/some/path,threads=16,active=true&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">path</span>: <span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>(), <span class="ident">threads</span>: <span class="number">16</span>, <span class="ident">active</span>: <span class="bool-val">true</span> });
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;threads=16,active=true,path=/some/path&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">path</span>: <span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>(), <span class="ident">threads</span>: <span class="number">16</span>, <span class="ident">active</span>: <span class="bool-val">true</span> });</code></pre></div>
+<p>As a convenience the name of the first field of a struct can be omitted:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="ident">path</span>: <span class="ident">String</span>,
+    <span class="ident">threads</span>: <span class="ident">u8</span>,
+    <span class="ident">active</span>: <span class="ident">bool</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;/some/path,threads=16,active=true&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">path</span>: <span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>(), <span class="ident">threads</span>: <span class="number">16</span>, <span class="ident">active</span>: <span class="bool-val">true</span> });</code></pre></div>
+<p>Fields that are behind an <code>Option</code> can be omitted, in which case they will be <code>None</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="ident">path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="ident">threads</span>: <span class="ident">u8</span>,
+    <span class="ident">active</span>: <span class="ident">bool</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;path=/some/path,threads=16,active=true&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">path</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>()), <span class="ident">threads</span>: <span class="number">16</span>, <span class="ident">active</span>: <span class="bool-val">true</span> });
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;threads=16,active=true&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">path</span>: <span class="prelude-val">None</span>, <span class="ident">threads</span>: <span class="number">16</span>, <span class="ident">active</span>: <span class="bool-val">true</span> });</code></pre></div>
+<p>Alternatively, the serde <code>default</code> attribute can be used on select fields or on the whole
+struct to make unspecified fields be assigned their default value. In the following example only
+the <code>path</code> parameter must be specified.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="ident">path</span>: <span class="ident">String</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+    <span class="ident">threads</span>: <span class="ident">u8</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+    <span class="ident">active</span>: <span class="ident">bool</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;path=/some/path&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">path</span>: <span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>(), <span class="ident">threads</span>: <span class="number">0</span>, <span class="ident">active</span>: <span class="bool-val">false</span> });</code></pre></div>
+<p>A function providing a default value can also be specified, see the <a href="https://serde.rs/field-attrs.html">serde documentation for
+field attributes</a> for details.</p>
+<p>Booleans can be <code>true</code> or <code>false</code>, or take no value at all, in which case they will be <code>true</code>.
+Combined with default values this allows to implement flags very easily:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="ident">active</span>: <span class="ident">bool</span>,
+    <span class="ident">delayed</span>: <span class="ident">bool</span>,
+    <span class="ident">pooled</span>: <span class="ident">bool</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;active=true,delayed=false,pooled=true&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">active</span>: <span class="bool-val">true</span>, <span class="ident">delayed</span>: <span class="bool-val">false</span>, <span class="ident">pooled</span>: <span class="bool-val">true</span> });
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;active,pooled&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">active</span>: <span class="bool-val">true</span>, <span class="ident">delayed</span>: <span class="bool-val">false</span>, <span class="ident">pooled</span>: <span class="bool-val">true</span> });</code></pre></div>
+<p>Strings can be quoted, which is useful if they e.g. need to include a comma. Quoted strings can
+also contain escaped characters, where any character after a <code>\</code> is repeated as-is:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="ident">path</span>: <span class="ident">String</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">r#&quot;path=&quot;/some/\&quot;strange\&quot;/pa,th&quot;&quot;#</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">path</span>: <span class="string">r#&quot;/some/&quot;strange&quot;/pa,th&quot;#</span>.<span class="ident">into</span>() });</code></pre></div>
+<p>Enums can be directly specified by name. It is recommended to use the <code>rename_all</code> serde
+container attribute to make them parseable using snake or kebab case representation. Serde’s
+<code>rename</code> and <code>alias</code> field attributes can also be used to provide shorter values:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span><span class="op">=</span><span class="string">&quot;kebab-case&quot;</span>)]</span>
+<span class="kw">enum</span> <span class="ident">Mode</span> {
+    <span class="ident">Slow</span>,
+    <span class="ident">Fast</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span><span class="op">=</span><span class="string">&quot;ludicrous&quot;</span>)]</span>
+    <span class="ident">LudicrousSpeed</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="ident">mode</span>: <span class="ident">Mode</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;mode=slow&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">mode</span>: <span class="ident">Mode::Slow</span> });
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;mode=ludicrous&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">mode</span>: <span class="ident">Mode::LudicrousSpeed</span> });</code></pre></div>
+<p>Enums taking a single value should use the <code>flatten</code> field attribute in order to be inferred
+from their variant key directly:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span><span class="op">=</span><span class="string">&quot;kebab-case&quot;</span>)]</span>
+<span class="kw">enum</span> <span class="ident">Mode</span> {
+    <span class="comment">// Work with a local file.</span>
+    <span class="ident">File</span>(<span class="ident">String</span>),
+    <span class="comment">// Work with a remote URL.</span>
+    <span class="ident">Url</span>(<span class="ident">String</span>),
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>, <span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
+    <span class="ident">mode</span>: <span class="ident">Mode</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;file=/some/path&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">mode</span>: <span class="ident">Mode::File</span>(<span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>()) });
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;url=https://www.google.com&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">mode</span>: <span class="ident">Mode::Url</span>(<span class="string">&quot;https://www.google.com&quot;</span>.<span class="ident">into</span>()) });</code></pre></div>
+<p>The <code>flatten</code> attribute can also be used to embed one struct within another one and parse both
+from the same string:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">BaseConfig</span> {
+    <span class="ident">enabled</span>: <span class="ident">bool</span>,
+    <span class="ident">num_threads</span>: <span class="ident">u8</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
+    <span class="ident">base</span>: <span class="ident">BaseConfig</span>,
+    <span class="ident">path</span>: <span class="ident">String</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;path=/some/path,enabled,num_threads=16&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(
+    <span class="ident">config</span>,
+    <span class="ident">Config</span> {
+        <span class="ident">path</span>: <span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>(),
+        <span class="ident">base</span>: <span class="ident">BaseConfig</span> {
+            <span class="ident">num_threads</span>: <span class="number">16</span>,
+            <span class="ident">enabled</span>: <span class="bool-val">true</span>,
+        }
+    }
+);</code></pre></div>
+<p>If an enum’s variants are made of structs, it should take the <code>untagged</code> container attribute so
+it can be inferred directly from the fields of the embedded structs:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">untagged</span>)]</span>
+<span class="kw">enum</span> <span class="ident">Mode</span> {
+    <span class="comment">// Work with a local file.</span>
+    <span class="ident">File</span> {
+        <span class="ident">path</span>: <span class="ident">String</span>,
+        <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+        <span class="ident">read_only</span>: <span class="ident">bool</span>,
+    },
+    <span class="comment">// Work with a remote URL.</span>
+    <span class="ident">Remote</span> {
+        <span class="ident">server</span>: <span class="ident">String</span>,
+        <span class="ident">port</span>: <span class="ident">u16</span>,
+    }
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
+    <span class="ident">mode</span>: <span class="ident">Mode</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;path=/some/path&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">mode</span>: <span class="ident">Mode::File</span> { <span class="ident">path</span>: <span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>(), <span class="ident">read_only</span>: <span class="bool-val">false</span> } });
+
+<span class="kw">let</span> <span class="ident">config</span>: <span class="ident">Config</span> <span class="op">=</span> <span class="ident">from_key_values</span>(<span class="string">&quot;server=google.com,port=80&quot;</span>).<span class="ident">unwrap</span>();
+<span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">Config</span> { <span class="ident">mode</span>: <span class="ident">Mode::Remote</span> { <span class="ident">server</span>: <span class="string">&quot;google.com&quot;</span>.<span class="ident">into</span>(), <span class="ident">port</span>: <span class="number">80</span> } });</code></pre></div>
+<p>Using this crate, parsing errors and invalid or missing fields are precisely reported:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Config</span> {
+    <span class="ident">path</span>: <span class="ident">String</span>,
+    <span class="ident">threads</span>: <span class="ident">u8</span>,
+    <span class="ident">active</span>: <span class="ident">bool</span>,
+}
+
+<span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">from_key_values</span>::<span class="op">&lt;</span><span class="ident">Config</span><span class="op">&gt;</span>(<span class="string">&quot;path=/some/path,active=true&quot;</span>).<span class="ident">unwrap_err</span>();
+<span class="macro">assert_eq!</span>(<span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">config</span>), <span class="string">&quot;missing field `threads`&quot;</span>);</code></pre></div>
+<p>Most of the serde <a href="https://serde.rs/container-attrs.html">container</a> and
+<a href="https://serde.rs/field-attrs.html">field</a> attributes can be applied to your configuration
+struct. Most useful ones include
+<a href="https://serde.rs/container-attrs.html#deny_unknown_fields"><code>deny_unknown_fields</code></a> to report an
+error if an unknown field is met in the input, and
+<a href="https://serde.rs/field-attrs.html#deserialize_with"><code>deserialize_with</code></a> to use a custom
+deserialization function for a specific field.</p>
+</div></details><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.ParseError.html" title="serde_keyvalue::ParseError struct">ParseError</a></div><div class="item-right docblock-short"><p>Error that may be thown while parsing a key-values string.</p>
+</div></div></div><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.ErrorKind.html" title="serde_keyvalue::ErrorKind enum">ErrorKind</a></div><div class="item-right docblock-short"><p>Different kinds of errors that can be returned by the parser.</p>
+</div></div></div><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.from_key_values.html" title="serde_keyvalue::from_key_values fn">from_key_values</a></div><div class="item-right docblock-short"><p>Attempts to deserialize <code>T</code> from the key-values string <code>input</code>.</p>
+</div></div></div></section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="serde_keyvalue" data-search-index-js="../search-index.js" data-search-js="../search.js"></div>
+</body></html>
