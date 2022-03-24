@@ -2269,6 +2269,8 @@
 <span id="2268">2268</span>
 <span id="2269">2269</span>
 <span id="2270">2270</span>
+<span id="2271">2271</span>
+<span id="2272">2272</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2756,6 +2758,7 @@
                 <span class="ident">control_tubes</span>,
                 <span class="ident">vfio_path</span>.<span class="ident">as_path</span>(),
                 <span class="prelude-val">None</span>,
+                <span class="ident">vfio_dev</span>.<span class="ident">guest_address</span>(),
                 <span class="ident">iommu_attached_endpoints</span>,
                 <span class="prelude-val">Some</span>(<span class="kw-2">&amp;mut</span> <span class="ident">coiommu_attached_endpoints</span>),
                 <span class="ident">vfio_dev</span>.<span class="ident">iommu_dev_type</span>(),
@@ -3721,6 +3724,7 @@
         <span class="ident">control_tubes</span>,
         <span class="ident">vfio_path</span>,
         <span class="prelude-val">Some</span>(<span class="ident">bus_num</span>),
+        <span class="prelude-val">None</span>,
         <span class="kw-2">&amp;mut</span> <span class="ident">endpoints</span>,
         <span class="prelude-val">None</span>,
         <span class="kw">if</span> <span class="ident">iommu_host_tube</span>.<span class="ident">is_some</span>() {

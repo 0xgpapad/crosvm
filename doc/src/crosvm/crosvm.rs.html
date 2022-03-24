@@ -564,6 +564,24 @@
 <span id="563">563</span>
 <span id="564">564</span>
 <span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -837,6 +855,18 @@
 
     <span class="kw">fn</span> <span class="ident">validate_params</span>(<span class="ident">kind</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">argument::Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">kind</span> {
+            <span class="string">&quot;guest-address&quot;</span> =&gt; {
+                <span class="kw">if</span> <span class="ident">value</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="string">&quot;auto&quot;</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">PciAddress::from_string</span>(<span class="ident">value</span>).<span class="ident">is_ok</span>() {
+                    <span class="prelude-val">Ok</span>(())
+                } <span class="kw">else</span> {
+                    <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
+                        <span class="ident">value</span>: <span class="macro">format!</span>(<span class="string">&quot;{}={}&quot;</span>, <span class="ident">kind</span>.<span class="ident">to_owned</span>(), <span class="ident">value</span>.<span class="ident">to_owned</span>()),
+                        <span class="ident">expected</span>: <span class="ident">String::from</span>(
+                            <span class="string">&quot;option must be `guest-address=auto|&lt;BUS:DEVICE.FUNCTION&gt;`&quot;</span>,
+                        ),
+                    })
+                }
+            }
             <span class="string">&quot;iommu&quot;</span> =&gt; {
                 <span class="kw">if</span> <span class="ident">IommuDevType::from_str</span>(<span class="ident">value</span>).<span class="ident">is_ok</span>() {
                     <span class="prelude-val">Ok</span>(())
@@ -849,13 +879,19 @@
             }
             <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
                 <span class="ident">value</span>: <span class="macro">format!</span>(<span class="string">&quot;{}={}&quot;</span>, <span class="ident">kind</span>.<span class="ident">to_owned</span>(), <span class="ident">value</span>.<span class="ident">to_owned</span>()),
-                <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;option must be `iommu=&lt;val&gt;`&quot;</span>),
+                <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;option must be `guest-address=&lt;val&gt;` and/or `iommu=&lt;val&gt;`&quot;</span>),
             }),
         }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">VfioType</span> {
         <span class="self">self</span>.<span class="ident">dev_type</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">guest_address</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PciAddress</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">params</span>
+            .<span class="ident">get</span>(<span class="string">&quot;guest-address&quot;</span>)
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">addr</span><span class="op">|</span> <span class="ident">PciAddress::from_string</span>(<span class="ident">addr</span>).<span class="ident">ok</span>())
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iommu_dev_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">IommuDevType</span> {

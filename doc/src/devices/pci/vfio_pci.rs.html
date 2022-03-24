@@ -1754,6 +1754,11 @@
 <span id="1753">1753</span>
 <span id="1754">1754</span>
 <span id="1755">1755</span>
+<span id="1756">1756</span>
+<span id="1757">1757</span>
+<span id="1758">1758</span>
+<span id="1759">1759</span>
+<span id="1760">1760</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2330,6 +2335,7 @@
     <span class="ident">device</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">VfioDevice</span><span class="op">&gt;</span>,
     <span class="ident">config</span>: <span class="ident">VfioPciConfig</span>,
     <span class="ident">hotplug_bus_number</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="comment">// hot plug device has bus number specified at device creation.</span>
+    <span class="ident">guest_address</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PciAddress</span><span class="op">&gt;</span>,
     <span class="ident">pci_address</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PciAddress</span><span class="op">&gt;</span>,
     <span class="ident">interrupt_evt</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span>,
     <span class="ident">interrupt_resample_evt</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span>,
@@ -2352,6 +2358,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
         <span class="ident">device</span>: <span class="ident">VfioDevice</span>,
         <span class="ident">hotplug_bus_number</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
+        <span class="ident">guest_address</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PciAddress</span><span class="op">&gt;</span>,
         <span class="ident">vfio_device_socket_msi</span>: <span class="ident">Tube</span>,
         <span class="ident">vfio_device_socket_msix</span>: <span class="ident">Tube</span>,
         <span class="ident">vfio_device_socket_mem</span>: <span class="ident">Tube</span>,
@@ -2397,6 +2404,7 @@
             <span class="ident">device</span>: <span class="ident">dev</span>,
             <span class="ident">config</span>,
             <span class="ident">hotplug_bus_number</span>,
+            <span class="ident">guest_address</span>,
             <span class="ident">pci_address</span>: <span class="prelude-val">None</span>,
             <span class="ident">interrupt_evt</span>: <span class="prelude-val">None</span>,
             <span class="ident">interrupt_resample_evt</span>: <span class="prelude-val">None</span>,
@@ -3056,9 +3064,11 @@
         <span class="ident">resources</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PciAddress</span>, <span class="ident">PciDeviceError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">pci_address</span>.<span class="ident">is_none</span>() {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">address</span> <span class="op">=</span> <span class="ident">PciAddress::from_string</span>(<span class="self">self</span>.<span class="ident">device</span>.<span class="ident">device_name</span>()).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
-                <span class="ident">PciDeviceError::PciAddressParseFailure</span>(<span class="self">self</span>.<span class="ident">device</span>.<span class="ident">device_name</span>().<span class="ident">clone</span>(), <span class="ident">e</span>)
-            })<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">address</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">guest_address</span>.<span class="ident">unwrap_or</span>(
+                <span class="ident">PciAddress::from_string</span>(<span class="self">self</span>.<span class="ident">device</span>.<span class="ident">device_name</span>()).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+                    <span class="ident">PciDeviceError::PciAddressParseFailure</span>(<span class="self">self</span>.<span class="ident">device</span>.<span class="ident">device_name</span>().<span class="ident">clone</span>(), <span class="ident">e</span>)
+                })<span class="question-mark">?</span>,
+            );
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">bus_num</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">hotplug_bus_number</span> {
                 <span class="comment">// Caller specify pcie bus number for hotplug device</span>
                 <span class="ident">address</span>.<span class="ident">bus</span> <span class="op">=</span> <span class="ident">bus_num</span>;

@@ -4211,6 +4211,7 @@
 <span id="4210">4210</span>
 <span id="4211">4211</span>
 <span id="4212">4212</span>
+<span id="4213">4213</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -6842,7 +6843,8 @@
           <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
           <span class="ident">Argument::flag</span>(<span class="string">&quot;split-irqchip&quot;</span>, <span class="string">&quot;(EXPERIMENTAL) enable split-irqchip support&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;bios&quot;</span>, <span class="string">&quot;PATH&quot;</span>, <span class="string">&quot;Path to BIOS/firmware ROM&quot;</span>),
-          <span class="ident">Argument::value</span>(<span class="string">&quot;vfio&quot;</span>, <span class="string">&quot;PATH[,iommu=on|off]&quot;</span>, <span class="string">&quot;Path to sysfs of PCI pass through or mdev device.
+          <span class="ident">Argument::value</span>(<span class="string">&quot;vfio&quot;</span>, <span class="string">&quot;PATH[,guest-address=auto|&lt;BUS:DEVICE.FUNCTION&gt;][,iommu=on|off]&quot;</span>, <span class="string">&quot;Path to sysfs of PCI pass through or mdev device.
+guest-address=auto|&lt;BUS:DEVICE.FUNCTION&gt; - PCI address that the device will be assigned in the guest (default: auto).  When set to \&quot;auto\&quot;, the device will be assigned an address that mirrors its address in the host.
 iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;vfio-platform&quot;</span>, <span class="string">&quot;PATH&quot;</span>, <span class="string">&quot;Path to sysfs of platform pass through&quot;</span>),
           <span class="ident">Argument::flag</span>(<span class="string">&quot;virtio-iommu&quot;</span>, <span class="string">&quot;Add a virtio-iommu device&quot;</span>),

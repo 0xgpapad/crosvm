@@ -252,7 +252,7 @@ Configuration summary:
 
 Build targets in project: 7
 NOTICE: Future-deprecated features used:
- * 0.56.0: {'dependency.get_pkgconfig_variable', 'meson.build_root'}
+ * 0.56.0: {'meson.build_root', 'dependency.get_pkgconfig_variable'}
 
 virglrenderer 0.9.0
 
@@ -285,8 +285,8 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [22/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_parse.c.o
 [23/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_build.c.o
 [24/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_iterate.c.o
-[25/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_util.c.o
-[26/44] Compiling C object src/libvirgl.a.p/iov.c.o
+[25/44] Compiling C object src/libvirgl.a.p/iov.c.o
+[26/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_util.c.o
 [27/44] Compiling C object src/libvirgl.a.p/virgl_util.c.o
 [28/44] Compiling C object src/libvirgl.a.p/virgl_context.c.o
 [29/44] Compiling C object src/libvirgl.a.p/virgl_resource.c.o
@@ -294,8 +294,8 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [31/44] Compiling C object src/libvirgl.a.p/vrend_blitter.c.o
 [32/44] Compiling C object src/libvirgl.a.p/vrend_formats.c.o
 [33/44] Compiling C object src/libvirgl.a.p/vrend_object.c.o
-[34/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
-[35/44] Compiling C object src/libvirgl.a.p/vrend_decode.c.o
+[34/44] Compiling C object src/libvirgl.a.p/vrend_decode.c.o
+[35/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
 [36/44] Compiling C object src/libvirgl.a.p/vrend_tweaks.c.o
 [37/44] Compiling C object src/libvirgl.a.p/vrend_winsys.c.o
 [38/44] Compiling C object src/libvirgl.a.p/vrend_winsys_gbm.c.o
