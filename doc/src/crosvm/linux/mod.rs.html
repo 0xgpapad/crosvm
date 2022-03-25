@@ -2289,6 +2289,10 @@
 <span id="2288">2288</span>
 <span id="2289">2289</span>
 <span id="2290">2290</span>
+<span id="2291">2291</span>
+<span id="2292">2292</span>
+<span id="2293">2293</span>
+<span id="2294">2294</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3035,6 +3039,7 @@
                 <span class="comment">// hotplug capability and won&#39;t use slot.</span>
                 <span class="kw">if</span> <span class="op">!</span><span class="ident">sys_allocator</span>.<span class="ident">pci_bus_empty</span>(<span class="ident">i</span>) {
                     <span class="ident">slot_implemented</span> <span class="op">=</span> <span class="bool-val">false</span>;
+                    <span class="kw">break</span>;
                 }
             }
 
@@ -3056,20 +3061,23 @@
                 );
             }
 
-            <span class="ident">hp_endpoints_ranges</span>.<span class="ident">push</span>(<span class="ident">RangeInclusive::new</span>(
-                <span class="ident">PciAddress</span> {
-                    <span class="ident">bus</span>: <span class="ident">pci_bridge</span>.<span class="ident">get_secondary_num</span>(),
-                    <span class="ident">dev</span>: <span class="number">0</span>,
-                    <span class="ident">func</span>: <span class="number">0</span>,
-                }
-                .<span class="ident">to_u32</span>(),
-                <span class="ident">PciAddress</span> {
-                    <span class="ident">bus</span>: <span class="ident">pci_bridge</span>.<span class="ident">get_subordinate_num</span>(),
-                    <span class="ident">dev</span>: <span class="number">32</span>,
-                    <span class="ident">func</span>: <span class="number">8</span>,
-                }
-                .<span class="ident">to_u32</span>(),
-            ));
+            <span class="comment">// Only append the sub pci range of a hot-pluggable root port to virtio-iommu</span>
+            <span class="kw">if</span> <span class="ident">slot_implemented</span> {
+                <span class="ident">hp_endpoints_ranges</span>.<span class="ident">push</span>(<span class="ident">RangeInclusive::new</span>(
+                    <span class="ident">PciAddress</span> {
+                        <span class="ident">bus</span>: <span class="ident">pci_bridge</span>.<span class="ident">get_secondary_num</span>(),
+                        <span class="ident">dev</span>: <span class="number">0</span>,
+                        <span class="ident">func</span>: <span class="number">0</span>,
+                    }
+                    .<span class="ident">to_u32</span>(),
+                    <span class="ident">PciAddress</span> {
+                        <span class="ident">bus</span>: <span class="ident">pci_bridge</span>.<span class="ident">get_subordinate_num</span>(),
+                        <span class="ident">dev</span>: <span class="number">32</span>,
+                        <span class="ident">func</span>: <span class="number">8</span>,
+                    }
+                    .<span class="ident">to_u32</span>(),
+                ));
+            }
 
             <span class="ident">devices</span>.<span class="ident">push</span>((<span class="ident">pci_bridge</span>, <span class="prelude-val">None</span>));
             <span class="kw">if</span> <span class="ident">slot_implemented</span> {
