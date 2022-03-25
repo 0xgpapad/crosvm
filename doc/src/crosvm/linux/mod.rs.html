@@ -2271,6 +2271,24 @@
 <span id="2270">2270</span>
 <span id="2271">2271</span>
 <span id="2272">2272</span>
+<span id="2273">2273</span>
+<span id="2274">2274</span>
+<span id="2275">2275</span>
+<span id="2276">2276</span>
+<span id="2277">2277</span>
+<span id="2278">2278</span>
+<span id="2279">2279</span>
+<span id="2280">2280</span>
+<span id="2281">2281</span>
+<span id="2282">2282</span>
+<span id="2283">2283</span>
+<span id="2284">2284</span>
+<span id="2285">2285</span>
+<span id="2286">2286</span>
+<span id="2287">2287</span>
+<span id="2288">2288</span>
+<span id="2289">2289</span>
+<span id="2290">2290</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2287,7 +2305,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">std::os::unix::net::UnixStream</span>;
 <span class="kw">use</span> <span class="ident">std::os::unix::prelude::OpenOptionsExt</span>;
-<span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+<span class="kw">use</span> <span class="ident">std::path::Path</span>;
 <span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">mpsc</span>, <span class="ident">Arc</span>, <span class="ident">Barrier</span>};
 <span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
@@ -2311,8 +2329,7 @@
 <span class="kw">use</span> <span class="ident">devices::Ac97Dev</span>;
 <span class="kw">use</span> <span class="ident">devices</span>::{
     <span class="self">self</span>, <span class="ident">BusDeviceObj</span>, <span class="ident">HostHotPlugKey</span>, <span class="ident">HotPlugBus</span>, <span class="ident">IrqEventIndex</span>, <span class="ident">KvmKernelIrqChip</span>, <span class="ident">PciAddress</span>,
-    <span class="ident">PciBridge</span>, <span class="ident">PciDevice</span>, <span class="ident">PcieHostRootPort</span>, <span class="ident">PcieRootPort</span>, <span class="ident">PvPanicCode</span>, <span class="ident">PvPanicPciDevice</span>,
-    <span class="ident">StubPciDevice</span>, <span class="ident">VirtioPciDevice</span>,
+    <span class="ident">PciDevice</span>, <span class="ident">PvPanicCode</span>, <span class="ident">PvPanicPciDevice</span>, <span class="ident">StubPciDevice</span>, <span class="ident">VirtioPciDevice</span>,
 };
 <span class="kw">use</span> <span class="ident">devices</span>::{<span class="ident">CoIommuDev</span>, <span class="ident">IommuDevType</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;usb&quot;</span>)]</span>
@@ -2333,17 +2350,20 @@
     <span class="self">self</span>, <span class="ident">LinuxArch</span>, <span class="ident">RunnableLinuxVm</span>, <span class="ident">VcpuAffinity</span>, <span class="ident">VirtioDeviceStub</span>, <span class="ident">VmComponents</span>, <span class="ident">VmImage</span>,
 };
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
+<span class="kw">use</span> {
+    <span class="ident"><span class="kw">crate</span>::HostPcieRootPortParameters</span>,
+    <span class="ident">devices</span>::{
+        <span class="ident">IrqChipX86_64</span> <span class="kw">as</span> <span class="ident">IrqChipArch</span>, <span class="ident">KvmSplitIrqChip</span>, <span class="ident">PciBridge</span>, <span class="ident">PcieHostRootPort</span>, <span class="ident">PcieRootPort</span>,
+    },
+    <span class="ident">hypervisor</span>::{<span class="ident">VcpuX86_64</span> <span class="kw">as</span> <span class="ident">VcpuArch</span>, <span class="ident">VmX86_64</span> <span class="kw">as</span> <span class="ident">VmArch</span>},
+    <span class="ident">x86_64::X8664arch</span> <span class="kw">as</span> <span class="ident">Arch</span>,
+};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;arm&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>))]</span>
 <span class="kw">use</span> {
     <span class="ident">aarch64::AArch64</span> <span class="kw">as</span> <span class="ident">Arch</span>,
     <span class="ident">devices::IrqChipAArch64</span> <span class="kw">as</span> <span class="ident">IrqChipArch</span>,
     <span class="ident">hypervisor</span>::{<span class="ident">VcpuAArch64</span> <span class="kw">as</span> <span class="ident">VcpuArch</span>, <span class="ident">VmAArch64</span> <span class="kw">as</span> <span class="ident">VmArch</span>},
-};
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
-<span class="kw">use</span> {
-    <span class="ident">devices</span>::{<span class="ident">IrqChipX86_64</span> <span class="kw">as</span> <span class="ident">IrqChipArch</span>, <span class="ident">KvmSplitIrqChip</span>},
-    <span class="ident">hypervisor</span>::{<span class="ident">VcpuX86_64</span> <span class="kw">as</span> <span class="ident">VcpuArch</span>, <span class="ident">VmX86_64</span> <span class="kw">as</span> <span class="ident">VmArch</span>},
-    <span class="ident">x86_64::X8664arch</span> <span class="kw">as</span> <span class="ident">Arch</span>,
 };
 
 <span class="kw">mod</span> <span class="ident">device_helpers</span>;
@@ -2945,12 +2965,13 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
 <span class="kw">fn</span> <span class="ident">create_pcie_root_port</span>(
-    <span class="ident">host_pcie_rp</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
+    <span class="ident">host_pcie_rp</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">HostPcieRootPortParameters</span><span class="op">&gt;</span>,
     <span class="ident">sys_allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SystemAllocator</span>,
     <span class="ident">control_tubes</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TaggedControlTube</span><span class="op">&gt;</span>,
     <span class="ident">devices</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BusDeviceObj</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
     <span class="ident">hp_vec</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">HotPlugBus</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">hp_endpoints_ranges</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">gpe_notify_devs</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">u32</span>, <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">GpeNotify</span><span class="op">&gt;</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">host_pcie_rp</span>.<span class="ident">is_empty</span>() {
         <span class="comment">// user doesn&#39;t specify host pcie root port which link to this virtual pcie rp,</span>
@@ -3002,9 +3023,9 @@
     } <span class="kw">else</span> {
         <span class="comment">// user specify host pcie root port which link to this virtual pcie rp,</span>
         <span class="comment">// reserve the host pci BDF and create a virtual pcie RP with some attrs same as host</span>
-        <span class="kw">for</span> <span class="ident">pcie_sysfs</span> <span class="kw">in</span> <span class="ident">host_pcie_rp</span>.<span class="ident">iter</span>() {
+        <span class="kw">for</span> <span class="ident">host_pcie</span> <span class="kw">in</span> <span class="ident">host_pcie_rp</span>.<span class="ident">iter</span>() {
             <span class="kw">let</span> (<span class="ident">vm_host_tube</span>, <span class="ident">vm_device_tube</span>) <span class="op">=</span> <span class="ident">Tube::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create tube&quot;</span>)<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">pcie_host</span> <span class="op">=</span> <span class="ident">PcieHostRootPort::new</span>(<span class="ident">pcie_sysfs</span>.<span class="ident">as_path</span>(), <span class="ident">vm_device_tube</span>)<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">pcie_host</span> <span class="op">=</span> <span class="ident">PcieHostRootPort::new</span>(<span class="ident">host_pcie</span>.<span class="ident">host_path</span>.<span class="ident">as_path</span>(), <span class="ident">vm_device_tube</span>)<span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="ident">bus_range</span> <span class="op">=</span> <span class="ident">pcie_host</span>.<span class="ident">get_bus_range</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slot_implemented</span> <span class="op">=</span> <span class="bool-val">true</span>;
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">bus_range</span>.<span class="ident">secondary</span>..<span class="op">=</span><span class="ident">bus_range</span>.<span class="ident">subordinate</span> {
@@ -3016,6 +3037,7 @@
                     <span class="ident">slot_implemented</span> <span class="op">=</span> <span class="bool-val">false</span>;
                 }
             }
+
             <span class="kw">let</span> <span class="ident">pcie_root_port</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">PcieRootPort::new_from_host</span>(
                 <span class="ident">pcie_host</span>,
                 <span class="ident">slot_implemented</span>,
@@ -3050,7 +3072,13 @@
             ));
 
             <span class="ident">devices</span>.<span class="ident">push</span>((<span class="ident">pci_bridge</span>, <span class="prelude-val">None</span>));
-            <span class="ident">hp_vec</span>.<span class="ident">push</span>(<span class="ident">pcie_root_port</span> <span class="kw">as</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">HotPlugBus</span><span class="op">&gt;</span><span class="op">&gt;</span>);
+            <span class="kw">if</span> <span class="ident">slot_implemented</span> {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">gpe</span>) <span class="op">=</span> <span class="ident">host_pcie</span>.<span class="ident">hp_gpe</span> {
+                    <span class="ident">gpe_notify_devs</span>
+                        .<span class="ident">push</span>((<span class="ident">gpe</span>, <span class="ident">pcie_root_port</span>.<span class="ident">clone</span>() <span class="kw">as</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">GpeNotify</span><span class="op">&gt;</span><span class="op">&gt;</span>));
+                }
+                <span class="ident">hp_vec</span>.<span class="ident">push</span>(<span class="ident">pcie_root_port</span> <span class="kw">as</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">HotPlugBus</span><span class="op">&gt;</span><span class="op">&gt;</span>);
+            }
         }
     }
 
@@ -3538,16 +3566,16 @@
     )<span class="question-mark">?</span>;
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hp_endpoints_ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hotplug_buses</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">HotPlugBus</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
-
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">gpe_notify_devs</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">u32</span>, <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">GpeNotify</span><span class="op">&gt;</span><span class="op">&gt;</span>)<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
     {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
         <span class="kw">let</span> <span class="ident">rp_host</span> <span class="op">=</span> <span class="ident">cfg</span>.<span class="ident">pcie_rp</span>.<span class="ident">clone</span>();
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>))]</span>
-        <span class="kw">let</span> <span class="ident">rp_host</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="ident">rp_host</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">HostPcieRootPortParameters</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
         <span class="comment">// Create Pcie Root Port</span>
         <span class="ident">create_pcie_root_port</span>(
@@ -3557,6 +3585,7 @@
             <span class="kw-2">&amp;mut</span> <span class="ident">devices</span>,
             <span class="kw-2">&amp;mut</span> <span class="ident">hotplug_buses</span>,
             <span class="kw-2">&amp;mut</span> <span class="ident">hp_endpoints_ranges</span>,
+            <span class="kw-2">&amp;mut</span> <span class="ident">gpe_notify_devs</span>,
         )<span class="question-mark">?</span>;
     }
 
@@ -3631,6 +3660,12 @@
     {
         <span class="kw">for</span> <span class="ident">hotplug_bus</span> <span class="kw">in</span> <span class="ident">hotplug_buses</span>.<span class="ident">iter</span>() {
             <span class="ident">linux</span>.<span class="ident">hotplug_bus</span>.<span class="ident">push</span>(<span class="ident">hotplug_bus</span>.<span class="ident">clone</span>());
+        }
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pm</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">linux</span>.<span class="ident">pm</span> {
+            <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">gpe</span>, <span class="ident">notify_dev</span>)) <span class="op">=</span> <span class="ident">gpe_notify_devs</span>.<span class="ident">pop</span>() {
+                <span class="ident">pm</span>.<span class="ident">lock</span>().<span class="ident">register_gpe_notify_dev</span>(<span class="ident">gpe</span>, <span class="ident">notify_dev</span>);
+            }
         }
     }
 
@@ -4389,6 +4424,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">std::path::PathBuf</span>;
 
     <span class="comment">// Create a file-backed mapping parameters struct with the given `address` and `size` and other</span>
     <span class="comment">// parameters set to default values.</span>

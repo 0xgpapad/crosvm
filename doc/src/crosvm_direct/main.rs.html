@@ -4212,6 +4212,36 @@
 <span id="4211">4211</span>
 <span id="4212">4212</span>
 <span id="4213">4213</span>
+<span id="4214">4214</span>
+<span id="4215">4215</span>
+<span id="4216">4216</span>
+<span id="4217">4217</span>
+<span id="4218">4218</span>
+<span id="4219">4219</span>
+<span id="4220">4220</span>
+<span id="4221">4221</span>
+<span id="4222">4222</span>
+<span id="4223">4223</span>
+<span id="4224">4224</span>
+<span id="4225">4225</span>
+<span id="4226">4226</span>
+<span id="4227">4227</span>
+<span id="4228">4228</span>
+<span id="4229">4229</span>
+<span id="4230">4230</span>
+<span id="4231">4231</span>
+<span id="4232">4232</span>
+<span id="4233">4233</span>
+<span id="4234">4234</span>
+<span id="4235">4235</span>
+<span id="4236">4236</span>
+<span id="4237">4237</span>
+<span id="4238">4238</span>
+<span id="4239">4239</span>
+<span id="4240">4240</span>
+<span id="4241">4241</span>
+<span id="4242">4242</span>
+<span id="4243">4243</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -4239,7 +4269,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;virgl_renderer_next&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">crosvm::platform::GpuRenderServerParameters</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">crosvm</span>::{<span class="ident">argument::parse_hex_or_decimal</span>, <span class="ident">DirectIoOption</span>};
+<span class="kw">use</span> <span class="ident">crosvm</span>::{<span class="ident">argument::parse_hex_or_decimal</span>, <span class="ident">DirectIoOption</span>, <span class="ident">HostPcieRootPortParameters</span>};
 <span class="kw">use</span> <span class="ident">crosvm</span>::{
     <span class="ident">argument</span>::{<span class="self">self</span>, <span class="ident">print_help</span>, <span class="ident">set_arguments</span>, <span class="ident">Argument</span>},
     <span class="ident">platform</span>, <span class="ident">BindMount</span>, <span class="ident">Config</span>, <span class="ident">Executable</span>, <span class="ident">FileBackedMappingParameters</span>, <span class="ident">GidMap</span>, <span class="ident">SharedDir</span>,
@@ -6486,21 +6516,51 @@
         }
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
         <span class="string">&quot;pcie-root-port&quot;</span> =&gt; {
-            <span class="kw">let</span> <span class="ident">pcie_path</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="ident">value</span>.<span class="ident">unwrap</span>());
+            <span class="kw">let</span> <span class="ident">opts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">split</span>(<span class="string">&#39;,&#39;</span>).<span class="ident">collect</span>();
+            <span class="kw">if</span> <span class="ident">opts</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">2</span> {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::TooManyArguments</span>(
+                    <span class="string">&quot;pcie-root-port has maxmimum two arguments&quot;</span>.<span class="ident">to_owned</span>(),
+                ));
+            }
+            <span class="kw">let</span> <span class="ident">pcie_path</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="ident">opts</span>[<span class="number">0</span>]);
             <span class="kw">if</span> <span class="op">!</span><span class="ident">pcie_path</span>.<span class="ident">exists</span>() {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
-                    <span class="ident">value</span>: <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_owned</span>(),
+                    <span class="ident">value</span>: <span class="ident">opts</span>[<span class="number">0</span>].<span class="ident">to_owned</span>(),
                     <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;the pcie root port path does not exist&quot;</span>),
                 });
             }
             <span class="kw">if</span> <span class="op">!</span><span class="ident">pcie_path</span>.<span class="ident">is_dir</span>() {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
-                    <span class="ident">value</span>: <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_owned</span>(),
+                    <span class="ident">value</span>: <span class="ident">opts</span>[<span class="number">0</span>].<span class="ident">to_owned</span>(),
                     <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;the pcie root port path should be directory&quot;</span>),
                 });
             }
 
-            <span class="ident">cfg</span>.<span class="ident">pcie_rp</span>.<span class="ident">push</span>(<span class="ident">pcie_path</span>);
+            <span class="kw">let</span> <span class="ident">hp_gpe</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">opts</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">2</span> {
+                <span class="kw">let</span> <span class="ident">gpes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">opts</span>[<span class="number">1</span>].<span class="ident">split</span>(<span class="string">&#39;=&#39;</span>).<span class="ident">collect</span>();
+                <span class="kw">if</span> <span class="ident">gpes</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="number">2</span> <span class="op">|</span><span class="op">|</span> <span class="ident">gpes</span>[<span class="number">0</span>] <span class="op">!</span><span class="op">=</span> <span class="string">&quot;hp_gpe&quot;</span> {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
+                        <span class="ident">value</span>: <span class="ident">opts</span>[<span class="number">1</span>].<span class="ident">to_owned</span>(),
+                        <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;it should be hp_gpe=Num&quot;</span>),
+                    });
+                }
+                <span class="kw">match</span> <span class="ident">gpes</span>[<span class="number">1</span>].<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>() {
+                    <span class="prelude-val">Ok</span>(<span class="ident">gpe</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">gpe</span>),
+                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">argument::Error::InvalidValue</span> {
+                            <span class="ident">value</span>: <span class="ident">gpes</span>[<span class="number">1</span>].<span class="ident">to_owned</span>(),
+                            <span class="ident">expected</span>: <span class="ident">String::from</span>(<span class="string">&quot;host hp gpe must be a non-negative integer&quot;</span>),
+                        });
+                    }
+                }
+            } <span class="kw">else</span> {
+                <span class="prelude-val">None</span>
+            };
+
+            <span class="ident">cfg</span>.<span class="ident">pcie_rp</span>.<span class="ident">push</span>(<span class="ident">HostPcieRootPortParameters</span> {
+                <span class="ident">host_path</span>: <span class="ident">pcie_path</span>,
+                <span class="ident">hp_gpe</span>,
+            });
         }
         <span class="string">&quot;pivot-root&quot;</span> =&gt; {
             <span class="ident">cfg</span>.<span class="ident">pivot_root</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">PathBuf::from</span>(<span class="ident">value</span>.<span class="ident">unwrap</span>()));
@@ -6927,7 +6987,7 @@ iommu=on|off - indicates whether to enable virtio IOMMU for this device&quot;</s
                               sync - open backing file with O_SYNC
                               align - whether to adjust addr and size to page boundaries implicitly&quot;</span>),
           <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
-          <span class="ident">Argument::value</span>(<span class="string">&quot;pcie-root-port&quot;</span>, <span class="string">&quot;PATH&quot;</span>, <span class="string">&quot;Path to sysfs of host pcie root port&quot;</span>),
+          <span class="ident">Argument::value</span>(<span class="string">&quot;pcie-root-port&quot;</span>, <span class="string">&quot;PATH[,hp_gpe=NUM]&quot;</span>, <span class="string">&quot;Path to sysfs of host pcie root port and host pcie root port hotplug gpe number&quot;</span>),
           <span class="ident">Argument::value</span>(<span class="string">&quot;pivot-root&quot;</span>, <span class="string">&quot;PATH&quot;</span>, <span class="string">&quot;Path to empty directory to use for sandbox pivot root.&quot;</span>),
           <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
           <span class="ident">Argument::flag</span>(<span class="string">&quot;s2idle&quot;</span>, <span class="string">&quot;Set Low Power S0 Idle Capable Flag for guest Fixed ACPI Description Table&quot;</span>),
