@@ -257,6 +257,9 @@
 <span id="256">256</span>
 <span id="257">257</span>
 <span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -333,9 +336,12 @@
 
                 <span class="ident">entry</span>.<span class="ident">ebx</span> <span class="op">=</span> (<span class="ident">vcpu_id</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">EBX_CPUID_SHIFT</span>) <span class="kw">as</span> <span class="ident">u32</span>
                     <span class="op">|</span> (<span class="ident">EBX_CLFLUSH_CACHELINE</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">EBX_CLFLUSH_SIZE_SHIFT</span>);
-                <span class="kw">if</span> <span class="ident">cpu_count</span> <span class="op">&gt;</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">no_smt</span> {
+                <span class="kw">if</span> <span class="ident">cpu_count</span> <span class="op">&gt;</span> <span class="number">1</span> {
                     <span class="comment">// This field is only valid if CPUID.1.EDX.HTT[bit 28]= 1.</span>
                     <span class="ident">entry</span>.<span class="ident">ebx</span> <span class="op">|</span><span class="op">=</span> (<span class="ident">cpu_count</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">EBX_CPU_COUNT_SHIFT</span>;
+                    <span class="comment">// A value of 0 for HTT indicates there is only a single logical</span>
+                    <span class="comment">// processor in the package and software should assume only a</span>
+                    <span class="comment">// single APIC ID is reserved.</span>
                     <span class="ident">entry</span>.<span class="ident">edx</span> <span class="op">|</span><span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">EDX_HTT_SHIFT</span>;
                 }
             }
