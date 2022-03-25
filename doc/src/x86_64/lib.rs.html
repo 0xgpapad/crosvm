@@ -2885,6 +2885,23 @@
         <span class="comment">// The AML data for the acpi devices</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">amls</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
+        <span class="kw">let</span> <span class="ident">bat_control</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">battery_type</span>) <span class="op">=</span> <span class="ident">battery</span>.<span class="number">0</span> {
+            <span class="kw">match</span> <span class="ident">battery_type</span> {
+                <span class="ident">BatteryType::Goldfish</span> =&gt; {
+                    <span class="kw">let</span> <span class="ident">control_tube</span> <span class="op">=</span> <span class="ident">arch::add_goldfish_battery</span>(
+                        <span class="kw-2">&amp;mut</span> <span class="ident">amls</span>, <span class="ident">battery</span>.<span class="number">1</span>, <span class="ident">mmio_bus</span>, <span class="ident">irq_chip</span>, <span class="ident">sci_irq</span>, <span class="ident">resources</span>,
+                    )
+                    .<span class="ident">map_err</span>(<span class="ident">Error::CreateBatDevices</span>)<span class="question-mark">?</span>;
+                    <span class="prelude-val">Some</span>(<span class="ident">BatControl</span> {
+                        <span class="ident">type_</span>: <span class="ident">BatteryType::Goldfish</span>,
+                        <span class="ident">control_tube</span>,
+                    })
+                }
+            }
+        } <span class="kw">else</span> {
+            <span class="prelude-val">None</span>
+        };
+
         <span class="kw">let</span> <span class="ident">pm_alloc</span> <span class="op">=</span> <span class="ident">resources</span>.<span class="ident">get_anon_alloc</span>();
         <span class="kw">let</span> <span class="ident">pm_iobase</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">resources</span>.<span class="ident">io_allocator</span>() {
             <span class="prelude-val">Some</span>(<span class="ident">io</span>) =&gt; <span class="ident">io</span>
@@ -3001,23 +3018,6 @@
             )
             .<span class="ident">unwrap</span>();
         <span class="ident">resume_notify_devices</span>.<span class="ident">push</span>(<span class="ident">pm</span>.<span class="ident">clone</span>());
-
-        <span class="kw">let</span> <span class="ident">bat_control</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">battery_type</span>) <span class="op">=</span> <span class="ident">battery</span>.<span class="number">0</span> {
-            <span class="kw">match</span> <span class="ident">battery_type</span> {
-                <span class="ident">BatteryType::Goldfish</span> =&gt; {
-                    <span class="kw">let</span> <span class="ident">control_tube</span> <span class="op">=</span> <span class="ident">arch::add_goldfish_battery</span>(
-                        <span class="kw-2">&amp;mut</span> <span class="ident">amls</span>, <span class="ident">battery</span>.<span class="number">1</span>, <span class="ident">mmio_bus</span>, <span class="ident">irq_chip</span>, <span class="ident">sci_irq</span>, <span class="ident">resources</span>,
-                    )
-                    .<span class="ident">map_err</span>(<span class="ident">Error::CreateBatDevices</span>)<span class="question-mark">?</span>;
-                    <span class="prelude-val">Some</span>(<span class="ident">BatControl</span> {
-                        <span class="ident">type_</span>: <span class="ident">BatteryType::Goldfish</span>,
-                        <span class="ident">control_tube</span>,
-                    })
-                }
-            }
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
-        };
 
         <span class="prelude-val">Ok</span>((
             <span class="ident">acpi::AcpiDevResource</span> {
