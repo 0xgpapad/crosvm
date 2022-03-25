@@ -460,6 +460,12 @@
 <span id="459">459</span>
 <span id="460">460</span>
 <span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -471,7 +477,7 @@
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 <span class="kw">use</span> <span class="ident">std::thread</span>::{<span class="self">self</span>};
 
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">Event</span>, <span class="ident">FileSync</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">hypervisor::ProtectionType</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::bus::BusAccessInfo</span>;
@@ -551,6 +557,8 @@
         <span class="ident">interrupt_evt</span>: <span class="ident">Event</span>,
         <span class="ident">input</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">io::Read</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>,
         <span class="ident">out</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">io::Write</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">_sync</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">FileSync</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">_out_timestamp</span>: <span class="ident">bool</span>,
         <span class="ident">_keep_rds</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RawDescriptor</span><span class="op">&gt;</span>,
     ) -&gt; <span class="ident">Serial</span> {
         <span class="ident">Serial</span> {
@@ -886,6 +894,8 @@
             <span class="ident">intr_evt</span>,
             <span class="prelude-val">None</span>,
             <span class="prelude-val">Some</span>(<span class="ident">Box::new</span>(<span class="ident">serial_out</span>.<span class="ident">clone</span>())),
+            <span class="prelude-val">None</span>,
+            <span class="bool-val">false</span>,
             <span class="ident">Vec::new</span>(),
         );
 
@@ -905,6 +915,8 @@
             <span class="ident">intr_evt</span>.<span class="ident">try_clone</span>().<span class="ident">unwrap</span>(),
             <span class="prelude-val">None</span>,
             <span class="prelude-val">Some</span>(<span class="ident">Box::new</span>(<span class="ident">serial_out</span>)),
+            <span class="prelude-val">None</span>,
+            <span class="bool-val">false</span>,
             <span class="ident">Vec::new</span>(),
         );
 

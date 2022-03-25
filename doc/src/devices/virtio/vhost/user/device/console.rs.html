@@ -349,6 +349,9 @@
 <span id="348">348</span>
 <span id="349">349</span>
 <span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -360,7 +363,7 @@
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">anyhow</span>, <span class="ident">bail</span>, <span class="ident">Context</span>};
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>, <span class="ident">Terminal</span>};
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">Event</span>, <span class="ident">FileSync</span>, <span class="ident">RawDescriptor</span>, <span class="ident">Terminal</span>};
 <span class="kw">use</span> <span class="ident">cros_async</span>::{<span class="ident">EventAsync</span>, <span class="ident">Executor</span>};
 <span class="kw">use</span> <span class="ident">data_model::DataInit</span>;
 
@@ -434,6 +437,8 @@
         <span class="ident">_evt</span>: <span class="ident">Event</span>,
         <span class="ident">input</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">io::Read</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>,
         <span class="ident">output</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">io::Write</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">_sync</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">FileSync</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">_out_timestamp</span>: <span class="ident">bool</span>,
         <span class="ident">_keep_rds</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RawDescriptor</span><span class="op">&gt;</span>,
     ) -&gt; <span class="ident">ConsoleDevice</span> {
         <span class="kw">let</span> <span class="ident">avail_features</span> <span class="op">=</span> <span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident"><span class="kw">crate</span>::virtio::VIRTIO_F_VERSION_1</span>
@@ -659,6 +664,7 @@
         <span class="ident">earlycon</span>: <span class="bool-val">false</span>,
         <span class="comment">// We do not support stdin-less mode</span>
         <span class="ident">stdin</span>: <span class="bool-val">true</span>,
+        <span class="ident">out_timestamp</span>: <span class="bool-val">false</span>,
     };
 
     <span class="kw">let</span> <span class="ident">console</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">params</span>.<span class="ident">create_serial_device</span>::<span class="op">&lt;</span><span class="ident">ConsoleDevice</span><span class="op">&gt;</span>(
