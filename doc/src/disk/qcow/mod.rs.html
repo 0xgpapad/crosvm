@@ -2509,10 +2509,6 @@
 <span id="2508">2508</span>
 <span id="2509">2509</span>
 <span id="2510">2510</span>
-<span id="2511">2511</span>
-<span id="2512">2512</span>
-<span id="2513">2513</span>
-<span id="2514">2514</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2018 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2531,7 +2527,7 @@
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 
 <span class="kw">use</span> <span class="ident">std::cmp</span>::{<span class="ident">max</span>, <span class="ident">min</span>};
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
+<span class="kw">use</span> <span class="ident">std::fs</span>::{<span class="ident">File</span>, <span class="ident">OpenOptions</span>};
 <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">Read</span>, <span class="ident">Seek</span>, <span class="ident">SeekFrom</span>, <span class="ident">Write</span>};
 <span class="kw">use</span> <span class="ident">std::mem::size_of</span>;
 <span class="kw">use</span> <span class="ident">std::path::Path</span>;
@@ -2947,9 +2943,7 @@
             <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">backing_file_path</span>.<span class="ident">clone</span>();
             <span class="kw">let</span> <span class="ident">backing_raw_file</span> <span class="op">=</span> <span class="ident">open_file</span>(
                 <span class="ident">Path::new</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>),
-                <span class="bool-val">true</span>, <span class="comment">/*read_only*/</span>
-                <span class="comment">// TODO(b/190435784): Add support for O_DIRECT.</span>
-                <span class="bool-val">false</span>, <span class="comment">/*O_DIRECT*/</span>
+                <span class="ident">OpenOptions::new</span>().<span class="ident">read</span>(<span class="bool-val">true</span>), <span class="comment">// TODO(b/190435784): Add support for O_DIRECT.</span>
             )
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::BackingFileIo</span>(<span class="ident">e</span>.<span class="ident">into</span>()))<span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="ident">backing_file</span> <span class="op">=</span>
@@ -3093,9 +3087,7 @@
         <span class="kw">let</span> <span class="ident">backing_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="ident">backing_file_name</span>);
         <span class="kw">let</span> <span class="ident">backing_raw_file</span> <span class="op">=</span> <span class="ident">open_file</span>(
             <span class="ident">backing_path</span>,
-            <span class="bool-val">true</span>, <span class="comment">/*read_only*/</span>
-            <span class="comment">// TODO(b/190435784): add support for O_DIRECT.</span>
-            <span class="bool-val">false</span>, <span class="comment">/*O_DIRECT*/</span>
+            <span class="ident">OpenOptions::new</span>().<span class="ident">read</span>(<span class="bool-val">true</span>), <span class="comment">// TODO(b/190435784): add support for O_DIRECT.</span>
         )
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::BackingFileIo</span>(<span class="ident">e</span>.<span class="ident">into</span>()))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">backing_file</span> <span class="op">=</span> <span class="ident">create_disk_file</span>(

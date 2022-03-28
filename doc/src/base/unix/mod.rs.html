@@ -680,11 +680,6 @@
 <span id="679">679</span>
 <span id="680">680</span>
 <span id="681">681</span>
-<span id="682">682</span>
-<span id="683">683</span>
-<span id="684">684</span>
-<span id="685">685</span>
-<span id="686">686</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -787,7 +782,6 @@
     <span class="ident">mem</span>,
     <span class="ident">ops::Deref</span>,
     <span class="ident">os::unix</span>::{
-        <span class="ident">fs::OpenOptionsExt</span>,
         <span class="ident">io</span>::{<span class="ident">AsRawFd</span>, <span class="ident">FromRawFd</span>, <span class="ident">RawFd</span>},
         <span class="ident">net</span>::{<span class="ident">UnixDatagram</span>, <span class="ident">UnixListener</span>},
     },
@@ -798,7 +792,7 @@
 
 <span class="kw">use</span> <span class="ident">libc</span>::{
     <span class="ident">c_int</span>, <span class="ident">c_long</span>, <span class="ident">fcntl</span>, <span class="ident">pipe2</span>, <span class="ident">syscall</span>, <span class="ident">sysconf</span>, <span class="ident">waitpid</span>, <span class="ident">SYS_getpid</span>, <span class="ident">SYS_gettid</span>, <span class="ident">EINVAL</span>,
-    <span class="ident">F_GETFL</span>, <span class="ident">F_SETFL</span>, <span class="ident">O_CLOEXEC</span>, <span class="ident">O_DIRECT</span>, <span class="ident">SIGKILL</span>, <span class="ident">WNOHANG</span>, <span class="ident">_SC_IOV_MAX</span>, <span class="ident">_SC_PAGESIZE</span>,
+    <span class="ident">F_GETFL</span>, <span class="ident">F_SETFL</span>, <span class="ident">O_CLOEXEC</span>, <span class="ident">SIGKILL</span>, <span class="ident">WNOHANG</span>, <span class="ident">_SC_IOV_MAX</span>, <span class="ident">_SC_PAGESIZE</span>,
 };
 
 <span class="doccomment">/// Re-export libc types that are part of the API.</span>
@@ -1293,17 +1287,13 @@
 <span class="doccomment">/// Note that this will not work properly if the same `/proc/self/fd/N` path is used twice in</span>
 <span class="doccomment">/// different places, as the metadata (including the offset) will be shared between both file</span>
 <span class="doccomment">/// descriptors.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">open_file</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>, <span class="ident">read_only</span>: <span class="ident">bool</span>, <span class="ident">o_direct</span>: <span class="ident">bool</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">open_file</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>, <span class="ident">options</span>: <span class="kw-2">&amp;</span><span class="ident">OpenOptions</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">path</span>.<span class="ident">as_ref</span>();
     <span class="comment">// Special case &#39;/proc/self/fd/*&#39; paths. The FD is already open, just use it.</span>
     <span class="prelude-val">Ok</span>(<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">fd</span>) <span class="op">=</span> <span class="ident">safe_descriptor_from_path</span>(<span class="ident">path</span>)<span class="question-mark">?</span> {
         <span class="ident">fd</span>.<span class="ident">into</span>()
     } <span class="kw">else</span> {
-        <span class="ident">OpenOptions::new</span>()
-            .<span class="ident">custom_flags</span>(<span class="kw">if</span> <span class="ident">o_direct</span> { <span class="ident">O_DIRECT</span> } <span class="kw">else</span> { <span class="number">0</span> })
-            .<span class="ident">write</span>(<span class="op">!</span><span class="ident">read_only</span>)
-            .<span class="ident">read</span>(<span class="bool-val">true</span>)
-            .<span class="ident">open</span>(<span class="ident">path</span>)<span class="question-mark">?</span>
+        <span class="ident">options</span>.<span class="ident">open</span>(<span class="ident">path</span>)<span class="question-mark">?</span>
     })
 }
 

@@ -2286,13 +2286,6 @@
 <span id="2285">2285</span>
 <span id="2286">2286</span>
 <span id="2287">2287</span>
-<span id="2288">2288</span>
-<span id="2289">2289</span>
-<span id="2290">2290</span>
-<span id="2291">2291</span>
-<span id="2292">2292</span>
-<span id="2293">2293</span>
-<span id="2294">2294</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -3096,12 +3089,8 @@
 <span class="kw">fn</span> <span class="ident">setup_vm_components</span>(<span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">VmComponents</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">initrd_image</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">initrd_path</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">cfg</span>.<span class="ident">initrd_path</span> {
         <span class="prelude-val">Some</span>(
-            <span class="ident">open_file</span>(
-                <span class="ident">initrd_path</span>,
-                <span class="bool-val">true</span>,  <span class="comment">/*read_only*/</span>
-                <span class="bool-val">false</span>, <span class="comment">/*O_DIRECT*/</span>
-            )
-            .<span class="ident">with_context</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;failed to open initrd {}&quot;</span>, <span class="ident">initrd_path</span>.<span class="ident">display</span>()))<span class="question-mark">?</span>,
+            <span class="ident">open_file</span>(<span class="ident">initrd_path</span>, <span class="ident">OpenOptions::new</span>().<span class="ident">read</span>(<span class="bool-val">true</span>))
+                .<span class="ident">with_context</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;failed to open initrd {}&quot;</span>, <span class="ident">initrd_path</span>.<span class="ident">display</span>()))<span class="question-mark">?</span>,
         )
     } <span class="kw">else</span> {
         <span class="prelude-val">None</span>
@@ -3109,15 +3098,12 @@
 
     <span class="kw">let</span> <span class="ident">vm_image</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">cfg</span>.<span class="ident">executable_path</span> {
         <span class="prelude-val">Some</span>(<span class="ident">Executable::Kernel</span>(<span class="kw-2">ref</span> <span class="ident">kernel_path</span>)) =&gt; <span class="ident">VmImage::Kernel</span>(
-            <span class="ident">open_file</span>(
-                <span class="ident">kernel_path</span>,
-                <span class="bool-val">true</span>,  <span class="comment">/*read_only*/</span>
-                <span class="bool-val">false</span>, <span class="comment">/*O_DIRECT*/</span>
-            )
-            .<span class="ident">with_context</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;failed to open kernel image {}&quot;</span>, <span class="ident">kernel_path</span>.<span class="ident">display</span>()))<span class="question-mark">?</span>,
+            <span class="ident">open_file</span>(<span class="ident">kernel_path</span>, <span class="ident">OpenOptions::new</span>().<span class="ident">read</span>(<span class="bool-val">true</span>)).<span class="ident">with_context</span>(<span class="op">|</span><span class="op">|</span> {
+                <span class="macro">format!</span>(<span class="string">&quot;failed to open kernel image {}&quot;</span>, <span class="ident">kernel_path</span>.<span class="ident">display</span>())
+            })<span class="question-mark">?</span>,
         ),
         <span class="prelude-val">Some</span>(<span class="ident">Executable::Bios</span>(<span class="kw-2">ref</span> <span class="ident">bios_path</span>)) =&gt; <span class="ident">VmImage::Bios</span>(
-            <span class="ident">open_file</span>(<span class="ident">bios_path</span>, <span class="bool-val">true</span> <span class="comment">/*read_only*/</span>, <span class="bool-val">false</span> <span class="comment">/*O_DIRECT*/</span>)
+            <span class="ident">open_file</span>(<span class="ident">bios_path</span>, <span class="ident">OpenOptions::new</span>().<span class="ident">read</span>(<span class="bool-val">true</span>))
                 .<span class="ident">with_context</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;failed to open bios {}&quot;</span>, <span class="ident">bios_path</span>.<span class="ident">display</span>()))<span class="question-mark">?</span>,
         ),
         <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Did not receive a bios or kernel, should be impossible.&quot;</span>),
