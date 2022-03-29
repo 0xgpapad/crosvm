@@ -92,9 +92,6 @@ FD.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.clone_descriptor.html" title="base::unix::clone_descriptor fn">clone_descriptor</a></div><div class="item-right docblock-short"><p>Clones <code>descriptor</code>, returning a new <code>RawDescriptor</code> that refers to the same open file
 description as <code>descriptor</code>. The cloned descriptor will have the <code>FD_CLOEXEC</code> flag set but will
 not share any other file descriptor flags with <code>descriptor</code>.</p>
-</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.clone_fd.html" title="base::unix::clone_fd fn">clone_fd</a></div><div class="item-right docblock-short"><p>Clones <code>fd</code>, returning a new file descriptor that refers to the same open file description as
-<code>fd</code>. The cloned fd will have the <code>FD_CLOEXEC</code> flag set but will not share any other file
-descriptor flags with <code>fd</code>.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.clone_process.html" title="base::unix::clone_process fn">clone_process</a></div><div class="item-right docblock-short"><p>Clones this process and calls a closure in the new process.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.deserialize_with_descriptors.html" title="base::unix::deserialize_with_descriptors fn">deserialize_with_descriptors</a></div><div class="item-right docblock-short"><p>Allows the use of any serde deserializer within a closure while providing access to the a set of
 descriptors for use in <code>deserialize_descriptor</code>.</p>
