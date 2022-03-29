@@ -265,9 +265,6 @@
 <span id="264">264</span>
 <span id="265">265</span>
 <span id="266">266</span>
-<span id="267">267</span>
-<span id="268">268</span>
-<span id="269">269</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -277,7 +274,7 @@
 
 <span class="kw">use</span> <span class="ident">thiserror::Error</span> <span class="kw">as</span> <span class="ident">ThisError</span>;
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">windows</span>, <span class="ident">path</span> <span class="op">=</span> <span class="string">&quot;win/tube.rs&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">windows</span>, <span class="ident">path</span> <span class="op">=</span> <span class="string">&quot;windows/tube.rs&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">path</span> <span class="op">=</span> <span class="string">&quot;unix/tube.rs&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tube</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::DeserializeOwned</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
@@ -377,10 +374,7 @@
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Received a message with a zero sized body. This should not happen.&quot;</span>)]</span>
     <span class="ident">RecvUnexpectedEmptyBody</span>,
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to send packet: {0}&quot;</span>)]</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
     <span class="ident">Send</span>(<span class="ident"><span class="kw">crate</span>::platform::Error</span>),
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
-    <span class="ident">Send</span>(<span class="ident"><span class="kw">crate</span>::windows::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to send packet: {0}&quot;</span>)]</span>
     <span class="ident">SendIo</span>(<span class="ident">io::Error</span>),
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to write packet to intermediate buffer: {0}&quot;</span>)]</span>
