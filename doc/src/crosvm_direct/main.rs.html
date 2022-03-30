@@ -4242,6 +4242,11 @@
 <span id="4241">4241</span>
 <span id="4242">4242</span>
 <span id="4243">4243</span>
+<span id="4244">4244</span>
+<span id="4245">4245</span>
+<span id="4246">4246</span>
+<span id="4247">4247</span>
+<span id="4248">4248</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -6706,7 +6711,12 @@
             <span class="string">&quot;&#39;balloon-control&#39; requires enabled balloon&quot;</span>.<span class="ident">to_owned</span>(),
         ));
     }
-    <span class="ident">set_default_serial_parameters</span>(<span class="kw-2">&amp;mut</span> <span class="ident">cfg</span>.<span class="ident">serial_parameters</span>);
+
+    <span class="ident">set_default_serial_parameters</span>(
+        <span class="kw-2">&amp;mut</span> <span class="ident">cfg</span>.<span class="ident">serial_parameters</span>,
+        <span class="op">!</span><span class="ident">cfg</span>.<span class="ident">vhost_user_console</span>.<span class="ident">is_empty</span>(),
+    );
+
     <span class="prelude-val">Ok</span>(())
 }
 
