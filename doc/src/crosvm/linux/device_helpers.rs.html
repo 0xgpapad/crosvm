@@ -2043,7 +2043,7 @@
     {
         <span class="ident">VhostVsockDeviceParameter::Fd</span>(<span class="ident">fd</span>) =&gt; {
             <span class="kw">let</span> <span class="ident">fd</span> <span class="op">=</span> <span class="ident">validate_raw_descriptor</span>(<span class="kw-2">*</span><span class="ident">fd</span>)
-                .<span class="ident">context</span>(<span class="string">&quot;failed to validate fd for virtual socker device&quot;</span>)<span class="question-mark">?</span>;
+                .<span class="ident">context</span>(<span class="string">&quot;failed to validate fd for virtual socket device&quot;</span>)<span class="question-mark">?</span>;
             <span class="comment">// Safe because the `fd` is actually owned by this process and</span>
             <span class="comment">// we have a unique handle to it.</span>
             <span class="kw">unsafe</span> { <span class="ident">File::from_raw_fd</span>(<span class="ident">fd</span>) }
