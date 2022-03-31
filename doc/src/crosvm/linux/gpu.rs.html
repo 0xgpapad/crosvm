@@ -343,7 +343,7 @@
 
 <span class="kw">use</span> <span class="ident">devices::virtio::vhost::user::vmm::Gpu</span> <span class="kw">as</span> <span class="ident">VhostUserGpu</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::VhostUserOption</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">JailConfig</span>, <span class="ident">VhostUserOption</span>};
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
@@ -370,8 +370,8 @@
     })
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gpu_jail</span>(<span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>, <span class="ident">policy</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-    <span class="kw">match</span> <span class="ident">simple_jail</span>(<span class="ident">cfg</span>, <span class="ident">policy</span>)<span class="question-mark">?</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gpu_jail</span>(<span class="ident">jail_config</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">JailConfig</span><span class="op">&gt;</span>, <span class="ident">policy</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Minijail</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">match</span> <span class="ident">simple_jail</span>(<span class="ident">jail_config</span>, <span class="ident">policy</span>)<span class="question-mark">?</span> {
         <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">jail</span>) =&gt; {
             <span class="comment">// Create a tmpfs in the device&#39;s root directory so that we can bind mount the</span>
             <span class="comment">// dri directory into it.  The size=67108864 is size=64*1024*1024 or size=64MB.</span>
@@ -523,12 +523,12 @@
         <span class="ident">render_server_fd</span>,
         <span class="ident">event_devices</span>,
         <span class="ident">map_request</span>,
-        <span class="ident">cfg</span>.<span class="ident">sandbox</span>,
+        <span class="ident">cfg</span>.<span class="ident">jail_config</span>.<span class="ident">is_some</span>(),
         <span class="ident">virtio::base_features</span>(<span class="ident">cfg</span>.<span class="ident">protected_vm</span>),
         <span class="ident">cfg</span>.<span class="ident">wayland_socket_paths</span>.<span class="ident">clone</span>(),
     );
 
-    <span class="kw">let</span> <span class="ident">jail</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">gpu_jail</span>(<span class="ident">cfg</span>, <span class="string">&quot;gpu_device&quot;</span>)<span class="question-mark">?</span> {
+    <span class="kw">let</span> <span class="ident">jail</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">gpu_jail</span>(<span class="kw-2">&amp;</span><span class="ident">cfg</span>.<span class="ident">jail_config</span>, <span class="string">&quot;gpu_device&quot;</span>)<span class="question-mark">?</span> {
         <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">jail</span>) =&gt; {
             <span class="comment">// Prepare GPU shader disk cache directory.</span>
             <span class="kw">let</span> (<span class="ident">cache_dir</span>, <span class="ident">cache_size</span>) <span class="op">=</span> <span class="ident">cfg</span>
@@ -536,7 +536,7 @@
                 .<span class="ident">as_ref</span>()
                 .<span class="ident">map</span>(<span class="op">|</span><span class="ident">params</span><span class="op">|</span> (<span class="ident">params</span>.<span class="ident">cache_path</span>.<span class="ident">as_ref</span>(), <span class="ident">params</span>.<span class="ident">cache_size</span>.<span class="ident">as_ref</span>()))
                 .<span class="ident">unwrap</span>();
-            <span class="kw">let</span> <span class="ident">cache_info</span> <span class="op">=</span> <span class="ident">get_gpu_cache_info</span>(<span class="ident">cache_dir</span>, <span class="ident">cache_size</span>, <span class="ident">cfg</span>.<span class="ident">sandbox</span>);
+            <span class="kw">let</span> <span class="ident">cache_info</span> <span class="op">=</span> <span class="ident">get_gpu_cache_info</span>(<span class="ident">cache_dir</span>, <span class="ident">cache_size</span>, <span class="ident">cfg</span>.<span class="ident">jail_config</span>.<span class="ident">is_some</span>());
 
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">dir</span>) <span class="op">=</span> <span class="ident">cache_info</span>.<span class="ident">directory</span> {
                 <span class="ident">jail</span>.<span class="ident">mount_bind</span>(<span class="ident">dir</span>, <span class="ident">dir</span>, <span class="bool-val">true</span>)<span class="question-mark">?</span>;
@@ -604,12 +604,12 @@
         <span class="ident">UnixSeqpacket::pair</span>().<span class="ident">context</span>(<span class="string">&quot;failed to create render server socket&quot;</span>)<span class="question-mark">?</span>;
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">env</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-    <span class="kw">let</span> <span class="ident">jail</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">gpu_jail</span>(<span class="ident">cfg</span>, <span class="string">&quot;gpu_render_server&quot;</span>)<span class="question-mark">?</span> {
+    <span class="kw">let</span> <span class="ident">jail</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">gpu_jail</span>(<span class="kw-2">&amp;</span><span class="ident">cfg</span>.<span class="ident">jail_config</span>, <span class="string">&quot;gpu_render_server&quot;</span>)<span class="question-mark">?</span> {
         <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">jail</span>) =&gt; {
             <span class="kw">let</span> <span class="ident">cache_info</span> <span class="op">=</span> <span class="ident">get_gpu_cache_info</span>(
                 <span class="ident">render_server_parameters</span>.<span class="ident">cache_path</span>.<span class="ident">as_ref</span>(),
                 <span class="ident">render_server_parameters</span>.<span class="ident">cache_size</span>.<span class="ident">as_ref</span>(),
-                <span class="ident">cfg</span>.<span class="ident">sandbox</span>,
+                <span class="bool-val">true</span>,
             );
 
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">dir</span>) <span class="op">=</span> <span class="ident">cache_info</span>.<span class="ident">directory</span> {

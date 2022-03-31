@@ -252,7 +252,7 @@ Configuration summary:
 
 Build targets in project: 7
 NOTICE: Future-deprecated features used:
- * 0.56.0: {'meson.build_root', 'dependency.get_pkgconfig_variable'}
+ * 0.56.0: {'dependency.get_pkgconfig_variable', 'meson.build_root'}
 
 virglrenderer 0.9.0
 
@@ -293,9 +293,9 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [30/44] Compiling C object src/libvirgl.a.p/vrend_debug.c.o
 [31/44] Compiling C object src/libvirgl.a.p/vrend_blitter.c.o
 [32/44] Compiling C object src/libvirgl.a.p/vrend_formats.c.o
-[33/44] Compiling C object src/libvirgl.a.p/vrend_object.c.o
-[34/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
-[35/44] Compiling C object src/libvirgl.a.p/vrend_decode.c.o
+[33/44] Compiling C object src/libvirgl.a.p/vrend_decode.c.o
+[34/44] Compiling C object src/libvirgl.a.p/vrend_object.c.o
+[35/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
 [36/44] Compiling C object src/libvirgl.a.p/vrend_tweaks.c.o
 [37/44] Compiling C object src/libvirgl.a.p/vrend_winsys.c.o
 [38/44] Compiling C object src/libvirgl.a.p/vrend_winsys_gbm.c.o

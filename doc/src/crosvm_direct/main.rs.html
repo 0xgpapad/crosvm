@@ -4248,6 +4248,17 @@
 <span id="4247">4247</span>
 <span id="4248">4248</span>
 <span id="4249">4249</span>
+<span id="4250">4250</span>
+<span id="4251">4251</span>
+<span id="4252">4252</span>
+<span id="4253">4253</span>
+<span id="4254">4254</span>
+<span id="4255">4255</span>
+<span id="4256">4256</span>
+<span id="4257">4257</span>
+<span id="4258">4258</span>
+<span id="4259">4259</span>
+<span id="4260">4260</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -5797,7 +5808,7 @@
             <span class="ident">cfg</span>.<span class="ident">balloon_control</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">path</span>);
         }
         <span class="string">&quot;disable-sandbox&quot;</span> =&gt; {
-            <span class="ident">cfg</span>.<span class="ident">sandbox</span> <span class="op">=</span> <span class="bool-val">false</span>;
+            <span class="ident">cfg</span>.<span class="ident">jail_config</span> <span class="op">=</span> <span class="prelude-val">None</span>;
         }
         <span class="string">&quot;cid&quot;</span> =&gt; {
             <span class="kw">if</span> <span class="ident">cfg</span>.<span class="ident">cid</span>.<span class="ident">is_some</span>() {
@@ -5960,8 +5971,10 @@
             <span class="ident">cfg</span>.<span class="ident">shared_dirs</span>.<span class="ident">push</span>(<span class="ident">shared_dir</span>);
         }
         <span class="string">&quot;seccomp-policy-dir&quot;</span> =&gt; {
-            <span class="comment">// `value` is Some because we are in this match so it&#39;s safe to unwrap.</span>
-            <span class="ident">cfg</span>.<span class="ident">seccomp_policy_dir</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="ident">value</span>.<span class="ident">unwrap</span>());
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">jail_config</span>) <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">cfg</span>.<span class="ident">jail_config</span> {
+                <span class="comment">// `value` is Some because we are in this match so it&#39;s safe to unwrap.</span>
+                <span class="ident">jail_config</span>.<span class="ident">seccomp_policy_dir</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="ident">value</span>.<span class="ident">unwrap</span>());
+            }
         }
         <span class="string">&quot;seccomp-log-failures&quot;</span> =&gt; {
             <span class="comment">// A side-effect of this flag is to force the use of .policy files</span>
@@ -5981,7 +5994,9 @@
             <span class="comment">// or 2) do not use this command-line parameter and instead</span>
             <span class="comment">// temporarily change the build by passing &quot;log&quot; rather than</span>
             <span class="comment">// &quot;trap&quot; as the &quot;--default-action&quot; to compile_seccomp_policy.py.</span>
-            <span class="ident">cfg</span>.<span class="ident">seccomp_log_failures</span> <span class="op">=</span> <span class="bool-val">true</span>;
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">jail_config</span>) <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">cfg</span>.<span class="ident">jail_config</span> {
+                <span class="ident">jail_config</span>.<span class="ident">seccomp_log_failures</span> <span class="op">=</span> <span class="bool-val">true</span>;
+            }
         }
         <span class="string">&quot;plugin&quot;</span> =&gt; {
             <span class="kw">if</span> <span class="ident">cfg</span>.<span class="ident">executable_path</span>.<span class="ident">is_some</span>() {
@@ -6570,7 +6585,9 @@
             });
         }
         <span class="string">&quot;pivot-root&quot;</span> =&gt; {
-            <span class="ident">cfg</span>.<span class="ident">pivot_root</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">PathBuf::from</span>(<span class="ident">value</span>.<span class="ident">unwrap</span>()));
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">jail_config</span>) <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">cfg</span>.<span class="ident">jail_config</span> {
+                <span class="ident">jail_config</span>.<span class="ident">pivot_root</span> <span class="op">=</span> <span class="ident">PathBuf::from</span>(<span class="ident">value</span>.<span class="ident">unwrap</span>());
+            }
         }
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>))]</span>
         <span class="string">&quot;s2idle&quot;</span> =&gt; {
@@ -6718,6 +6735,11 @@
         <span class="kw-2">&amp;mut</span> <span class="ident">cfg</span>.<span class="ident">serial_parameters</span>,
         <span class="op">!</span><span class="ident">cfg</span>.<span class="ident">vhost_user_console</span>.<span class="ident">is_empty</span>(),
     );
+
+    <span class="comment">// Remove jail configuration if it has not been enabled.</span>
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">cfg</span>.<span class="ident">jail_enabled</span> {
+        <span class="ident">cfg</span>.<span class="ident">jail_config</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+    }
 
     <span class="prelude-val">Ok</span>(())
 }

@@ -576,6 +576,23 @@
 <span id="575">575</span>
 <span id="576">576</span>
 <span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -913,6 +930,23 @@
     <span class="kw">pub</span> <span class="ident">hp_gpe</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
 }
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">JailConfig</span> {
+    <span class="kw">pub</span> <span class="ident">pivot_root</span>: <span class="ident">PathBuf</span>,
+    <span class="kw">pub</span> <span class="ident">seccomp_policy_dir</span>: <span class="ident">PathBuf</span>,
+    <span class="kw">pub</span> <span class="ident">seccomp_log_failures</span>: <span class="ident">bool</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">JailConfig</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
+        <span class="ident">JailConfig</span> {
+            <span class="ident">pivot_root</span>: <span class="ident">PathBuf::from</span>(<span class="macro">option_env!</span>(<span class="string">&quot;DEFAULT_PIVOT_ROOT&quot;</span>).<span class="ident">unwrap_or</span>(<span class="string">&quot;/var/empty&quot;</span>)),
+            <span class="ident">seccomp_policy_dir</span>: <span class="ident">PathBuf::from</span>(<span class="ident">SECCOMP_POLICY_DIR</span>),
+            <span class="ident">seccomp_log_failures</span>: <span class="bool-val">false</span>,
+        }
+    }
+}
+
 <span class="doccomment">/// Aggregate of all configurable options for a running VM.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Config</span> {
     <span class="kw">pub</span> <span class="ident">kvm_device_path</span>: <span class="ident">PathBuf</span>,
@@ -936,6 +970,8 @@
     <span class="kw">pub</span> <span class="ident">executable_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Executable</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">android_fstab</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">initrd_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">jail_config</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">JailConfig</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">jail_enabled</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">socket_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">balloon_control</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
@@ -956,9 +992,6 @@
     <span class="kw">pub</span> <span class="ident">wayland_socket_paths</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">x_display</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">shared_dirs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SharedDir</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">sandbox</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">seccomp_policy_dir</span>: <span class="ident">PathBuf</span>,
-    <span class="kw">pub</span> <span class="ident">seccomp_log_failures</span>: <span class="ident">bool</span>,
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">gpu_parameters</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">GpuParameters</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
@@ -1026,7 +1059,6 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">pcie_rp</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">HostPcieRootPortParameters</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">rng</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">pivot_root</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">force_s2idle</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">strict_balloon</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">mmio_address_ranges</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RangeInclusive</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span><span class="op">&gt;</span>,
@@ -1056,6 +1088,12 @@
             <span class="ident">executable_path</span>: <span class="prelude-val">None</span>,
             <span class="ident">android_fstab</span>: <span class="prelude-val">None</span>,
             <span class="ident">initrd_path</span>: <span class="prelude-val">None</span>,
+            <span class="comment">// We initialize the jail configuration with a default value so jail-related options can</span>
+            <span class="comment">// apply irrespective of whether jail is enabled or not. `jail_config` will then be</span>
+            <span class="comment">// assigned `None` if it turns out that `jail_enabled` is `false` after we parse all the</span>
+            <span class="comment">// arguments.</span>
+            <span class="ident">jail_config</span>: <span class="prelude-val">Some</span>(<span class="ident">Default::default</span>()),
+            <span class="ident">jail_enabled</span>: <span class="op">!</span><span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;default-no-sandbox&quot;</span>),
             <span class="ident">params</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">socket_path</span>: <span class="prelude-val">None</span>,
             <span class="ident">balloon_control</span>: <span class="prelude-val">None</span>,
@@ -1083,9 +1121,6 @@
             <span class="ident">display_window_keyboard</span>: <span class="bool-val">false</span>,
             <span class="ident">display_window_mouse</span>: <span class="bool-val">false</span>,
             <span class="ident">shared_dirs</span>: <span class="ident">Vec::new</span>(),
-            <span class="ident">sandbox</span>: <span class="op">!</span><span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;default-no-sandbox&quot;</span>),
-            <span class="ident">seccomp_policy_dir</span>: <span class="ident">PathBuf::from</span>(<span class="ident">SECCOMP_POLICY_DIR</span>),
-            <span class="ident">seccomp_log_failures</span>: <span class="bool-val">false</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio&quot;</span>)]</span>
             <span class="ident">ac97_parameters</span>: <span class="ident">Vec::new</span>(),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio&quot;</span>)]</span>
@@ -1146,7 +1181,6 @@
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;direct&quot;</span>)]</span>
             <span class="ident">pcie_rp</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">rng</span>: <span class="bool-val">true</span>,
-            <span class="ident">pivot_root</span>: <span class="prelude-val">None</span>,
             <span class="ident">force_s2idle</span>: <span class="bool-val">false</span>,
             <span class="ident">strict_balloon</span>: <span class="bool-val">false</span>,
             <span class="ident">mmio_address_ranges</span>: <span class="ident">Vec::new</span>(),
