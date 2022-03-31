@@ -679,7 +679,6 @@
 <span id="678">678</span>
 <span id="679">679</span>
 <span id="680">680</span>
-<span id="681">681</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -709,7 +708,6 @@
 <span class="kw">mod</span> <span class="ident">capabilities</span>;
 <span class="kw">mod</span> <span class="ident">clock</span>;
 <span class="kw">mod</span> <span class="ident">descriptor</span>;
-<span class="kw">mod</span> <span class="ident">descriptor_reflection</span>;
 <span class="kw">mod</span> <span class="ident">eventfd</span>;
 <span class="kw">mod</span> <span class="ident">file_flags</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_traits</span>;
@@ -734,6 +732,10 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">vsock</span>;
 <span class="kw">mod</span> <span class="ident">write_zeroes</span>;
 
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor_reflection</span>::{
+    <span class="ident">deserialize_with_descriptors</span>, <span class="ident">with_as_descriptor</span>, <span class="ident">with_raw_descriptor</span>, <span class="ident">FileSerdeWrapper</span>,
+    <span class="ident">SerializeDescriptors</span>,
+};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">common</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>, <span class="kw-2">*</span>},
     <span class="ident">generate_scoped_event</span>,
@@ -743,10 +745,6 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">capabilities::drop_capabilities</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">clock</span>::{<span class="ident">Clock</span>, <span class="ident">FakeClock</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">descriptor</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">descriptor_reflection</span>::{
-    <span class="ident">deserialize_with_descriptors</span>, <span class="ident">with_as_descriptor</span>, <span class="ident">with_raw_descriptor</span>, <span class="ident">FileSerdeWrapper</span>,
-    <span class="ident">SerializeDescriptors</span>,
-};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">eventfd</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_flags</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">fork</span>::<span class="kw-2">*</span>;
