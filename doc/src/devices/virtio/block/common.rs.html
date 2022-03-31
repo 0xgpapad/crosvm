@@ -164,6 +164,7 @@
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio::block::sys</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">DataInit</span>, <span class="ident">Le16</span>, <span class="ident">Le32</span>, <span class="ident">Le64</span>};
 
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SECTOR_SHIFT</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">9</span>;
@@ -195,7 +196,6 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VIRTIO_BLK_S_IOERR</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">1</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VIRTIO_BLK_S_UNSUPP</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">2</span>;
 
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VIRTIO_BLK_F_SEG_MAX</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">2</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VIRTIO_BLK_F_RO</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">5</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VIRTIO_BLK_F_BLK_SIZE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">6</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VIRTIO_BLK_F_FLUSH</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">9</span>;
@@ -314,7 +314,7 @@
         }
         <span class="ident">avail_features</span> <span class="op">|</span><span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">VIRTIO_BLK_F_WRITE_ZEROES</span>;
     }
-    <span class="ident">avail_features</span> <span class="op">|</span><span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">VIRTIO_BLK_F_SEG_MAX</span>;
+    <span class="ident">avail_features</span> <span class="op">|</span><span class="op">=</span> <span class="ident">system_block_avail_features</span>();
     <span class="ident">avail_features</span> <span class="op">|</span><span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">VIRTIO_BLK_F_BLK_SIZE</span>;
     <span class="kw">if</span> <span class="ident">multi_queue</span> {
         <span class="ident">avail_features</span> <span class="op">|</span><span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">VIRTIO_BLK_F_MQ</span>;

@@ -1143,20 +1143,11 @@
 <span id="1142">1142</span>
 <span id="1143">1143</span>
 <span id="1144">1144</span>
-<span id="1145">1145</span>
-<span id="1146">1146</span>
-<span id="1147">1147</span>
-<span id="1148">1148</span>
-<span id="1149">1149</span>
-<span id="1150">1150</span>
-<span id="1151">1151</span>
-<span id="1152">1152</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
-<span class="kw">use</span> <span class="ident">std::cmp</span>::{<span class="ident">max</span>, <span class="ident">min</span>};
 <span class="kw">use</span> <span class="ident">std::io</span>::{<span class="self">self</span>, <span class="ident">Write</span>};
 <span class="kw">use</span> <span class="ident">std::mem::size_of</span>;
 <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
@@ -1173,9 +1164,7 @@
 
 <span class="kw">use</span> <span class="ident">base::Error</span> <span class="kw">as</span> <span class="ident">SysError</span>;
 <span class="kw">use</span> <span class="ident">base::Result</span> <span class="kw">as</span> <span class="ident">SysResult</span>;
-<span class="kw">use</span> <span class="ident">base</span>::{
-    <span class="ident">error</span>, <span class="ident">info</span>, <span class="ident">iov_max</span>, <span class="ident">warn</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>, <span class="ident">Timer</span>, <span class="ident">Tube</span>, <span class="ident">TubeError</span>,
-};
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">info</span>, <span class="ident">warn</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>, <span class="ident">Timer</span>, <span class="ident">Tube</span>, <span class="ident">TubeError</span>};
 <span class="kw">use</span> <span class="ident">cros_async</span>::{
     <span class="ident">select5</span>, <span class="ident">sync::Mutex</span> <span class="kw">as</span> <span class="ident">AsyncMutex</span>, <span class="ident">AsyncError</span>, <span class="ident">AsyncTube</span>, <span class="ident">EventAsync</span>, <span class="ident">Executor</span>, <span class="ident">SelectResult</span>,
     <span class="ident">TimerAsync</span>,
@@ -1187,8 +1176,8 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::common</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::virtio</span>::{
-    <span class="ident">async_utils</span>, <span class="ident">copy_config</span>, <span class="ident">DescriptorChain</span>, <span class="ident">DescriptorError</span>, <span class="ident">Interrupt</span>, <span class="ident">Queue</span>, <span class="ident">Reader</span>,
-    <span class="ident">SignalableInterrupt</span>, <span class="ident">VirtioDevice</span>, <span class="ident">Writer</span>, <span class="ident">TYPE_BLOCK</span>,
+    <span class="ident">async_utils</span>, <span class="ident">block::sys</span>::<span class="kw-2">*</span>, <span class="ident">copy_config</span>, <span class="ident">DescriptorChain</span>, <span class="ident">DescriptorError</span>, <span class="ident">Interrupt</span>, <span class="ident">Queue</span>,
+    <span class="ident">Reader</span>, <span class="ident">SignalableInterrupt</span>, <span class="ident">VirtioDevice</span>, <span class="ident">Writer</span>, <span class="ident">TYPE_BLOCK</span>,
 };
 
 <span class="kw">const</span> <span class="ident">QUEUE_SIZE</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">256</span>;
@@ -1656,12 +1645,7 @@
 
         <span class="kw">let</span> <span class="ident">avail_features</span> <span class="op">=</span> <span class="ident">build_avail_features</span>(<span class="ident">base_features</span>, <span class="ident">read_only</span>, <span class="ident">sparse</span>, <span class="bool-val">true</span>);
 
-        <span class="kw">let</span> <span class="ident">seg_max</span> <span class="op">=</span> <span class="ident">min</span>(<span class="ident">max</span>(<span class="ident">iov_max</span>(), <span class="number">1</span>), <span class="ident">u32::max_value</span>() <span class="kw">as</span> <span class="ident">usize</span>) <span class="kw">as</span> <span class="ident">u32</span>;
-
-        <span class="comment">// Since we do not currently support indirect descriptors, the maximum</span>
-        <span class="comment">// number of segments must be smaller than the queue size.</span>
-        <span class="comment">// In addition, the request header and status each consume a descriptor.</span>
-        <span class="kw">let</span> <span class="ident">seg_max</span> <span class="op">=</span> <span class="ident">min</span>(<span class="ident">seg_max</span>, <span class="ident">u32::from</span>(<span class="ident">QUEUE_SIZE</span>) <span class="op">-</span> <span class="number">2</span>);
+        <span class="kw">let</span> <span class="ident">seg_max</span> <span class="op">=</span> <span class="ident">get_seg_max</span>(<span class="ident">QUEUE_SIZE</span>);
 
         <span class="prelude-val">Ok</span>(<span class="ident">BlockAsync</span> {
             <span class="ident">kill_evt</span>: <span class="prelude-val">None</span>,
