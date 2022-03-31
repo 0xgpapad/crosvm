@@ -252,7 +252,7 @@ Configuration summary:
 
 Build targets in project: 7
 NOTICE: Future-deprecated features used:
- * 0.56.0: {'dependency.get_pkgconfig_variable', 'meson.build_root'}
+ * 0.56.0: {'meson.build_root', 'dependency.get_pkgconfig_variable'}
 
 virglrenderer 0.9.0
 
@@ -267,23 +267,23 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [4/44] Compiling C object src/mesa/libmesa.a.p/util_u_cpu_detect.c.o
 [5/44] Compiling C object src/mesa/libmesa.a.p/util_hash_table.c.o
 [6/44] Compiling C object src/mesa/libmesa.a.p/util_u_debug.c.o
-[7/44] Compiling C object src/mesa/libmesa.a.p/util_u_math.c.o
-[8/44] Compiling C object src/mesa/libmesa.a.p/util_ralloc.c.o
+[7/44] Compiling C object src/mesa/libmesa.a.p/util_ralloc.c.o
+[8/44] Compiling C object src/mesa/libmesa.a.p/util_u_math.c.o
 [9/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_cso_cache_cso_cache.c.o
 [10/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_debug_describe.c.o
-[11/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_texture.c.o
-[12/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_format.c.o
-[13/44] Generating src/gallium/u_format_table.c with a custom command (wrapped by meson to capture output)
+[11/44] Generating src/gallium/u_format_table.c with a custom command (wrapped by meson to capture output)
+[12/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_texture.c.o
+[13/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_format.c.o
 [14/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_util_u_hash_table.c.o
 [15/44] Compiling C object src/gallium/libgallium.a.p/meson-generated_.._u_format_table.c.o
 [16/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_cso_cache_cso_hash.c.o
 [17/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_dump.c.o
 [18/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_info.c.o
 [19/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_scan.c.o
-[20/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_sanity.c.o
-[21/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_strings.c.o
-[22/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_build.c.o
-[23/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_parse.c.o
+[20/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_strings.c.o
+[21/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_sanity.c.o
+[22/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_parse.c.o
+[23/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_build.c.o
 [24/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_iterate.c.o
 [25/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_util.c.o
 [26/44] Compiling C object src/libvirgl.a.p/iov.c.o
@@ -294,16 +294,16 @@ Found ninja-1.10.0 at /usr/bin/ninja
 [31/44] Compiling C object src/libvirgl.a.p/vrend_blitter.c.o
 [32/44] Compiling C object src/libvirgl.a.p/vrend_formats.c.o
 [33/44] Compiling C object src/libvirgl.a.p/vrend_object.c.o
-[34/44] Compiling C object src/libvirgl.a.p/vrend_decode.c.o
-[35/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
+[34/44] Compiling C object src/gallium/libgallium.a.p/auxiliary_tgsi_tgsi_text.c.o
+[35/44] Compiling C object src/libvirgl.a.p/vrend_decode.c.o
 [36/44] Compiling C object src/libvirgl.a.p/vrend_tweaks.c.o
 [37/44] Compiling C object src/libvirgl.a.p/vrend_winsys.c.o
 [38/44] Compiling C object src/libvirgl.a.p/vrend_winsys_gbm.c.o
 [39/44] Compiling C object src/libvirgl.a.p/vrend_winsys_egl.c.o
 [40/44] Compiling C object src/libvirgl.a.p/vrend_winsys_glx.c.o
 [41/44] Compiling C object src/libvirglrenderer.a.p/virglrenderer.c.o
-[42/44] Compiling C object src/libvirgl.a.p/vrend_renderer.c.o
-[43/44] Compiling C object src/libvirgl.a.p/vrend_shader.c.o
+[42/44] Compiling C object src/libvirgl.a.p/vrend_shader.c.o
+[43/44] Compiling C object src/libvirgl.a.p/vrend_renderer.c.o
 [44/44] Linking static target src/libvirglrenderer.a
 cargo:rustc-link-search=/home/runner/work/crosvm/crosvm/./docs/target/html/debug/build/rutabaga_gfx-05307b4d4cc9fa1e/out/virglrenderer/src
 cargo:rustc-link-search=/home/runner/work/crosvm/crosvm/./docs/target/html/debug/build/rutabaga_gfx-05307b4d4cc9fa1e/out/minigbm

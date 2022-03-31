@@ -1292,6 +1292,16 @@
 <span id="1291">1291</span>
 <span id="1292">1292</span>
 <span id="1293">1293</span>
+<span id="1294">1294</span>
+<span id="1295">1295</span>
+<span id="1296">1296</span>
+<span id="1297">1297</span>
+<span id="1298">1298</span>
+<span id="1299">1299</span>
+<span id="1300">1300</span>
+<span id="1301">1301</span>
+<span id="1302">1302</span>
+<span id="1303">1303</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -2009,18 +2019,25 @@
     }
 
     <span class="doccomment">/// Enable vfio device&#39;s irq and associate Irqfd Event with device.</span>
-    <span class="doccomment">/// When MSIx is enabled, multi vectors will be supported, so descriptors is vector and the vector</span>
-    <span class="doccomment">/// length is the num of MSIx vectors.</span>
+    <span class="doccomment">/// When MSIx is enabled, multi vectors will be supported, and vectors starting from subindex to subindex +</span>
+    <span class="doccomment">/// descriptors length will be assigned with irqfd in the descriptors array.</span>
     <span class="doccomment">/// when index = VFIO_PCI_REQ_IRQ_INDEX, kernel vfio will trigger this event when physical device</span>
     <span class="doccomment">/// is removed.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">irq_enable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">descriptors</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">Event</span>], <span class="ident">index</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="doccomment">/// If descriptor is None, -1 is assigned to the irq. A value of -1 is used to either de-assign</span>
+    <span class="doccomment">/// interrupts if already assigned or skip un-assigned interrupts.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">irq_enable</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">descriptors</span>: <span class="kw-2">&amp;</span>[<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Event</span><span class="op">&gt;</span>],
+        <span class="ident">index</span>: <span class="ident">u32</span>,
+        <span class="ident">subindex</span>: <span class="ident">u32</span>,
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">descriptors</span>.<span class="ident">len</span>();
         <span class="kw">let</span> <span class="ident">u32_size</span> <span class="op">=</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">irq_set</span> <span class="op">=</span> <span class="ident">vec_with_array_field</span>::<span class="op">&lt;</span><span class="ident">vfio_irq_set</span>, <span class="ident">u32</span><span class="op">&gt;</span>(<span class="ident">count</span>);
         <span class="ident">irq_set</span>[<span class="number">0</span>].<span class="ident">argsz</span> <span class="op">=</span> (<span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">vfio_irq_set</span><span class="op">&gt;</span>() <span class="op">+</span> <span class="ident">count</span> <span class="op">*</span> <span class="ident">u32_size</span>) <span class="kw">as</span> <span class="ident">u32</span>;
         <span class="ident">irq_set</span>[<span class="number">0</span>].<span class="ident">flags</span> <span class="op">=</span> <span class="ident">VFIO_IRQ_SET_DATA_EVENTFD</span> <span class="op">|</span> <span class="ident">VFIO_IRQ_SET_ACTION_TRIGGER</span>;
         <span class="ident">irq_set</span>[<span class="number">0</span>].<span class="ident">index</span> <span class="op">=</span> <span class="ident">index</span>;
-        <span class="ident">irq_set</span>[<span class="number">0</span>].<span class="ident">start</span> <span class="op">=</span> <span class="number">0</span>;
+        <span class="ident">irq_set</span>[<span class="number">0</span>].<span class="ident">start</span> <span class="op">=</span> <span class="ident">subindex</span>;
         <span class="ident">irq_set</span>[<span class="number">0</span>].<span class="ident">count</span> <span class="op">=</span> <span class="ident">count</span> <span class="kw">as</span> <span class="ident">u32</span>;
 
         <span class="comment">// irq_set.data could be none, bool or descriptor according to flags, so irq_set.data</span>
@@ -2030,7 +2047,10 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">irq_set</span>[<span class="number">0</span>].<span class="ident">data</span>.<span class="ident">as_mut_slice</span>(<span class="ident">count</span> <span class="op">*</span> <span class="ident">u32_size</span>) };
         <span class="kw">for</span> <span class="ident">descriptor</span> <span class="kw">in</span> <span class="ident">descriptors</span>.<span class="ident">iter</span>().<span class="ident">take</span>(<span class="ident">count</span>) {
             <span class="kw">let</span> (<span class="ident">left</span>, <span class="ident">right</span>) <span class="op">=</span> <span class="ident">data</span>.<span class="ident">split_at_mut</span>(<span class="ident">u32_size</span>);
-            <span class="ident">left</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">descriptor</span>.<span class="ident">as_raw_descriptor</span>().<span class="ident">to_ne_bytes</span>()[..]);
+            <span class="kw">match</span> <span class="ident">descriptor</span> {
+                <span class="prelude-val">Some</span>(<span class="ident">fd</span>) =&gt; <span class="ident">left</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">fd</span>.<span class="ident">as_raw_descriptor</span>().<span class="ident">to_ne_bytes</span>()[..]),
+                <span class="prelude-val">None</span> =&gt; <span class="ident">left</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span>(<span class="op">-</span><span class="number">1i32</span>).<span class="ident">to_ne_bytes</span>()[..]),
+            }
             <span class="ident">data</span> <span class="op">=</span> <span class="ident">right</span>;
         }
 

@@ -915,12 +915,12 @@
         }
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">msix_vec</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="ident">msix_num</span>);
-        <span class="ident">msix_vec</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">vvu_irqs</span>[<span class="number">0</span>]);
-        <span class="ident">msix_vec</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">vvu_irqs</span>[<span class="number">1</span>]);
-        <span class="ident">msix_vec</span>.<span class="ident">extend</span>(<span class="ident">notification_evts</span>.<span class="ident">iter</span>().<span class="ident">take</span>(<span class="ident">device_vq_num</span>));
+        <span class="ident">msix_vec</span>.<span class="ident">push</span>(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">vvu_irqs</span>[<span class="number">0</span>]));
+        <span class="ident">msix_vec</span>.<span class="ident">push</span>(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">vvu_irqs</span>[<span class="number">1</span>]));
+        <span class="ident">msix_vec</span>.<span class="ident">extend</span>(<span class="ident">notification_evts</span>.<span class="ident">iter</span>().<span class="ident">take</span>(<span class="ident">device_vq_num</span>).<span class="ident">map</span>(<span class="prelude-val">Some</span>));
 
         <span class="self">self</span>.<span class="ident">vfio_dev</span>
-            .<span class="ident">irq_enable</span>(<span class="kw-2">&amp;</span><span class="ident">msix_vec</span>, <span class="ident">VFIO_PCI_MSIX_IRQ_INDEX</span>)
+            .<span class="ident">irq_enable</span>(<span class="kw-2">&amp;</span><span class="ident">msix_vec</span>, <span class="ident">VFIO_PCI_MSIX_IRQ_INDEX</span>, <span class="number">0</span>)
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">anyhow!</span>(<span class="string">&quot;failed to enable irq: {}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
 
         <span class="comment">// Registers VVU virtqueue&#39;s irqs by writing `queue_msix_vector`.</span>
