@@ -2578,7 +2578,7 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tpm&quot;</span>)]</span>
     {
         <span class="kw">if</span> <span class="ident">cfg</span>.<span class="ident">software_tpm</span> {
-            <span class="ident">devs</span>.<span class="ident">push</span>(<span class="ident">create_tpm_device</span>(<span class="ident">cfg</span>)<span class="question-mark">?</span>);
+            <span class="ident">devs</span>.<span class="ident">push</span>(<span class="ident">create_software_tpm_device</span>(<span class="ident">cfg</span>)<span class="question-mark">?</span>);
         }
     }
 

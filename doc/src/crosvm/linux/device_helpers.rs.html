@@ -1238,6 +1238,9 @@
 <span id="1237">1237</span>
 <span id="1238">1238</span>
 <span id="1239">1239</span>
+<span id="1240">1240</span>
+<span id="1241">1241</span>
+<span id="1242">1242</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1280,6 +1283,8 @@
 <span class="kw">use</span> <span class="ident">devices::virtio::VideoBackendType</span>;
 <span class="kw">use</span> <span class="ident">devices::virtio</span>::{<span class="self">self</span>, <span class="ident">BalloonMode</span>, <span class="ident">Console</span>, <span class="ident">VirtioDevice</span>};
 <span class="kw">use</span> <span class="ident">devices::IommuDevType</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tpm&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">devices::SoftwareTpm</span>;
 <span class="kw">use</span> <span class="ident">devices</span>::{
     <span class="self">self</span>, <span class="ident">BusDeviceObj</span>, <span class="ident">PciAddress</span>, <span class="ident">PciDevice</span>, <span class="ident">VfioDevice</span>, <span class="ident">VfioPciDevice</span>, <span class="ident">VfioPlatformDevice</span>,
 };
@@ -1536,7 +1541,7 @@
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tpm&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_tpm_device</span>(<span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>) -&gt; <span class="ident">DeviceResult</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_software_tpm_device</span>(<span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>) -&gt; <span class="ident">DeviceResult</span> {
     <span class="kw">use</span> <span class="ident">std::ffi::CString</span>;
     <span class="kw">use</span> <span class="ident">std::fs</span>;
     <span class="kw">use</span> <span class="ident">std::process</span>;
@@ -1576,7 +1581,8 @@
         }
     }
 
-    <span class="kw">let</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">virtio::Tpm::new</span>(<span class="ident">tpm_storage</span>);
+    <span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">SoftwareTpm::new</span>(<span class="ident">tpm_storage</span>).<span class="ident">context</span>(<span class="string">&quot;failed to create SoftwareTpm&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">virtio::Tpm::new</span>(<span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">backend</span>)));
 
     <span class="prelude-val">Ok</span>(<span class="ident">VirtioDeviceStub</span> {
         <span class="ident">dev</span>: <span class="ident">Box::new</span>(<span class="ident">dev</span>),
