@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""],["VhostDevRequest",""],["VhostDevResponse",""]],"mod":[["user",""]],"struct":[["Net",""],["Vsock",""]],"type":[["Result",""]]});
+initSidebarItems({"enum":[["Error",""],["VhostDevRequest",""],["VhostDevResponse",""]],"mod":[["user",""],["vsock",""]],"struct":[["Net",""]],"type":[["Result",""]]});

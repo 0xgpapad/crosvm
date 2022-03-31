@@ -4247,6 +4247,7 @@
 <span id="4246">4246</span>
 <span id="4247">4247</span>
 <span id="4248">4248</span>
+<span id="4249">4249</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -4279,7 +4280,7 @@
     <span class="ident">argument</span>::{<span class="self">self</span>, <span class="ident">print_help</span>, <span class="ident">set_arguments</span>, <span class="ident">Argument</span>},
     <span class="ident">platform</span>, <span class="ident">BindMount</span>, <span class="ident">Config</span>, <span class="ident">Executable</span>, <span class="ident">FileBackedMappingParameters</span>, <span class="ident">GidMap</span>, <span class="ident">SharedDir</span>,
     <span class="ident">TouchDeviceOption</span>, <span class="ident">VfioCommand</span>, <span class="ident">VhostUserFsOption</span>, <span class="ident">VhostUserOption</span>, <span class="ident">VhostUserWlOption</span>,
-    <span class="ident">VhostVsockDeviceParameter</span>, <span class="ident">VvuOption</span>,
+    <span class="ident">VvuOption</span>,
 };
 <span class="kw">use</span> <span class="ident">devices::serial_device</span>::{<span class="ident">SerialHardware</span>, <span class="ident">SerialParameters</span>};
 <span class="kw">use</span> <span class="ident">devices::virtio::block::block::DiskOption</span>;
@@ -4291,6 +4292,7 @@
     <span class="ident">run_block_device</span>, <span class="ident">run_console_device</span>, <span class="ident">run_fs_device</span>, <span class="ident">run_net_device</span>, <span class="ident">run_vsock_device</span>,
     <span class="ident">run_wl_device</span>,
 };
+<span class="kw">use</span> <span class="ident">devices::virtio::vhost::vsock::VhostVsockDeviceParameter</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-decoder&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-encoder&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">devices::virtio::VideoBackendType</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>

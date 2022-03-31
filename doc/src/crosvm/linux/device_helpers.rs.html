@@ -1232,25 +1232,6 @@
 <span id="1231">1231</span>
 <span id="1232">1232</span>
 <span id="1233">1233</span>
-<span id="1234">1234</span>
-<span id="1235">1235</span>
-<span id="1236">1236</span>
-<span id="1237">1237</span>
-<span id="1238">1238</span>
-<span id="1239">1239</span>
-<span id="1240">1240</span>
-<span id="1241">1241</span>
-<span id="1242">1242</span>
-<span id="1243">1243</span>
-<span id="1244">1244</span>
-<span id="1245">1245</span>
-<span id="1246">1246</span>
-<span id="1247">1247</span>
-<span id="1248">1248</span>
-<span id="1249">1249</span>
-<span id="1250">1250</span>
-<span id="1251">1251</span>
-<span id="1252">1252</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -1261,14 +1242,14 @@
 <span class="kw">use</span> <span class="ident">std::net::Ipv4Addr</span>;
 <span class="kw">use</span> <span class="ident">std::ops::RangeInclusive</span>;
 <span class="kw">use</span> <span class="ident">std::os::unix::net::UnixListener</span>;
-<span class="kw">use</span> <span class="ident">std::os::unix</span>::{<span class="ident">io::FromRawFd</span>, <span class="ident">net::UnixStream</span>, <span class="ident">prelude::OpenOptionsExt</span>};
+<span class="kw">use</span> <span class="ident">std::os::unix</span>::{<span class="ident">net::UnixStream</span>, <span class="ident">prelude::OpenOptionsExt</span>};
 <span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 <span class="kw">use</span> <span class="ident">std::str</span>;
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">Config</span>, <span class="ident">DiskOption</span>, <span class="ident">TouchDeviceOption</span>, <span class="ident">VhostUserFsOption</span>, <span class="ident">VhostUserOption</span>, <span class="ident">VhostUserWlOption</span>,
-    <span class="ident">VhostVsockDeviceParameter</span>, <span class="ident">VvuOption</span>,
+    <span class="ident">VvuOption</span>,
 };
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">anyhow</span>, <span class="ident">bail</span>, <span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">arch</span>::{<span class="self">self</span>, <span class="ident">VirtioDeviceStub</span>};
@@ -1288,6 +1269,7 @@
     <span class="ident">Mac80211Hwsim</span> <span class="kw">as</span> <span class="ident">VhostUserMac80211Hwsim</span>, <span class="ident">Net</span> <span class="kw">as</span> <span class="ident">VhostUserNet</span>, <span class="ident">Vsock</span> <span class="kw">as</span> <span class="ident">VhostUserVsock</span>,
     <span class="ident">Wl</span> <span class="kw">as</span> <span class="ident">VhostUserWl</span>,
 };
+<span class="kw">use</span> <span class="ident">devices::virtio::vhost::vsock::VhostVsockConfig</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-decoder&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-encoder&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">devices::virtio::VideoBackendType</span>;
 <span class="kw">use</span> <span class="ident">devices::virtio</span>::{<span class="self">self</span>, <span class="ident">BalloonMode</span>, <span class="ident">Console</span>, <span class="ident">VirtioDevice</span>};
@@ -2033,30 +2015,10 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_vhost_vsock_device</span>(<span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>, <span class="ident">cid</span>: <span class="ident">u64</span>) -&gt; <span class="ident">DeviceResult</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_vhost_vsock_device</span>(<span class="ident">cfg</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>, <span class="ident">vhost_config</span>: <span class="kw-2">&amp;</span><span class="ident">VhostVsockConfig</span>) -&gt; <span class="ident">DeviceResult</span> {
     <span class="kw">let</span> <span class="ident">features</span> <span class="op">=</span> <span class="ident">virtio::base_features</span>(<span class="ident">cfg</span>.<span class="ident">protected_vm</span>);
 
-    <span class="kw">let</span> <span class="ident">device_file</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">cfg</span>
-        .<span class="ident">vhost_vsock_device</span>
-        .<span class="ident">as_ref</span>()
-        .<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span><span class="ident">VhostVsockDeviceParameter::default</span>())
-    {
-        <span class="ident">VhostVsockDeviceParameter::Fd</span>(<span class="ident">fd</span>) =&gt; {
-            <span class="kw">let</span> <span class="ident">fd</span> <span class="op">=</span> <span class="ident">validate_raw_descriptor</span>(<span class="kw-2">*</span><span class="ident">fd</span>)
-                .<span class="ident">context</span>(<span class="string">&quot;failed to validate fd for virtual socket device&quot;</span>)<span class="question-mark">?</span>;
-            <span class="comment">// Safe because the `fd` is actually owned by this process and</span>
-            <span class="comment">// we have a unique handle to it.</span>
-            <span class="kw">unsafe</span> { <span class="ident">File::from_raw_fd</span>(<span class="ident">fd</span>) }
-        }
-        <span class="ident">VhostVsockDeviceParameter::Path</span>(<span class="ident">path</span>) =&gt; <span class="ident">OpenOptions::new</span>()
-            .<span class="ident">read</span>(<span class="bool-val">true</span>)
-            .<span class="ident">write</span>(<span class="bool-val">true</span>)
-            .<span class="ident">custom_flags</span>(<span class="ident">libc::O_CLOEXEC</span> <span class="op">|</span> <span class="ident">libc::O_NONBLOCK</span>)
-            .<span class="ident">open</span>(<span class="ident">path</span>)
-            .<span class="ident">context</span>(<span class="string">&quot;failed to open virtual socket device&quot;</span>)<span class="question-mark">?</span>,
-    };
-
-    <span class="kw">let</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">virtio::vhost::Vsock::new</span>(<span class="ident">device_file</span>, <span class="ident">features</span>, <span class="ident">cid</span>)
+    <span class="kw">let</span> <span class="ident">dev</span> <span class="op">=</span> <span class="ident">virtio::vhost::Vsock::new</span>(<span class="ident">features</span>, <span class="ident">vhost_config</span>)
         .<span class="ident">context</span>(<span class="string">&quot;failed to set up virtual socket device&quot;</span>)<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(<span class="ident">VirtioDeviceStub</span> {

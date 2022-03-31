@@ -289,16 +289,159 @@
 <span id="288">288</span>
 <span id="289">289</span>
 <span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
+<span class="kw">use</span> <span class="ident">std::fs</span>::{<span class="ident">File</span>, <span class="ident">OpenOptions</span>};
+<span class="kw">use</span> <span class="ident">std::os::unix::prelude</span>::{<span class="ident">FromRawFd</span>, <span class="ident">OpenOptionsExt</span>};
+<span class="kw">use</span> <span class="ident">std::path::PathBuf</span>;
 <span class="kw">use</span> <span class="ident">std::thread</span>;
 
+<span class="kw">use</span> <span class="ident">anyhow::Context</span>;
+<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">validate_raw_descriptor</span>, <span class="ident">warn</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>};
 <span class="kw">use</span> <span class="ident">data_model</span>::{<span class="ident">DataInit</span>, <span class="ident">Le64</span>};
-
-<span class="kw">use</span> <span class="ident">base</span>::{<span class="ident">error</span>, <span class="ident">warn</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Event</span>, <span class="ident">RawDescriptor</span>};
+<span class="kw">use</span> <span class="ident">serde::Deserialize</span>;
 <span class="kw">use</span> <span class="ident">vhost::Vhost</span>;
 <span class="kw">use</span> <span class="ident">vhost::Vsock</span> <span class="kw">as</span> <span class="ident">VhostVsockHandle</span>;
 <span class="kw">use</span> <span class="ident">vm_memory::GuestMemory</span>;
@@ -310,6 +453,28 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">QUEUE_SIZE</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">256</span>;
 <span class="kw">const</span> <span class="ident">NUM_QUEUES</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">3</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">QUEUE_SIZES</span>: <span class="kw-2">&amp;</span>[<span class="ident">u16</span>] <span class="op">=</span> <span class="kw-2">&amp;</span>[<span class="ident">QUEUE_SIZE</span>; <span class="ident">NUM_QUEUES</span>];
+<span class="kw">static</span> <span class="ident">VHOST_VSOCK_DEFAULT_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;/dev/vhost-vsock&quot;</span>;
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">deny_unknown_fields</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">VhostVsockConfig</span> {
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">device</span>: <span class="ident">VhostVsockDeviceParameter</span>,
+    <span class="kw">pub</span> <span class="ident">cid</span>: <span class="ident">u64</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">untagged</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">VhostVsockDeviceParameter</span> {
+    <span class="ident">Path</span>(<span class="ident">PathBuf</span>),
+    <span class="ident">Fd</span>(<span class="ident">RawDescriptor</span>),
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">VhostVsockDeviceParameter</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
+        <span class="ident">VhostVsockDeviceParameter::Path</span>(<span class="ident">PathBuf::from</span>(<span class="ident">VHOST_VSOCK_DEFAULT_PATH</span>))
+    }
+}
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Vsock</span> {
     <span class="ident">worker_kill_evt</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span>,
@@ -323,9 +488,25 @@
 
 <span class="kw">impl</span> <span class="ident">Vsock</span> {
     <span class="doccomment">/// Create a new virtio-vsock device with the given VM cid.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">vhost_vsock_file</span>: <span class="ident">File</span>, <span class="ident">base_features</span>: <span class="ident">u64</span>, <span class="ident">cid</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vsock</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">base_features</span>: <span class="ident">u64</span>, <span class="ident">vhost_config</span>: <span class="kw-2">&amp;</span><span class="ident">VhostVsockConfig</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">Vsock</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">device_file</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">vhost_config</span>.<span class="ident">device</span> {
+            <span class="ident">VhostVsockDeviceParameter::Fd</span>(<span class="ident">fd</span>) =&gt; {
+                <span class="kw">let</span> <span class="ident">fd</span> <span class="op">=</span> <span class="ident">validate_raw_descriptor</span>(<span class="kw-2">*</span><span class="ident">fd</span>)
+                    .<span class="ident">context</span>(<span class="string">&quot;failed to validate fd for virtual socket device&quot;</span>)<span class="question-mark">?</span>;
+                <span class="comment">// Safe because the `fd` is actually owned by this process and</span>
+                <span class="comment">// we have a unique handle to it.</span>
+                <span class="kw">unsafe</span> { <span class="ident">File::from_raw_fd</span>(<span class="ident">fd</span>) }
+            }
+            <span class="ident">VhostVsockDeviceParameter::Path</span>(<span class="ident">path</span>) =&gt; <span class="ident">OpenOptions::new</span>()
+                .<span class="ident">read</span>(<span class="bool-val">true</span>)
+                .<span class="ident">write</span>(<span class="bool-val">true</span>)
+                .<span class="ident">custom_flags</span>(<span class="ident">libc::O_CLOEXEC</span> <span class="op">|</span> <span class="ident">libc::O_NONBLOCK</span>)
+                .<span class="ident">open</span>(<span class="ident">path</span>)
+                .<span class="ident">context</span>(<span class="string">&quot;failed to open virtual socket device&quot;</span>)<span class="question-mark">?</span>,
+        };
+
         <span class="kw">let</span> <span class="ident">kill_evt</span> <span class="op">=</span> <span class="ident">Event::new</span>().<span class="ident">map_err</span>(<span class="ident">Error::CreateKillEvent</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">VhostVsockHandle::new</span>(<span class="ident">vhost_vsock_file</span>);
+        <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">VhostVsockHandle::new</span>(<span class="ident">device_file</span>);
 
         <span class="kw">let</span> <span class="ident">avail_features</span> <span class="op">=</span> <span class="ident">base_features</span>
             <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">virtio_sys::vhost::VIRTIO_F_NOTIFY_ON_EMPTY</span>
@@ -343,7 +524,7 @@
             <span class="ident">worker_kill_evt</span>: <span class="prelude-val">Some</span>(<span class="ident">kill_evt</span>.<span class="ident">try_clone</span>().<span class="ident">map_err</span>(<span class="ident">Error::CloneKillEvent</span>)<span class="question-mark">?</span>),
             <span class="ident">kill_evt</span>: <span class="prelude-val">Some</span>(<span class="ident">kill_evt</span>),
             <span class="ident">vhost_handle</span>: <span class="prelude-val">Some</span>(<span class="ident">handle</span>),
-            <span class="ident">cid</span>,
+            <span class="ident">cid</span>: <span class="ident">vhost_config</span>.<span class="ident">cid</span>,
             <span class="ident">interrupts</span>: <span class="prelude-val">Some</span>(<span class="ident">interrupts</span>),
             <span class="ident">avail_features</span>,
             <span class="ident">acked_features</span>: <span class="number">0</span>,
@@ -503,9 +684,12 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-
     <span class="kw">use</span> <span class="ident">std::convert::TryInto</span>;
+    <span class="kw">use</span> <span class="ident">std::result::Result</span>;
+
+    <span class="kw">use</span> <span class="ident">serde_keyvalue</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">ack_features</span>() {
@@ -577,6 +761,102 @@
 
         <span class="kw">let</span> <span class="ident">vsock</span> <span class="op">=</span> <span class="ident">Vsock::new_for_testing</span>(<span class="ident">cid</span>, <span class="ident">features</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">features</span>, <span class="ident">vsock</span>.<span class="ident">features</span>());
+    }
+
+    <span class="kw">fn</span> <span class="ident">from_vsock_arg</span>(<span class="ident">options</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">VhostVsockConfig</span>, <span class="ident">ParseError</span><span class="op">&gt;</span> {
+        <span class="ident">from_key_values</span>(<span class="ident">options</span>)
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">params_from_key_values</span>() {
+        <span class="comment">// Fd device</span>
+        <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">from_vsock_arg</span>(<span class="string">&quot;device=42,cid=56&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">params</span>,
+            <span class="ident">VhostVsockConfig</span> {
+                <span class="ident">device</span>: <span class="ident">VhostVsockDeviceParameter::Fd</span>(<span class="number">42</span>),
+                <span class="ident">cid</span>: <span class="number">56</span>,
+            }
+        );
+        <span class="comment">// No key for fd device</span>
+        <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">from_vsock_arg</span>(<span class="string">&quot;42,cid=56&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">params</span>,
+            <span class="ident">VhostVsockConfig</span> {
+                <span class="ident">device</span>: <span class="ident">VhostVsockDeviceParameter::Fd</span>(<span class="number">42</span>),
+                <span class="ident">cid</span>: <span class="number">56</span>,
+            }
+        );
+        <span class="comment">// Path device</span>
+        <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">from_vsock_arg</span>(<span class="string">&quot;device=/some/path,cid=56&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">params</span>,
+            <span class="ident">VhostVsockConfig</span> {
+                <span class="ident">device</span>: <span class="ident">VhostVsockDeviceParameter::Path</span>(<span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>()),
+                <span class="ident">cid</span>: <span class="number">56</span>,
+            }
+        );
+        <span class="comment">// No key for path device</span>
+        <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">from_vsock_arg</span>(<span class="string">&quot;/some/path,cid=56&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">params</span>,
+            <span class="ident">VhostVsockConfig</span> {
+                <span class="ident">device</span>: <span class="ident">VhostVsockDeviceParameter::Path</span>(<span class="string">&quot;/some/path&quot;</span>.<span class="ident">into</span>()),
+                <span class="ident">cid</span>: <span class="number">56</span>,
+            }
+        );
+        <span class="comment">// Default device</span>
+        <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="ident">from_vsock_arg</span>(<span class="string">&quot;cid=56&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">params</span>,
+            <span class="ident">VhostVsockConfig</span> {
+                <span class="ident">device</span>: <span class="ident">VhostVsockDeviceParameter::Path</span>(<span class="ident">VHOST_VSOCK_DEFAULT_PATH</span>.<span class="ident">into</span>()),
+                <span class="ident">cid</span>: <span class="number">56</span>,
+            }
+        );
+
+        <span class="comment">// No argument</span>
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">from_vsock_arg</span>(<span class="string">&quot;&quot;</span>).<span class="ident">unwrap_err</span>(),
+            <span class="ident">ParseError</span> {
+                <span class="ident">kind</span>: <span class="ident">ErrorKind::SerdeError</span>(<span class="string">&quot;missing field `cid`&quot;</span>.<span class="ident">into</span>()),
+                <span class="ident">pos</span>: <span class="number">0</span>
+            }
+        );
+        <span class="comment">// Missing cid</span>
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">from_vsock_arg</span>(<span class="string">&quot;device=42&quot;</span>).<span class="ident">unwrap_err</span>(),
+            <span class="ident">ParseError</span> {
+                <span class="ident">kind</span>: <span class="ident">ErrorKind::SerdeError</span>(<span class="string">&quot;missing field `cid`&quot;</span>.<span class="ident">into</span>()),
+                <span class="ident">pos</span>: <span class="number">0</span>,
+            }
+        );
+        <span class="comment">// Cid passed twice</span>
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">from_vsock_arg</span>(<span class="string">&quot;cid=42,cid=56&quot;</span>).<span class="ident">unwrap_err</span>(),
+            <span class="ident">ParseError</span> {
+                <span class="ident">kind</span>: <span class="ident">ErrorKind::SerdeError</span>(<span class="string">&quot;duplicate field `cid`&quot;</span>.<span class="ident">into</span>()),
+                <span class="ident">pos</span>: <span class="number">0</span>,
+            }
+        );
+        <span class="comment">// Device passed twice</span>
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">from_vsock_arg</span>(<span class="string">&quot;cid=56,device=42,device=/some/path&quot;</span>).<span class="ident">unwrap_err</span>(),
+            <span class="ident">ParseError</span> {
+                <span class="ident">kind</span>: <span class="ident">ErrorKind::SerdeError</span>(<span class="string">&quot;duplicate field `device`&quot;</span>.<span class="ident">into</span>()),
+                <span class="ident">pos</span>: <span class="number">0</span>,
+            }
+        );
+        <span class="comment">// Invalid argument</span>
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">from_vsock_arg</span>(<span class="string">&quot;invalid=foo&quot;</span>).<span class="ident">unwrap_err</span>(),
+            <span class="ident">ParseError</span> {
+                <span class="ident">kind</span>: <span class="ident">ErrorKind::SerdeError</span>(
+                    <span class="string">&quot;unknown field `invalid`, expected `device` or `cid`&quot;</span>.<span class="ident">into</span>()
+                ),
+                <span class="ident">pos</span>: <span class="number">0</span>,
+            }
+        );
     }
 }
 </code></pre></div>

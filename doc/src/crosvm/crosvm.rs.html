@@ -576,18 +576,6 @@
 <span id="575">575</span>
 <span id="576">576</span>
 <span id="577">577</span>
-<span id="578">578</span>
-<span id="579">579</span>
-<span id="580">580</span>
-<span id="581">581</span>
-<span id="582">582</span>
-<span id="583">583</span>
-<span id="584">584</span>
-<span id="585">585</span>
-<span id="586">586</span>
-<span id="587">587</span>
-<span id="588">588</span>
-<span id="589">589</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -611,7 +599,6 @@
 <span class="kw">use</span> <span class="ident">std::str::FromStr</span>;
 
 <span class="kw">use</span> <span class="ident">arch</span>::{<span class="ident">Pstore</span>, <span class="ident">VcpuAffinity</span>};
-<span class="kw">use</span> <span class="ident">base::RawDescriptor</span>;
 <span class="kw">use</span> <span class="ident">devices::serial_device</span>::{<span class="ident">SerialHardware</span>, <span class="ident">SerialParameters</span>};
 <span class="kw">use</span> <span class="ident">devices::virtio::block::block::DiskOption</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio_cras&quot;</span>)]</span>
@@ -619,6 +606,7 @@
 <span class="kw">use</span> <span class="ident">devices::virtio::fs::passthrough</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gpu&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">devices::virtio::gpu::GpuParameters</span>;
+<span class="kw">use</span> <span class="ident">devices::virtio::vhost::vsock::VhostVsockDeviceParameter</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-decoder&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;video-encoder&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">devices::virtio::VideoBackendType</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;audio&quot;</span>)]</span>
@@ -634,7 +622,6 @@
 <span class="kw">use</span> <span class="ident">vm_control::BatteryType</span>;
 
 <span class="kw">static</span> <span class="ident">KVM_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;/dev/kvm&quot;</span>;
-<span class="kw">static</span> <span class="ident">VHOST_VSOCK_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;/dev/vhost-vsock&quot;</span>;
 <span class="kw">static</span> <span class="ident">VHOST_NET_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;/dev/vhost-net&quot;</span>;
 <span class="kw">static</span> <span class="ident">SECCOMP_POLICY_DIR</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;/usr/share/policy/crosvm&quot;</span>;
 
@@ -907,17 +894,6 @@
             }
         }
         <span class="ident">IommuDevType::NoIommu</span>
-    }
-}
-
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">VhostVsockDeviceParameter</span> {
-    <span class="ident">Path</span>(<span class="ident">PathBuf</span>),
-    <span class="ident">Fd</span>(<span class="ident">RawDescriptor</span>),
-}
-
-<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">VhostVsockDeviceParameter</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident">VhostVsockDeviceParameter::Path</span>(<span class="ident">PathBuf::from</span>(<span class="ident">VHOST_VSOCK_PATH</span>))
     }
 }
 
