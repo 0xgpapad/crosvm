@@ -498,8 +498,6 @@
 <span id="497">497</span>
 <span id="498">498</span>
 <span id="499">499</span>
-<span id="500">500</span>
-<span id="501">501</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -511,10 +509,8 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::common::LayoutAllocation</span>;
 
-<span class="kw">use</span> <span class="kw">super</span>::{
-    <span class="ident">errno_result</span>, <span class="ident">getpid</span>, <span class="ident">AsRawDescriptor</span>, <span class="ident">Error</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>,
-    <span class="ident">SafeDescriptor</span>,
-};
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">errno_result</span>, <span class="ident">getpid</span>, <span class="ident">Error</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">SafeDescriptor</span>};
 
 <span class="macro">macro_rules!</span> <span class="ident">debug_pr</span> {
     <span class="comment">// By default debugs are suppressed, to enabled them replace macro body with:</span>

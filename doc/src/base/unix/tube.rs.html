@@ -156,11 +156,11 @@
     <span class="ident">time::Duration</span>,
 };
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">SafeDescriptor</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">platform</span>::{<span class="ident">deserialize_with_descriptors</span>, <span class="ident">SerializeDescriptors</span>},
     <span class="ident">tube</span>::{<span class="ident">Error</span>, <span class="ident">RecvTube</span>, <span class="prelude-ty">Result</span>, <span class="ident">SendTube</span>},
-    <span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">RawDescriptor</span>, <span class="ident">ReadNotifier</span>, <span class="ident">SafeDescriptor</span>, <span class="ident">ScmSocket</span>,
-    <span class="ident">UnixSeqpacket</span>, <span class="ident">UnsyncMarker</span>,
+    <span class="ident">RawDescriptor</span>, <span class="ident">ReadNotifier</span>, <span class="ident">ScmSocket</span>, <span class="ident">UnixSeqpacket</span>, <span class="ident">UnsyncMarker</span>,
 };
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::DeserializeOwned</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};

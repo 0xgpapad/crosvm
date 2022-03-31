@@ -106,16 +106,12 @@
 <span id="105">105</span>
 <span id="106">106</span>
 <span id="107">107</span>
-<span id="108">108</span>
-<span id="109">109</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">AsRawDescriptor</span>, <span class="ident">Error</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">MemfdSeals</span>, <span class="ident">RawDescriptor</span>,
-    <span class="prelude-ty">Result</span>, <span class="ident">SafeDescriptor</span>,
-};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">SafeDescriptor</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Error</span>, <span class="ident">MemfdSeals</span>, <span class="ident">RawDescriptor</span>, <span class="prelude-ty">Result</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">use</span> <span class="ident">std::os::unix::io::RawFd</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{

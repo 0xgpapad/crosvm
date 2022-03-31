@@ -39,7 +39,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">use</span> <span class="ident">std::os::unix::net::UnixStream</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::AsRawDescriptor</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor::AsRawDescriptor</span>;
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ReadNotifier</span> {
     <span class="doccomment">/// Gets a descriptor that can be used in EventContext to wait for events to be available (e.g.</span>

@@ -78,11 +78,16 @@
 <span id="77">77</span>
 <span id="78">78</span>
 <span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">common</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">descriptor</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">descriptor_reflection</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
@@ -129,6 +134,9 @@
      }
 }
 
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor</span>::{
+    <span class="ident">AsRawDescriptor</span>, <span class="ident">Descriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">SafeDescriptor</span>,
+};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">platform</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// Wraps an AsRawDescriptor in the simple Descriptor struct, which</span>

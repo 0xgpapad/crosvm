@@ -213,104 +213,6 @@
 <span id="212">212</span>
 <span id="213">213</span>
 <span id="214">214</span>
-<span id="215">215</span>
-<span id="216">216</span>
-<span id="217">217</span>
-<span id="218">218</span>
-<span id="219">219</span>
-<span id="220">220</span>
-<span id="221">221</span>
-<span id="222">222</span>
-<span id="223">223</span>
-<span id="224">224</span>
-<span id="225">225</span>
-<span id="226">226</span>
-<span id="227">227</span>
-<span id="228">228</span>
-<span id="229">229</span>
-<span id="230">230</span>
-<span id="231">231</span>
-<span id="232">232</span>
-<span id="233">233</span>
-<span id="234">234</span>
-<span id="235">235</span>
-<span id="236">236</span>
-<span id="237">237</span>
-<span id="238">238</span>
-<span id="239">239</span>
-<span id="240">240</span>
-<span id="241">241</span>
-<span id="242">242</span>
-<span id="243">243</span>
-<span id="244">244</span>
-<span id="245">245</span>
-<span id="246">246</span>
-<span id="247">247</span>
-<span id="248">248</span>
-<span id="249">249</span>
-<span id="250">250</span>
-<span id="251">251</span>
-<span id="252">252</span>
-<span id="253">253</span>
-<span id="254">254</span>
-<span id="255">255</span>
-<span id="256">256</span>
-<span id="257">257</span>
-<span id="258">258</span>
-<span id="259">259</span>
-<span id="260">260</span>
-<span id="261">261</span>
-<span id="262">262</span>
-<span id="263">263</span>
-<span id="264">264</span>
-<span id="265">265</span>
-<span id="266">266</span>
-<span id="267">267</span>
-<span id="268">268</span>
-<span id="269">269</span>
-<span id="270">270</span>
-<span id="271">271</span>
-<span id="272">272</span>
-<span id="273">273</span>
-<span id="274">274</span>
-<span id="275">275</span>
-<span id="276">276</span>
-<span id="277">277</span>
-<span id="278">278</span>
-<span id="279">279</span>
-<span id="280">280</span>
-<span id="281">281</span>
-<span id="282">282</span>
-<span id="283">283</span>
-<span id="284">284</span>
-<span id="285">285</span>
-<span id="286">286</span>
-<span id="287">287</span>
-<span id="288">288</span>
-<span id="289">289</span>
-<span id="290">290</span>
-<span id="291">291</span>
-<span id="292">292</span>
-<span id="293">293</span>
-<span id="294">294</span>
-<span id="295">295</span>
-<span id="296">296</span>
-<span id="297">297</span>
-<span id="298">298</span>
-<span id="299">299</span>
-<span id="300">300</span>
-<span id="301">301</span>
-<span id="302">302</span>
-<span id="303">303</span>
-<span id="304">304</span>
-<span id="305">305</span>
-<span id="306">306</span>
-<span id="307">307</span>
-<span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
-<span id="311">311</span>
-<span id="312">312</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -319,8 +221,6 @@
     <span class="ident">convert::TryFrom</span>,
     <span class="ident">fs::File</span>,
     <span class="ident">io</span>::{<span class="ident">Stderr</span>, <span class="ident">Stdin</span>, <span class="ident">Stdout</span>},
-    <span class="ident">mem</span>,
-    <span class="ident">mem::ManuallyDrop</span>,
     <span class="ident">net::UdpSocket</span>,
     <span class="ident">ops::Drop</span>,
     <span class="ident">os::unix</span>::{
@@ -329,35 +229,18 @@
     },
 };
 
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-
 <span class="kw">use</span> <span class="kw">super</span>::{
     <span class="ident">errno_result</span>,
     <span class="ident">net</span>::{<span class="ident">UnixSeqpacket</span>, <span class="ident">UnlinkUnixSeqpacketListener</span>},
-    <span class="ident">PollToken</span>, <span class="prelude-ty">Result</span>,
+    <span class="prelude-ty">Result</span>,
+};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor</span>::{
+    <span class="ident">AsRawDescriptor</span>, <span class="ident">Descriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>, <span class="ident">SafeDescriptor</span>,
 };
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">RawDescriptor</span> <span class="op">=</span> <span class="ident">RawFd</span>;
 
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">INVALID_DESCRIPTOR</span>: <span class="ident">RawDescriptor</span> <span class="op">=</span> <span class="op">-</span><span class="number">1</span>;
-
-<span class="doccomment">/// Trait for forfeiting ownership of the current raw descriptor, and returning the raw descriptor</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">IntoRawDescriptor</span> {
-    <span class="kw">fn</span> <span class="ident">into_raw_descriptor</span>(<span class="self">self</span>) -&gt; <span class="ident">RawDescriptor</span>;
-}
-
-<span class="doccomment">/// Trait for returning the underlying raw descriptor, without giving up ownership of the</span>
-<span class="doccomment">/// descriptor.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AsRawDescriptor</span> {
-    <span class="kw">fn</span> <span class="ident">as_raw_descriptor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawDescriptor</span>;
-}
-
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">FromRawDescriptor</span> {
-    <span class="doccomment">/// # Safety</span>
-    <span class="doccomment">/// Safe only if the caller ensures nothing has access to the descriptor after passing it to</span>
-    <span class="doccomment">/// `from_raw_descriptor`</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_raw_descriptor</span>(<span class="ident">descriptor</span>: <span class="ident">RawDescriptor</span>) -&gt; <span class="self">Self</span>;
-}
 
 <span class="doccomment">/// Clones `descriptor`, returning a new `RawDescriptor` that refers to the same open file</span>
 <span class="doccomment">/// description as `descriptor`. The cloned descriptor will have the `FD_CLOEXEC` flag set but will</span>
@@ -377,14 +260,6 @@
     } <span class="kw">else</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">ret</span>)
     }
-}
-
-<span class="doccomment">/// Wraps a RawDescriptor and safely closes it when self falls out of scope.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>)]</span>
-<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SafeDescriptor</span> {
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;super::with_raw_descriptor&quot;</span>)]</span>
-    <span class="ident">descriptor</span>: <span class="ident">RawDescriptor</span>,
 }
 
 <span class="kw">const</span> <span class="ident">KCMP_FILE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0</span>;
@@ -420,26 +295,6 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">AsRawDescriptor</span> <span class="kw">for</span> <span class="ident">SafeDescriptor</span> {
-    <span class="kw">fn</span> <span class="ident">as_raw_descriptor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawDescriptor</span> {
-        <span class="self">self</span>.<span class="ident">descriptor</span>
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">IntoRawDescriptor</span> <span class="kw">for</span> <span class="ident">SafeDescriptor</span> {
-    <span class="kw">fn</span> <span class="ident">into_raw_descriptor</span>(<span class="self">self</span>) -&gt; <span class="ident">RawDescriptor</span> {
-        <span class="kw">let</span> <span class="ident">descriptor</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">descriptor</span>;
-        <span class="ident">mem::forget</span>(<span class="self">self</span>);
-        <span class="ident">descriptor</span>
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">FromRawDescriptor</span> <span class="kw">for</span> <span class="ident">SafeDescriptor</span> {
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_raw_descriptor</span>(<span class="ident">descriptor</span>: <span class="ident">RawDescriptor</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">SafeDescriptor</span> { <span class="ident">descriptor</span> }
-    }
-}
-
 <span class="kw">impl</span> <span class="ident">AsRawFd</span> <span class="kw">for</span> <span class="ident">SafeDescriptor</span> {
     <span class="kw">fn</span> <span class="ident">as_raw_fd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawFd</span> {
         <span class="self">self</span>.<span class="ident">as_raw_descriptor</span>()
@@ -453,27 +308,6 @@
         <span class="prelude-val">Ok</span>(<span class="ident">SafeDescriptor</span> {
             <span class="ident">descriptor</span>: <span class="ident">clone_fd</span>(<span class="ident">fd</span>)<span class="question-mark">?</span>,
         })
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">TryFrom</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AsRawDescriptor</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SafeDescriptor</span> {
-    <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">std::io::Error</span>;
-
-    <span class="doccomment">/// Clones the underlying descriptor (handle), internally creating a new descriptor.</span>
-    <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">rd</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">AsRawDescriptor</span>) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
-        <span class="comment">// Safe because the underlying raw descriptor is guaranteed valid by rd&#39;s existence.</span>
-        <span class="comment">//</span>
-        <span class="comment">// Note that we are cloning the underlying raw descriptor since we have no guarantee of</span>
-        <span class="comment">// its existence after this function returns.</span>
-        <span class="kw">let</span> <span class="ident">rd_as_safe_desc</span> <span class="op">=</span> <span class="ident">ManuallyDrop::new</span>(<span class="kw">unsafe</span> {
-            <span class="ident">SafeDescriptor::from_raw_descriptor</span>(<span class="ident">rd</span>.<span class="ident">as_raw_descriptor</span>())
-        });
-
-        <span class="comment">// We have to clone rd because we have no guarantee ownership was transferred (rd is</span>
-        <span class="comment">// borrowed).</span>
-        <span class="ident">rd_as_safe_desc</span>
-            .<span class="ident">try_clone</span>()
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident"><span class="self">Self</span>::Error::from_raw_os_error</span>(<span class="ident">e</span>.<span class="ident">errno</span>()))
     }
 }
 
@@ -498,13 +332,6 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">File</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SafeDescriptor</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">f</span>: <span class="ident">File</span>) -&gt; <span class="ident">SafeDescriptor</span> {
-        <span class="comment">// Safe because we own the File at this point.</span>
-        <span class="kw">unsafe</span> { <span class="ident">SafeDescriptor::from_raw_descriptor</span>(<span class="ident">f</span>.<span class="ident">into_raw_descriptor</span>()) }
-    }
-}
-
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">SafeDescriptor</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">UnixStream</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">s</span>: <span class="ident">SafeDescriptor</span>) -&gt; <span class="self">Self</span> {
         <span class="comment">// Safe because we own the SafeDescriptor at this point.</span>
@@ -519,34 +346,11 @@
     }
 }
 
-<span class="doccomment">/// For use cases where a simple wrapper around a RawDescriptor is needed.</span>
-<span class="doccomment">/// This is a simply a wrapper and does not manage the lifetime of the descriptor.</span>
-<span class="doccomment">/// Most usages should prefer SafeDescriptor or using a RawDescriptor directly</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Hash</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
-<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">transparent</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Descriptor</span>(<span class="kw">pub</span> <span class="ident">RawDescriptor</span>);
-<span class="kw">impl</span> <span class="ident">AsRawDescriptor</span> <span class="kw">for</span> <span class="ident">Descriptor</span> {
-    <span class="kw">fn</span> <span class="ident">as_raw_descriptor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawDescriptor</span> {
-        <span class="self">self</span>.<span class="number">0</span>
-    }
-}
-
 <span class="comment">// AsRawFd for interoperability with interfaces that require it. Within crosvm,</span>
 <span class="comment">// always use AsRawDescriptor when possible.</span>
 <span class="kw">impl</span> <span class="ident">AsRawFd</span> <span class="kw">for</span> <span class="ident">Descriptor</span> {
     <span class="kw">fn</span> <span class="ident">as_raw_fd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawFd</span> {
         <span class="self">self</span>.<span class="number">0</span>
-    }
-}
-
-<span class="doccomment">/// Implement token for implementations that wish to use this struct as such</span>
-<span class="kw">impl</span> <span class="ident">PollToken</span> <span class="kw">for</span> <span class="ident">Descriptor</span> {
-    <span class="kw">fn</span> <span class="ident">as_raw_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
-        <span class="self">self</span>.<span class="number">0</span> <span class="kw">as</span> <span class="ident">u64</span>
-    }
-
-    <span class="kw">fn</span> <span class="ident">from_raw_token</span>(<span class="ident">data</span>: <span class="ident">u64</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident">Descriptor</span>(<span class="ident">data</span> <span class="kw">as</span> <span class="ident">RawDescriptor</span>)
     }
 }
 

@@ -547,6 +547,8 @@
 <span id="546">546</span>
 <span id="547">547</span>
 <span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2020 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -613,7 +615,8 @@
     <span class="ident">ser</span>, <span class="ident">Deserialize</span>, <span class="ident">Deserializer</span>, <span class="ident">Serialize</span>, <span class="ident">Serializer</span>,
 };
 
-<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">RawDescriptor</span>, <span class="ident">SafeDescriptor</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::RawDescriptor</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor::SafeDescriptor</span>;
 
 <span class="macro">thread_local!</span> {
     <span class="kw">static</span> <span class="ident">DESCRIPTOR_DST</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RawDescriptor</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Default::default</span>();
@@ -888,7 +891,8 @@
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">with_raw_descriptor</span> {
-    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span></span>::{<span class="ident">IntoRawDescriptor</span>, <span class="ident">RawDescriptor</span>};
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::RawDescriptor</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor::IntoRawDescriptor</span>;
     <span class="kw">use</span> <span class="ident">serde::Deserializer</span>;
 
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::serialize_descriptor</span> <span class="kw">as</span> <span class="ident">serialize</span>;
@@ -918,7 +922,7 @@
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">with_as_descriptor</span> {
-    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span></span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>};
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::descriptor</span>::{<span class="ident">AsRawDescriptor</span>, <span class="ident">FromRawDescriptor</span>, <span class="ident">IntoRawDescriptor</span>};
     <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserializer</span>, <span class="ident">Serializer</span>};
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Serializer</span><span class="op">&gt;</span>(
