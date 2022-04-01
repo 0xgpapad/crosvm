@@ -4259,6 +4259,11 @@
 <span id="4258">4258</span>
 <span id="4259">4259</span>
 <span id="4260">4260</span>
+<span id="4261">4261</span>
+<span id="4262">4262</span>
+<span id="4263">4263</span>
+<span id="4264">4264</span>
+<span id="4265">4265</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2017 The Chromium OS Authors. All rights reserved.</span>
 <span class="comment">// Use of this source code is governed by a BSD-style license that can be</span>
 <span class="comment">// found in the LICENSE file.</span>
@@ -4745,8 +4750,13 @@
     ];
 
     <span class="kw">match</span> <span class="ident">s</span> {
-        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;libvda&quot;</span>)]</span>
-        <span class="prelude-val">None</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">VideoBackendType::Libvda</span>),
+        <span class="prelude-val">None</span> =&gt; {
+            <span class="macro">cfg_if::cfg_if!</span> {
+                <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;libvda&quot;</span>)]</span> {
+                    <span class="prelude-val">Ok</span>(<span class="ident">VideoBackendType::Libvda</span>)
+                }
+            }
+        }
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;libvda&quot;</span>)]</span>
         <span class="prelude-val">Some</span>(<span class="string">&quot;libvda&quot;</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">VideoBackendType::Libvda</span>),
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;libvda&quot;</span>)]</span>
